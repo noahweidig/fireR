@@ -194,10 +194,11 @@ get_mtbs <- function(
   where_clauses <- character(0)
 
   if (!is.null(years)) {
+    start_date <- sprintf("%04d-01-01", years[[1L]])
+    end_date   <- sprintf("%04d-12-31", years[[2L]])
     where_clauses <- c(
       where_clauses,
-      sprintf("Ig_Date >= '%04d-01-01' AND Ig_Date <= '%04d-12-31'",
-              years[[1L]], years[[2L]])
+      sprintf("CAST(Ig_Date AS character(10)) >= '%s' AND CAST(Ig_Date AS character(10)) <= '%s'", start_date, end_date)
     )
   }
 
