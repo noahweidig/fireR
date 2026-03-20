@@ -1,14 +1,18 @@
-# Skip helper: checks if the USGS MTBS endpoint is actually reachable.
-# skip_if_offline() only verifies general internet connectivity; the USGS
-# server can be unreachable (firewall, CDN outage, CI network policy) even
-# when the internet is up.
+# Skip helper: checks if the USGS MTBS endpoint is actually reachable and
+# able to serve data. Uses a Range GET (first 1 KB) rather than a HEAD
+# request because some servers accept HEAD but restrict actual downloads.
 skip_if_usgs_unreachable <- function(
     url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip"
 ) {
   reachable <- tryCatch({
-    h <- curl::new_handle(nobody = TRUE, timeout = 10L, followlocation = TRUE)
+    h <- curl::new_handle(
+      range          = "bytes=0-1023",
+      timeout        = 15L,
+      followlocation = TRUE,
+      ssl_verifypeer = 1L
+    )
     res <- curl::curl_fetch_memory(url, handle = h)
-    res$status_code < 400L
+    res$status_code %in% c(200L, 206L)
   }, error = function(e) FALSE)
 
   if (!reachable) {

@@ -8,7 +8,8 @@ get_mtbs(
   url =
     "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip",
   years = NULL,
-  return_spatial = TRUE,
+  type = NULL,
+  geometry = TRUE,
   output = c("sf", "vect", "terra"),
   cache = FALSE,
   overwrite = FALSE,
@@ -23,16 +24,22 @@ Defaults to the official USGS composite data endpoint.}
 to keep. If a single year is supplied, only fires from that year are
 returned. If two years are supplied they are treated as
 \code{c(start_year, end_year)} (inclusive). \code{NULL} (the default) returns all
-years without filtering.}
+years without filtering. Filtering is based on the \code{Ig_Date} column
+(format \code{YYYY-MM-DD}) via OGR SQL.}
 
-\item{return_spatial}{\code{logical(1)} When \code{TRUE} (the default) the result is
+\item{type}{\code{character} vector of incident types to keep, matched against
+the \code{Incid_Type} column. Valid values are \code{"Wildfire"},
+\code{"Prescribed Fire"}, \code{"Unknown"}, \code{"Wildland Fire Use"}, and
+\code{"Complex"}. \code{NULL} (the default) returns all incident types.}
+
+\item{geometry}{\code{logical(1)} When \code{TRUE} (the default) the result is
 a spatial object (\code{sf} or \code{terra::SpatVector} depending on \code{output}).
 When \code{FALSE} the shapefile attributes are returned as a plain
 \code{data.frame} with the geometry column dropped.}
 
 \item{output}{\code{character(1)} The class of the returned spatial object.
 Either \code{"sf"} (default) or \code{"vect"} / \code{"terra"} for a \code{terra::SpatVector}.
-Ignored when \code{return_spatial = FALSE}.}
+Ignored when \code{geometry = FALSE}.}
 
 \item{cache}{\code{logical(1)} or \code{character(1)}. When \code{FALSE} (the default)
 the ZIP is downloaded to a per-session temporary directory and deleted
@@ -48,33 +55,38 @@ force a fresh download even if a cached copy exists. Defaults to \code{FALSE}.}
 }
 \value{
 \itemize{
-\item An \code{sf} object when \code{output = "sf"} and \code{return_spatial = TRUE}.
+\item An \code{sf} object when \code{output = "sf"} and \code{geometry = TRUE}.
 \item A \code{terra::SpatVector} when \code{output = "vect"} / \code{"terra"} and
-\code{return_spatial = TRUE}.
-\item A \code{data.frame} when \code{return_spatial = FALSE}.
+\code{geometry = TRUE}.
+\item A \code{data.frame} when \code{geometry = FALSE}.
 }
 }
 \description{
 Downloads the MTBS composite burned-area extent shapefile from the USGS,
-unzips it, and returns fire perimeters as a spatial object. Downloads are
-performed using \code{curl}'s multi-handle for maximum throughput.
+unzips it, and returns fire perimeters as a spatial object. The shapefile
+is read via \code{terra} (significantly faster than \code{sf} for large files) and
+converted to \code{sf} only when requested. Year and type filtering is performed
+via an OGR SQL query so only matching features are read into memory.
 }
 \details{
 \subsection{Speed}{
 
 \code{curl::curl_download()} is used in preference to base \code{download.file()}
-because the \code{curl} back-end uses a persistent HTTP/2 connection and avoids
-the overhead of spawning an external process. For very large files you can
-squeeze out additional throughput by setting the \code{CURL_CA_BUNDLE}
-environment variable to point at a local CA bundle so TLS handshakes are
-faster.
+because the \code{curl} back-end uses a persistent HTTP/2 connection, avoids
+spawning an external process, and never times out on large files (the
+handle is configured with \code{timeout = 0}).
+
+\code{terra::vect()} reads the shapefile via GDAL's C++ layer and is
+substantially faster than \code{sf::st_read()} for large files. The result is
+converted to \code{sf} only when the caller requests \code{output = "sf"}.
 }
 
-\subsection{Year filtering}{
+\subsection{Year and type filtering}{
 
-Filtering is applied to the \code{Year} column that MTBS includes in the
-attribute table. If the column cannot be found the raw data are returned
-with a warning.
+Filtering is performed as an OGR SQL \code{WHERE} clause passed directly to
+\code{terra::vect()}, so only matching features are read into memory. Years are
+matched against the \code{Ig_Date} column (e.g. \code{1997-04-23}); incident types
+are matched against the \code{Incid_Type} column.
 }
 }
 \examples{
@@ -85,11 +97,11 @@ fires <- get_mtbs()
 # Only fires from 2020 to 2023, as a terra SpatVector
 fires_recent <- get_mtbs(years = c(2020, 2023), output = "vect")
 
-# Single year
-fires_2020 <- get_mtbs(years = 2020)
+# Single year, wildfires only
+fires_2020 <- get_mtbs(years = 2020, type = "Wildfire")
 
 # Attribute table only (no geometry)
-tbl <- get_mtbs(return_spatial = FALSE)
+tbl <- get_mtbs(geometry = FALSE)
 
 # Cache the download for future sessions
 fires <- get_mtbs(cache = TRUE)
