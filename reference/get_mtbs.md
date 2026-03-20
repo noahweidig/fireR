@@ -1,8 +1,11 @@
 # Download and Load MTBS Fire Perimeter Data
 
 Downloads the MTBS composite burned-area extent shapefile from the USGS,
-unzips it, and returns fire perimeters as a spatial object. Downloads
-are performed using `curl`'s multi-handle for maximum throughput.
+unzips it, and returns fire perimeters as a spatial object. The
+shapefile is read via `terra` (significantly faster than `sf` for large
+files) and converted to `sf` only when requested. Year and type
+filtering is performed via an OGR SQL query so only matching features
+are read into memory.
 
 ## Usage
 
@@ -11,7 +14,8 @@ get_mtbs(
   url =
     "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip",
   years = NULL,
-  return_spatial = TRUE,
+  type = NULL,
+  geometry = TRUE,
   output = c("sf", "vect", "terra"),
   cache = FALSE,
   overwrite = FALSE,
@@ -32,9 +36,17 @@ get_mtbs(
   If a single year is supplied, only fires from that year are returned.
   If two years are supplied they are treated as
   `c(start_year, end_year)` (inclusive). `NULL` (the default) returns
-  all years without filtering.
+  all years without filtering. Filtering is based on the `Ig_Date`
+  column (format `YYYY-MM-DD`) via OGR SQL.
 
-- return_spatial:
+- type:
+
+  `character` vector of incident types to keep, matched against the
+  `Incid_Type` column. Valid values are `"Wildfire"`,
+  `"Prescribed Fire"`, `"Unknown"`, `"Wildland Fire Use"`, and
+  `"Complex"`. `NULL` (the default) returns all incident types.
+
+- geometry:
 
   `logical(1)` When `TRUE` (the default) the result is a spatial object
   (`sf` or
@@ -47,7 +59,7 @@ get_mtbs(
   `character(1)` The class of the returned spatial object. Either `"sf"`
   (default) or `"vect"` / `"terra"` for a
   [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html).
-  Ignored when `return_spatial = FALSE`.
+  Ignored when `geometry = FALSE`.
 
 - cache:
 
@@ -69,13 +81,13 @@ get_mtbs(
 
 ## Value
 
-- An `sf` object when `output = "sf"` and `return_spatial = TRUE`.
+- An `sf` object when `output = "sf"` and `geometry = TRUE`.
 
 - A
   [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
-  when `output = "vect"` / `"terra"` and `return_spatial = TRUE`.
+  when `output = "vect"` / `"terra"` and `geometry = TRUE`.
 
-- A `data.frame` when `return_spatial = FALSE`.
+- A `data.frame` when `geometry = FALSE`.
 
 ## Details
 
@@ -84,17 +96,24 @@ get_mtbs(
 [`curl::curl_download()`](https://jeroen.r-universe.dev/curl/reference/curl_download.html)
 is used in preference to base
 [`download.file()`](https://rdrr.io/r/utils/download.file.html) because
-the `curl` back-end uses a persistent HTTP/2 connection and avoids the
-overhead of spawning an external process. For very large files you can
-squeeze out additional throughput by setting the `CURL_CA_BUNDLE`
-environment variable to point at a local CA bundle so TLS handshakes are
-faster.
+the `curl` back-end uses a persistent HTTP/2 connection, avoids spawning
+an external process, and never times out on large files (the handle is
+configured with `timeout = 0`).
 
-### Year filtering
+[`terra::vect()`](https://rspatial.github.io/terra/reference/vect.html)
+reads the shapefile via GDAL's C++ layer and is substantially faster
+than
+[`sf::st_read()`](https://r-spatial.github.io/sf/reference/st_read.html)
+for large files. The result is converted to `sf` only when the caller
+requests `output = "sf"`.
 
-Filtering is applied to the `Year` column that MTBS includes in the
-attribute table. If the column cannot be found the raw data are returned
-with a warning.
+### Year and type filtering
+
+Filtering is performed as an OGR SQL `WHERE` clause passed directly to
+[`terra::vect()`](https://rspatial.github.io/terra/reference/vect.html),
+so only matching features are read into memory. Years are matched
+against the `Ig_Date` column (e.g. `1997-04-23`); incident types are
+matched against the `Incid_Type` column.
 
 ## Examples
 
@@ -106,11 +125,11 @@ fires <- get_mtbs()
 # Only fires from 2020 to 2023, as a terra SpatVector
 fires_recent <- get_mtbs(years = c(2020, 2023), output = "vect")
 
-# Single year
-fires_2020 <- get_mtbs(years = 2020)
+# Single year, wildfires only
+fires_2020 <- get_mtbs(years = 2020, type = "Wildfire")
 
 # Attribute table only (no geometry)
-tbl <- get_mtbs(return_spatial = FALSE)
+tbl <- get_mtbs(geometry = FALSE)
 
 # Cache the download for future sessions
 fires <- get_mtbs(cache = TRUE)
