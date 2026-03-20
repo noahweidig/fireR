@@ -8,9 +8,9 @@
 `fireR` splits MTBS access into two functions:
 
 - [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
-  downloads and unzips the data to a directory
+  downloads the MTBS ZIP to a directory
 - [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
-  reads, filters, and returns the data as **`sf`**,
+  reads, filters, and returns data from that ZIP as **`sf`**,
   **[`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)**,
   or `data.frame`
 
@@ -99,7 +99,7 @@ fires <- read_mtbs(cache = "~/data/mtbs_cache")
 | `overwrite` | `logical`             | `FALSE`  | Force fresh download even if cached copy exists               |
 | `verbose`   | `logical`             | `TRUE`   | Print progress messages                                       |
 
-To only download and unzip data to disk:
+To only download data to disk:
 
 ``` r
 mtbs_dir <- get_mtbs()

@@ -1,10 +1,9 @@
 # Read MTBS fire perimeter data
 
-Reads MTBS fire perimeters from locally extracted data and returns
-either a spatial object or a plain attribute table. Data are
-downloaded/unzipped via
+Reads MTBS fire perimeters from an existing local MTBS ZIP downloaded
+with
 [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
-when needed.
+and returns either a spatial object or a plain attribute table.
 
 ## Usage
 
@@ -28,7 +27,8 @@ read_mtbs(
 
 - url:
 
-  `character(1)` URL of the MTBS perimeter ZIP archive.
+  `character(1)` retained for backward compatibility; not used by
+  `read_mtbs()`.
 
 - years:
 
@@ -63,22 +63,24 @@ read_mtbs(
 - cache:
 
   `logical(1)` or `character(1)`. When `FALSE` (the default) data are
-  downloaded/extracted in a per-session temporary directory. When `TRUE`
-  data are cached in `tools::R_user_dir("fireR", "cache")`.
-  Alternatively, supply a directory path as a string to control the
-  location.
+  read from the current working directory. When `TRUE` data are read
+  from `tools::R_user_dir("fireR", "cache")`. Alternatively, supply a
+  directory path as a string to control the location.
 
 - overwrite:
 
-  `logical(1)` force re-download and re-extraction.
+  `logical(1)` retained for backward compatibility; not used by
+  `read_mtbs()`.
 
 - retries:
 
-  `integer(1)` number of download retry attempts.
+  `integer(1)` retained for backward compatibility; not used by
+  `read_mtbs()`.
 
 - timeout:
 
-  `integer(1)` timeout in seconds per download attempt.
+  `integer(1)` retained for backward compatibility; not used by
+  `read_mtbs()`.
 
 - verbose:
 
@@ -93,6 +95,11 @@ read_mtbs(
 - An `sf` object when `output = "sf"` and `geometry = TRUE`.
 
 - A `data.frame` when `geometry = FALSE`.
+
+## Details
+
+`read_mtbs()` does not download data. Download the ZIP first with
+[`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md).
 
 ## Examples
 

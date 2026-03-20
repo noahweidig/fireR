@@ -6,7 +6,7 @@ Download and read MTBS wildfire perimeter data.
 
 - [`download_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
   [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
-  : Download and unzip MTBS perimeter data
+  : Download MTBS perimeter data
 - [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
   : Read MTBS fire perimeter data
 

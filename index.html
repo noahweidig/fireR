@@ -71,9 +71,9 @@
 <p><code>fireR</code> splits MTBS access into two functions:</p>
 <ul>
 <li>
-<code><a href="reference/get_mtbs.html">get_mtbs()</a></code> downloads and unzips the data to a directory</li>
+<code><a href="reference/get_mtbs.html">get_mtbs()</a></code> downloads the MTBS ZIP to a directory</li>
 <li>
-<code><a href="reference/read_mtbs.html">read_mtbs()</a></code> reads, filters, and returns the data as <strong><code>sf</code></strong>, <strong><code><a href="https://rspatial.github.io/terra/reference/SpatVector-class.html" class="external-link">terra::SpatVector</a></code></strong>, or <code>data.frame</code>
+<code><a href="reference/read_mtbs.html">read_mtbs()</a></code> reads, filters, and returns data from that ZIP as <strong><code>sf</code></strong>, <strong><code><a href="https://rspatial.github.io/terra/reference/SpatVector-class.html" class="external-link">terra::SpatVector</a></code></strong>, or <code>data.frame</code>
 </li>
 </ul>
 <p>Key features:</p>
@@ -215,7 +215,7 @@
 </tr>
 </tbody>
 </table>
-<p>To only download and unzip data to disk:</p>
+<p>To only download data to disk:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mtbs_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_mtbs.html">get_mtbs</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <hr>

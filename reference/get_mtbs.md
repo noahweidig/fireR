@@ -1,8 +1,8 @@
-# Download and unzip MTBS perimeter data
+# Download MTBS perimeter data
 
 Downloads the MTBS composite burned-area extent ZIP archive to a
-directory and unzips it to `mtbs_perimeter_data/`. If data are already
-extracted and `overwrite = FALSE`, no network call is made.
+directory. If the ZIP already exists and `overwrite = FALSE`, no network
+call is made.
 
 ## Usage
 
@@ -36,13 +36,11 @@ get_mtbs(
 
 - directory:
 
-  `character(1)` parent directory where `mtbs_perimeter_data.zip` and
-  `mtbs_perimeter_data/` are stored.
+  `character(1)` directory where `mtbs_perimeter_data.zip` is stored.
 
 - overwrite:
 
-  `logical(1)` re-download and re-extract when `TRUE`; defaults to
-  `FALSE`.
+  `logical(1)` re-download when `TRUE`; defaults to `FALSE`.
 
 - retries:
 
@@ -58,7 +56,7 @@ get_mtbs(
 
 ## Value
 
-`character(1)` path to the extracted directory (invisibly).
+`character(1)` path to the downloaded ZIP file (invisibly).
 
 ## Details
 
