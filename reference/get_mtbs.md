@@ -1,14 +1,14 @@
-# Download MTBS perimeter data
+# Download MTBS perimeter or occurrence data
 
-Downloads the MTBS composite burned-area extent ZIP archive to a
-directory. If the ZIP already exists and `overwrite = FALSE`, no network
-call is made.
+Downloads an MTBS composite data ZIP archive to a directory. If the ZIP
+already exists and `overwrite = FALSE`, no network call is made.
 
 ## Usage
 
 ``` r
 get_mtbs(
   directory = getwd(),
+  dataset = c("perimeters", "occurrence"),
   overwrite = FALSE,
   timeout = 3600,
   verbose = TRUE
@@ -19,8 +19,14 @@ get_mtbs(
 
 - directory:
 
-  `character(1)` directory where `mtbs_perimeter_data.zip` is stored.
-  Defaults to the current working directory.
+  `character(1)` directory where the ZIP file is stored. Defaults to the
+  current working directory.
+
+- dataset:
+
+  `character(1)` which dataset to download. Use `"perimeters"` (default)
+  to get fire perimeters as polygons, or `"occurrence"` to get fire
+  centroids as points.
 
 - overwrite:
 
@@ -45,5 +51,6 @@ get_mtbs(
 ``` r
 if (FALSE) { # \dontrun{
 zip_path <- get_mtbs()
+zip_path_pts <- get_mtbs(dataset = "occurrence")
 } # }
 ```

@@ -127,7 +127,7 @@ MIT © Noah Weidig
 Download and read MTBS wildfire perimeter data.
 
 - [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
-  : Download MTBS perimeter data
+  : Download MTBS perimeter or occurrence data
 - [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
   : Read MTBS fire perimeter data
 
