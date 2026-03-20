@@ -8,7 +8,7 @@ test_that("get_mtbs() input validation works", {
 })
 
 test_that("get_mtbs() returns the right class", {
-  skip_if_offline()
+  skip_if_usgs_unreachable()
   skip_on_cran()
 
   # sf (default)
@@ -26,7 +26,7 @@ test_that("get_mtbs() returns the right class", {
 })
 
 test_that("year filtering keeps correct rows", {
-  skip_if_offline()
+  skip_if_usgs_unreachable()
   skip_on_cran()
 
   fires <- get_mtbs(years = c(2018, 2019), output = "sf", verbose = FALSE)
@@ -47,7 +47,7 @@ test_that("year filtering keeps correct rows", {
 })
 
 test_that("single year is treated as exact match", {
-  skip_if_offline()
+  skip_if_usgs_unreachable()
   skip_on_cran()
 
   fires <- get_mtbs(years = 2005, output = "sf", verbose = FALSE)
