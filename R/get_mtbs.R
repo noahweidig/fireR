@@ -4,9 +4,9 @@
 #' and returns fire perimeters as a spatial object. The shapefile is read
 #' directly from the ZIP archive via GDAL's \code{/vsizip/} virtual
 #' filesystem — no extraction to disk. Reading is performed via \code{terra}
-#' (significantly faster than \code{sf} for large files) and converted to
-#' \code{sf} only when requested. Year and type filtering is performed via an
-#' OGR SQL query so only matching features are read into memory.
+#' and converted to \code{sf} only when requested. Year and type filtering
+#' is performed via an OGR SQL query so only matching features are read into
+#' memory.
 #'
 #' @param url \code{character(1)} URL of the MTBS perimeter ZIP archive.
 #'   Defaults to the official USGS composite data endpoint.
@@ -29,8 +29,7 @@
 #' @param output \code{character(1)} The class of the returned spatial
 #'   object. Either \code{"vect"} / \code{"terra"} (default) for a
 #'   \code{terra::SpatVector}, or \code{"sf"} for an \code{sf} object.
-#'   Defaulting to \code{"vect"} avoids the overhead of converting to
-#'   \code{sf} when it is not needed. Ignored when \code{geometry = FALSE}.
+#'   Ignored when \code{geometry = FALSE}.
 #' @param cache \code{logical(1)} or \code{character(1)}. When \code{FALSE}
 #'   (the default) the ZIP is downloaded to a per-session temporary directory
 #'   and deleted when the R session ends. When \code{TRUE} the file is cached
@@ -40,29 +39,21 @@
 #' @param overwrite \code{logical(1)} When \code{cache} is enabled, set
 #'   \code{TRUE} to force a fresh download even if a cached copy exists.
 #'   Defaults to \code{FALSE}.
+#' @param retries \code{integer(1)} Number of download retry attempts on
+#'   failure or stall. Defaults to \code{3L}.
+#' @param timeout \code{integer(1)} Maximum number of seconds to allow for
+#'   the entire download before aborting and retrying. Defaults to
+#'   \code{300L} (5 minutes). Increase for very slow connections.
 #' @param verbose \code{logical(1)} Print progress messages. Defaults to
 #'   \code{TRUE}.
-#' @param background \code{logical(1)} When \code{TRUE} the download and all
-#'   subsequent processing runs in a background R process via
-#'   \code{callr::r_bg()}, so your interactive session stays responsive. The
-#'   function returns a \code{callr} process object immediately; call
-#'   \code{$wait()} to block until it finishes and \code{$get_result()} to
-#'   retrieve the spatial object. Requires the \pkg{callr} package. Defaults
-#'   to \code{FALSE}.
 #'
 #' @return
 #' \itemize{
-#'   \item When \code{background = FALSE} (default):
-#'   \itemize{
-#'     \item A \code{terra::SpatVector} when \code{output = "vect"} /
-#'       \code{"terra"} and \code{geometry = TRUE}.
-#'     \item An \code{sf} object when \code{output = "sf"} and
-#'       \code{geometry = TRUE}.
-#'     \item A \code{data.frame} when \code{geometry = FALSE}.
-#'   }
-#'   \item When \code{background = TRUE}: a \code{callr} \code{r_process}
-#'     object. Use \code{$wait()} then \code{$get_result()} to obtain the
-#'     spatial object.
+#'   \item A \code{terra::SpatVector} when \code{output = "vect"} /
+#'     \code{"terra"} and \code{geometry = TRUE}.
+#'   \item An \code{sf} object when \code{output = "sf"} and
+#'     \code{geometry = TRUE}.
+#'   \item A \code{data.frame} when \code{geometry = FALSE}.
 #' }
 #'
 #' @details
@@ -70,47 +61,47 @@
 #' Three design decisions keep this function fast:
 #'
 #' 1. **No extraction to disk.** The shapefile is read directly from the ZIP
-#'    via GDAL's \code{/vsizip/} virtual filesystem. \code{utils::unzip()} is
-#'    called only to inspect the ZIP's table of contents (near-instant), never
-#'    to extract files.
+#'    via GDAL's \code{/vsizip/} virtual filesystem.
 #'
-#' 2. **\code{terra::SpatVector} is the default output** (\code{output =
-#'    "vect"}). The \code{terra} C++ layer reads shapefiles substantially
-#'    faster than \code{sf::st_read()}, and skipping the
-#'    \code{sf::st_as_sf()} conversion saves additional time. Pass
-#'    \code{output = "sf"} explicitly when you need an \code{sf} object.
+#' 2. **\code{terra::SpatVector} is the default output.** The \code{terra}
+#'    C++ layer reads shapefiles substantially faster than \code{sf::st_read()}.
+#'    Pass \code{output = "sf"} explicitly when you need an \code{sf} object.
 #'
-#' 3. **OGR SQL filtering** is applied at read time via \code{terra::vect()},
-#'    so only matching features are loaded into memory.
+#' 3. **OGR SQL filtering** is applied at read time, so only matching features
+#'    are loaded into memory.
 #'
-#' ## Non-blocking mode
-#' Pass \code{background = TRUE} to keep your R session responsive while the
-#' ~100 MB archive downloads and is processed:
+#' ## Caching
+#' The first call with \code{cache = TRUE} downloads the ~100 MB archive once.
+#' All subsequent calls read from disk and skip the download entirely.
+#' This is the most effective way to avoid slow or stalled downloads.
 #'
 #' ```r
-#' proc <- get_mtbs(years = 2020, background = TRUE)
-#' # … do other work …
-#' proc$wait()
-#' fires <- proc$get_result()
+#' # First call: downloads and caches
+#' fires <- get_mtbs(cache = TRUE)
+#'
+#' # All future calls: instant, no network
+#' fires <- get_mtbs(cache = TRUE)
 #' ```
 #'
-#' \code{background = TRUE} requires the \pkg{callr} package
-#' (\code{install.packages("callr")}).
+#' ## Retries
+#' On slow or unreliable connections, \code{retries} controls how many times
+#' the download is attempted before giving up. Each attempt honours
+#' \code{timeout} seconds. A partial file is deleted before each retry.
 #'
 #' ## Year and type filtering
-#' Filtering is performed as an OGR SQL \code{WHERE} clause passed directly
-#' to \code{terra::vect()}, so only matching features are read into memory.
 #' Years are matched against the \code{Ig_Date} column (e.g.
-#' \code{1997-04-23}); incident types are matched against the
-#' \code{Incid_Type} column.
+#' \code{1997-04-23}); incident types are matched against \code{Incid_Type}.
 #'
 #' @examples
 #' \dontrun{
-#' # Default: all years, return as terra SpatVector (fastest)
+#' # Default: all years, return as terra SpatVector
 #' fires <- get_mtbs()
 #'
+#' # Cache for instant loads in future sessions (recommended)
+#' fires <- get_mtbs(cache = TRUE)
+#'
 #' # Only fires from 2020 to 2023
-#' fires_recent <- get_mtbs(years = c(2020, 2023))
+#' fires_recent <- get_mtbs(years = c(2020, 2023), cache = TRUE)
 #'
 #' # Single year, wildfires only, as sf
 #' fires_2020 <- get_mtbs(years = 2020, type = "Wildfire", output = "sf")
@@ -118,58 +109,23 @@
 #' # Attribute table only (no geometry)
 #' tbl <- get_mtbs(geometry = FALSE)
 #'
-#' # Cache the download for future sessions
-#' fires <- get_mtbs(cache = TRUE)
-#'
-#' # Non-blocking: download in background, keep working
-#' proc <- get_mtbs(years = 2020, background = TRUE)
-#' proc$wait()
-#' fires <- proc$get_result()
+#' # Slow connection: extend timeout, add retries
+#' fires <- get_mtbs(cache = TRUE, timeout = 600L, retries = 5L)
 #' }
 #'
 #' @export
 get_mtbs <- function(
-    url        = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip",
-    years      = NULL,
-    type       = NULL,
-    geometry   = TRUE,
-    output     = c("vect", "sf", "terra"),
-    cache      = FALSE,
-    overwrite  = FALSE,
-    verbose    = TRUE,
-    background = FALSE
+    url      = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip",
+    years    = NULL,
+    type     = NULL,
+    geometry = TRUE,
+    output   = c("vect", "sf", "terra"),
+    cache    = FALSE,
+    overwrite = FALSE,
+    retries  = 3L,
+    timeout  = 300L,
+    verbose  = TRUE
 ) {
-
-  # ── Background mode ────────────────────────────────────────────────────────
-  if (isTRUE(background)) {
-    if (!requireNamespace("callr", quietly = TRUE)) {
-      cli::cli_abort(c(
-        "{.arg background = TRUE} requires the {.pkg callr} package.",
-        "i" = "Install it with {.code install.packages(\"callr\")}."
-      ))
-    }
-    proc <- callr::r_bg(
-      func = get_mtbs,
-      args = list(
-        url        = url,
-        years      = years,
-        type       = type,
-        geometry   = geometry,
-        output     = output[[1L]],
-        cache      = cache,
-        overwrite  = overwrite,
-        verbose    = FALSE,
-        background = FALSE
-      ),
-      package = TRUE
-    )
-    if (verbose) {
-      cli::cli_inform(c(
-        "i" = "Processing in background. Call {.code proc$wait()} then {.code proc$get_result()} when ready."
-      ))
-    }
-    return(proc)
-  }
 
   # ── Argument validation ────────────────────────────────────────────────────
   output <- rlang::arg_match(output)
@@ -203,66 +159,62 @@ get_mtbs <- function(
     cli::cli_abort("{.arg geometry} must be {.code TRUE} or {.code FALSE}.")
   }
 
+  retries <- max(1L, as.integer(retries))
+  timeout <- max(30L, as.integer(timeout))
+
   # ── Resolve download destination ───────────────────────────────────────────
   zip_path <- .resolve_cache(url, cache, overwrite, verbose)
 
-  # ── Download ───────────────────────────────────────────────────────────────
+  # ── Download (with retries) ────────────────────────────────────────────────
   if (!fs::file_exists(zip_path)) {
-    .download_zip(url, zip_path, verbose)
+    .download_zip(url, zip_path, retries = retries, timeout = timeout,
+                  verbose = verbose)
   } else {
-    if (verbose) cli::cli_inform("c" = "Using cached file: {.path {zip_path}}")
+    if (verbose) cli::cli_inform("Using cached file: {.path {zip_path}}")
   }
 
-  # ── Locate shapefile inside ZIP (table-of-contents only, no extraction) ────
+  # ── Locate shapefile inside ZIP ────────────────────────────────────────────
   zip_contents <- utils::unzip(zip_path, list = TRUE)$Name
-  shp_name     <- zip_contents[grepl("\\.shp$", zip_contents, ignore.case = TRUE)]
+  shp_name     <- zip_contents[grepl("\\.shp$", zip_contents,
+                                     ignore.case = TRUE)]
 
   if (length(shp_name) == 0L) {
-    cli::cli_abort(
-      "No {.file .shp} file found inside {.path {zip_path}}. \\
-      Check that {.url {url}} returns a valid shapefile ZIP."
-    )
+    cli::cli_abort(c(
+      "No {.file .shp} found inside {.path {zip_path}}.",
+      "i" = "The ZIP may be corrupt. Re-run with {.code overwrite = TRUE} to force a fresh download."
+    ))
   }
 
   shp_name <- shp_name[[1L]]
+  vsi_path <- paste0("/vsizip/", normalizePath(zip_path, winslash = "/"),
+                     "/", shp_name)
 
-  # Build GDAL virtual path — reads directly from ZIP, no disk extraction
-  vsi_path <- paste0(
-    "/vsizip/",
-    normalizePath(zip_path, winslash = "/"),
-    "/",
-    shp_name
-  )
-
-  # ── Build OGR SQL query for efficient attribute-level filtering ────────────
+  # ── Build OGR SQL WHERE clause ─────────────────────────────────────────────
   layer         <- tools::file_path_sans_ext(basename(shp_name))
   where_clauses <- character(0)
 
   if (!is.null(years)) {
-    start_date    <- sprintf("%04d-01-01", years[[1L]])
-    end_date      <- sprintf("%04d-12-31", years[[2L]])
     where_clauses <- c(
       where_clauses,
-      sprintf("Ig_Date >= '%s' AND Ig_Date <= '%s'", start_date, end_date)
+      sprintf("Ig_Date >= '%04d-01-01' AND Ig_Date <= '%04d-12-31'",
+              years[[1L]], years[[2L]])
     )
   }
 
   if (!is.null(type)) {
-    type_eq       <- paste(sprintf("Incid_Type = '%s'", type), collapse = " OR ")
+    type_eq       <- paste(sprintf("Incid_Type = '%s'", type),
+                           collapse = " OR ")
     where_clauses <- c(where_clauses, sprintf("(%s)", type_eq))
   }
 
   sql_query <- if (length(where_clauses) > 0L) {
-    sprintf(
-      "SELECT * FROM \"%s\" WHERE %s",
-      layer,
-      paste(where_clauses, collapse = " AND ")
-    )
+    sprintf('SELECT * FROM "%s" WHERE %s', layer,
+            paste(where_clauses, collapse = " AND "))
   } else {
     NULL
   }
 
-  # ── Read via terra directly from ZIP ──────────────────────────────────────
+  # ── Read via terra ─────────────────────────────────────────────────────────
   if (verbose) cli::cli_progress_step("Reading {.path {basename(shp_name)}} \u2026")
 
   data_sv <- if (!is.null(sql_query)) {
@@ -278,14 +230,8 @@ get_mtbs <- function(
   }
 
   # ── Return ─────────────────────────────────────────────────────────────────
-  if (!geometry) {
-    return(as.data.frame(terra::values(data_sv)))
-  }
-
-  if (output == "sf") {
-    return(sf::st_as_sf(data_sv))
-  }
-
+  if (!geometry) return(as.data.frame(terra::values(data_sv)))
+  if (output == "sf") return(sf::st_as_sf(data_sv))
   data_sv
 }
 
@@ -321,36 +267,62 @@ get_mtbs <- function(
 
 
 #' @keywords internal
-.download_zip <- function(url, dest, verbose) {
-  if (verbose) {
-    cli::cli_progress_step(
-      "Downloading MTBS perimeter data ({.url {url}}) \u2026"
-    )
-  }
+.download_zip <- function(url, dest, retries, timeout, verbose) {
 
-  tryCatch(
-    curl::curl_download(
-      url      = url,
-      destfile = dest,
-      quiet    = !verbose,
-      handle   = curl::new_handle(
-        http_version   = 2L,
-        tcp_keepalive  = 1L,
-        followlocation = 1L,
-        ssl_verifypeer = 1L,
-        timeout        = 0L,
-        connecttimeout = 30L
+  attempt <- 0L
+
+  repeat {
+    attempt <- attempt + 1L
+
+    if (verbose) {
+      cli::cli_progress_step(
+        "Downloading MTBS perimeter data (attempt {attempt}/{retries}) \u2026"
       )
-    ),
-    error = function(e) {
+    }
+
+    # Remove partial file from a previous failed attempt
+    if (fs::file_exists(dest)) fs::file_delete(dest)
+
+    success <- tryCatch({
+      curl::curl_download(
+        url      = url,
+        destfile = dest,
+        quiet    = !verbose,
+        handle   = curl::new_handle(
+          http_version   = 2L,
+          tcp_keepalive  = 1L,
+          followlocation = 1L,
+          ssl_verifypeer = 1L,
+          timeout        = timeout,   # hard ceiling per attempt
+          connecttimeout = 30L,
+          low_speed_limit = 1000L,    # abort if < 1 KB/s …
+          low_speed_time  = 30L       # … for 30 consecutive seconds
+        )
+      )
+      TRUE
+    }, error = function(e) {
+      if (verbose) {
+        cli::cli_warn(c(
+          "!" = "Attempt {attempt} failed: {conditionMessage(e)}"
+        ))
+      }
+      FALSE
+    })
+
+    if (isTRUE(success)) {
+      if (verbose) cli::cli_progress_done()
+      return(invisible(dest))
+    }
+
+    if (attempt >= retries) {
       cli::cli_abort(c(
-        "Download failed.",
+        "Download failed after {retries} attempt{?s}.",
         "i" = "URL: {.url {url}}",
-        "x" = conditionMessage(e)
+        "i" = "Try {.code cache = TRUE} and {.code retries = 5L}, or check your connection."
       ))
     }
-  )
 
-  if (verbose) cli::cli_progress_done()
-  invisible(dest)
+    if (verbose) cli::cli_inform("Retrying in 5 seconds \u2026")
+    Sys.sleep(5)
+  }
 }
