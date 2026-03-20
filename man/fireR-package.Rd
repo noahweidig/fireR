@@ -8,7 +8,7 @@
 \description{
 \code{fireR} provides two ergonomic entry points for MTBS
 (Monitoring Trends in Burn Severity) composite burned-area extent data:
-\code{\link[=get_mtbs]{get_mtbs()}} for downloading/unzipping, and
+\code{\link[=get_mtbs]{get_mtbs()}} for downloading, and
 \code{\link[=read_mtbs]{read_mtbs()}} for reading and filtering data as an
 \code{\link[sf:sf]{sf}} object, a \code{\link[terra:vect]{terra::SpatVector}}, or a
 plain \code{data.frame}.
@@ -16,7 +16,7 @@ plain \code{data.frame}.
 \section{Main functions}{
 
 \itemize{
-\item \code{\link[=get_mtbs]{get_mtbs()}} — download and unzip MTBS fire perimeter data.
+\item \code{\link[=get_mtbs]{get_mtbs()}} — download MTBS fire perimeter ZIP data.
 \item \code{\link[=read_mtbs]{read_mtbs()}} — read, filter, and return MTBS fire perimeters.
 }
 }

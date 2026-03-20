@@ -80,7 +80,8 @@ get_mtbs <- function(
 #' Reads MTBS fire perimeters from an existing local MTBS ZIP downloaded with
 #' [get_mtbs()] and returns either a spatial object or a plain attribute table.
 #'
-#' @param url \code{character(1)} URL of the MTBS perimeter ZIP archive.
+#' @param url \code{character(1)} retained for backward compatibility; not used
+#'   by \code{read_mtbs()}.
 #' @param years \code{integer} vector of length 1 or 2 specifying the year
 #'   range to keep. If a single year is supplied, only fires from that year
 #'   are returned. If two years are supplied they are treated as
@@ -107,8 +108,10 @@ get_mtbs <- function(
 #'   directory path as a string to control the location.
 #' @param overwrite \code{logical(1)} retained for backward compatibility; not
 #'   used by \code{read_mtbs()}.
-#' @param retries \code{integer(1)} number of download retry attempts.
-#' @param timeout \code{integer(1)} timeout in seconds per download attempt.
+#' @param retries \code{integer(1)} retained for backward compatibility; not
+#'   used by \code{read_mtbs()}.
+#' @param timeout \code{integer(1)} retained for backward compatibility; not
+#'   used by \code{read_mtbs()}.
 #' @param verbose \code{logical(1)} print progress messages.
 #'
 #' @return

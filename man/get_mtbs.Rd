@@ -3,7 +3,7 @@
 \name{get_mtbs}
 \alias{download_mtbs}
 \alias{get_mtbs}
-\title{Download and unzip MTBS perimeter data}
+\title{Download MTBS perimeter data}
 \usage{
 download_mtbs(
   url =
@@ -28,11 +28,11 @@ get_mtbs(
 \arguments{
 \item{url}{\code{character(1)} URL of the MTBS perimeter ZIP archive.}
 
-\item{directory}{\code{character(1)} parent directory where
-\code{mtbs_perimeter_data.zip} and \code{mtbs_perimeter_data/} are stored.}
+\item{directory}{\code{character(1)} directory where
+\code{mtbs_perimeter_data.zip} is stored.}
 
-\item{overwrite}{\code{logical(1)} re-download and re-extract when \code{TRUE};
-defaults to \code{FALSE}.}
+\item{overwrite}{\code{logical(1)} re-download when \code{TRUE}; defaults to
+\code{FALSE}.}
 
 \item{retries}{\code{integer(1)} number of download retry attempts.}
 
@@ -41,12 +41,12 @@ defaults to \code{FALSE}.}
 \item{verbose}{\code{logical(1)} print progress messages.}
 }
 \value{
-\code{character(1)} path to the extracted directory (invisibly).
+\code{character(1)} path to the downloaded ZIP file (invisibly).
 }
 \description{
-Downloads the MTBS composite burned-area extent ZIP archive to a directory
-and unzips it to \code{mtbs_perimeter_data/}. If data are already extracted
-and \code{overwrite = FALSE}, no network call is made.
+Downloads the MTBS composite burned-area extent ZIP archive to a directory.
+If the ZIP already exists and \code{overwrite = FALSE}, no network call is
+made.
 }
 \details{
 \code{get_mtbs()} is a convenience wrapper for \code{download_mtbs()}.
