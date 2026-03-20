@@ -204,7 +204,7 @@ top10
 
 ### Example: area burned and fires per year
 
-```{r fires-load, eval = TRUE, message = FALSE}
+```{r fires-load, eval = FALSE, message = FALSE}
 library(dplyr)
 library(ggplot2)
 library(sf)
@@ -212,7 +212,7 @@ library(sf)
 fires_all <- read_mtbs(output = "sf")
 ```
 
-```{r plot-area-burned, eval = TRUE}
+```{r plot-area-burned, eval = FALSE}
 fires_all |>
   st_drop_geometry() |>
   mutate(year = as.integer(substr(Ig_Date, 1, 4))) |>
@@ -226,7 +226,7 @@ fires_all |>
   theme_classic()
 ```
 
-```{r plot-fires-per-year, eval = TRUE}
+```{r plot-fires-per-year, eval = FALSE}
 fires_all |>
   st_drop_geometry() |>
   mutate(year = as.integer(substr(Ig_Date, 1, 4))) |>
