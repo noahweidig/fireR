@@ -2,13 +2,12 @@
 
 ## Overview
 
-**fireR** gives you a single, fast function —
+**fireR** provides two functions for [Monitoring Trends in Burn Severity
+(MTBS)](https://www.mtbs.gov/) wildfire perimeter data:
 [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
-— for downloading [Monitoring Trends in Burn Severity
-(MTBS)](https://www.mtbs.gov/) wildfire perimeter data directly from the
-USGS. The function handles everything: downloading the ~100 MB ZIP
-archive over an HTTP/2 connection, unzipping it, reading the shapefile,
-and returning a ready-to-analyse spatial object.
+downloads + unzips the data, and
+[`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
+reads and filters it into a ready-to-analyse object.
 
 ``` r
 library(fireR)
@@ -18,15 +17,15 @@ library(fireR)
 
 ## Basic usage
 
-### All fires (default)
+### All fires
 
-With no arguments,
-[`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
+With `output = "sf"`,
+[`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
 returns an **`sf`** object containing every fire perimeter in the MTBS
 composite dataset — all years, all states.
 
 ``` r
-fires <- get_mtbs()
+fires <- read_mtbs(output = "sf")
 fires
 #> Simple feature collection with 31,386 features and 22 fields
 #> Geometry type: MULTIPOLYGON
@@ -51,7 +50,7 @@ Pass a single integer to keep only fires that started in that calendar
 year:
 
 ``` r
-fires_2020 <- get_mtbs(years = 2020)
+fires_2020 <- read_mtbs(years = 2020, output = "sf")
 nrow(fires_2020)
 #> [1] 246
 ```
@@ -61,7 +60,7 @@ nrow(fires_2020)
 Supply a two-element vector to keep all fires within an inclusive span:
 
 ``` r
-fires_recent <- get_mtbs(years = c(2018, 2023))
+fires_recent <- read_mtbs(years = c(2018, 2023), output = "sf")
 nrow(fires_recent)
 #> [1] 1 328
 ```
@@ -89,7 +88,7 @@ instead of an `sf` object — handy when the rest of your workflow uses
 ``` r
 library(terra)
 
-fires_vect <- get_mtbs(years = c(2020, 2023), output = "vect")
+fires_vect <- read_mtbs(years = c(2020, 2023), output = "vect")
 class(fires_vect)
 #> [1] "SpatVector"
 #> attr(,"package")
@@ -100,12 +99,11 @@ plot(fires_vect, "BurnBndAc", main = "Recent Fire Perimeters (terra)")
 
 ### Attribute table only
 
-Set `return_spatial = FALSE` to drop geometry and get a plain
-`data.frame`. Useful when you only need the metadata (fire name, year,
-acreage, etc.):
+Set `geometry = FALSE` to drop geometry and get a plain `data.frame`.
+Useful when you only need the metadata (fire name, year, acreage, etc.):
 
 ``` r
-tbl <- get_mtbs(return_spatial = FALSE)
+tbl <- read_mtbs(geometry = FALSE)
 head(tbl[, c("Fire_Name", "Year", "BurnBndAc", "Incid_Type")])
 #>       Fire_Name Year BurnBndAc   Incid_Type
 #> 1   LOWDEN FIRE 1984   4537.35 Wildfire
@@ -118,7 +116,7 @@ head(tbl[, c("Fire_Name", "Year", "BurnBndAc", "Incid_Type")])
 ## Caching downloads
 
 The MTBS ZIP archive is ~100 MB. If you call
-[`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
+[`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
 repeatedly (across sessions or in reports), enable caching to avoid
 redundant downloads.
 
@@ -130,10 +128,10 @@ sessions:
 
 ``` r
 # First call: downloads ~100 MB
-fires <- get_mtbs(cache = TRUE)
+fires <- read_mtbs(cache = TRUE)
 
 # Subsequent calls: reads from disk instantly
-fires <- get_mtbs(cache = TRUE)
+fires <- read_mtbs(cache = TRUE)
 #> ℹ Using cached file: ~/.local/share/fireR/...
 ```
 
@@ -142,7 +140,7 @@ fires <- get_mtbs(cache = TRUE)
 Supply a directory path to control where the file is stored:
 
 ``` r
-fires <- get_mtbs(cache = "~/data/mtbs_cache")
+fires <- read_mtbs(cache = "~/data/mtbs_cache")
 ```
 
 ### Force a fresh download
@@ -151,7 +149,7 @@ If the USGS releases an updated dataset, use `overwrite = TRUE` to
 bypass the cache and re-download:
 
 ``` r
-fires <- get_mtbs(cache = TRUE, overwrite = TRUE)
+fires <- read_mtbs(cache = TRUE, overwrite = TRUE)
 ```
 
 ------------------------------------------------------------------------
@@ -162,7 +160,7 @@ Progress messages are printed by default. Suppress them with
 `verbose = FALSE`:
 
 ``` r
-fires <- get_mtbs(years = 2022, verbose = FALSE)
+fires <- read_mtbs(years = 2022, verbose = FALSE)
 ```
 
 ------------------------------------------------------------------------
@@ -189,7 +187,7 @@ available to you.
 ``` r
 library(dplyr)
 
-fires_2000s <- get_mtbs(years = c(2000, 2023))
+fires_2000s <- read_mtbs(years = c(2000, 2023), output = "sf")
 
 top10 <- fires_2000s |>
   filter(Incid_Type == "Wildfire") |>
@@ -205,7 +203,7 @@ top10
 ``` r
 library(ggplot2)
 
-fires_all <- get_mtbs()
+fires_all <- read_mtbs(output = "sf")
 
 fires_all |>
   st_drop_geometry() |>

@@ -2,14 +2,13 @@
 
 ## Downloading Fire Data
 
-The primary interface for accessing MTBS wildfire perimeter data.
-Downloads the USGS composite burned-area shapefile and returns it as an
-`sf` or
-[`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
-object.
+Download and read MTBS wildfire perimeter data.
 
-- [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
-  : Download and Load MTBS Fire Perimeter Data
+- [`download_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
+  [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
+  : Download and unzip MTBS perimeter data
+- [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
+  : Read MTBS fire perimeter data
 
 ## Package
 
