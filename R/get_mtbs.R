@@ -136,15 +136,11 @@ get_mtbs <- function(
 #' }
 #' @export
 read_mtbs <- function(
-    url      = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip",
     years    = NULL,
     type     = NULL,
     geometry = TRUE,
     output   = c("vect", "sf", "terra"),
     cache    = FALSE,
-    overwrite = FALSE,
-    retries  = 3L,
-    timeout  = 300L,
     verbose  = TRUE
 ) {
   output <- rlang::arg_match(output)
@@ -273,32 +269,23 @@ read_mtbs <- function(
 
     # Remove partial file from a previous failed attempt
     if (fs::file_exists(dest)) fs::file_delete(dest)
-
-    success <- tryCatch({
-      curl::curl_download(
-        url      = url,
-        destfile = dest,
-        quiet    = TRUE,
-        handle   = curl::new_handle(
-          http_version   = 2L,
-          tcp_keepalive  = 1L,
-          followlocation = 1L,
-          ssl_verifypeer = 1L,
-          timeout        = timeout,
-          connecttimeout = 30L,
-          low_speed_limit = 1000L,
-          low_speed_time  = 30L
-        )
-      )
-      TRUE
-    }, error = function(e) {
-      if (verbose) {
-        cli::cli_warn(c(
-          "!" = "Attempt {attempt} failed: {conditionMessage(e)}"
-        ))
-      }
-      FALSE
-    })
+      
+      success <- tryCatch({
+          utils::download.file(
+              url      = url,
+              destfile = dest,
+              method   = "libcurl",   # "curl" works too, libcurl is more portable
+              mode     = "wb",
+              quiet    = TRUE)
+          TRUE
+      }, error = function(e) {
+          if (verbose) {
+              cli::cli_warn(c(
+                  "!" = "Attempt {attempt} failed: {conditionMessage(e)}"
+              ))
+          }
+          FALSE
+      })
 
     if (isTRUE(success)) {
       if (verbose) cli::cli_progress_done()
