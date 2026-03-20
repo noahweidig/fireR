@@ -67,11 +67,12 @@ get_mtbs <- function(
 #' `read_mtbs()` does not download data. Use [get_mtbs()] first to obtain the
 #' ZIP archive.
 #'
-#' @param years \code{integer} vector of length 1 or 2 specifying the year
-#'   range to keep. If a single year is supplied, only fires from that year
-#'   are returned. If two years are supplied they are treated as
-#'   \code{c(start_year, end_year)} (inclusive). \code{NULL} (the default)
-#'   returns all years without filtering.
+#' @param years \code{integer} vector of years to keep.  Accepts a single
+#'   year (\code{2020}), a contiguous range created with \code{:} notation
+#'   (\code{2010:2020}), or a vector of specific years
+#'   (\code{c(2000, 2010, 2020)}).  Only fires whose ignition year appears in
+#'   \code{years} are returned.  \code{NULL} (the default) returns all years
+#'   without filtering.
 #' @param type \code{character} vector of incident types to keep, matched
 #'   against the \code{Incid_Type} column. Valid values are
 #'   \code{"Wildfire"}, \code{"Prescribed Fire"}, \code{"Unknown"}, and
@@ -107,7 +108,16 @@ get_mtbs <- function(
 #' \dontrun{
 #' zip_path <- get_mtbs()
 #' fires <- read_mtbs(output = "sf")
+#'
+#' # Single year
 #' fires_2020 <- read_mtbs(years = 2020, type = "Wildfire", output = "sf")
+#'
+#' # Contiguous range
+#' fires_recent <- read_mtbs(years = 2018:2023, output = "sf")
+#'
+#' # Specific years only
+#' fires_sel <- read_mtbs(years = c(2010, 2015, 2020), output = "sf")
+#'
 #' tbl <- read_mtbs(geometry = FALSE)
 #' }
 #' @export
@@ -129,9 +139,10 @@ read_mtbs <- function(
   # Validate years
   if (!is.null(years)) {
     years <- as.integer(years)
-    if (length(years) > 2L) stop("`years` must be length 1 or 2")
-    if (length(years) == 1L) years <- c(years, years)
-    years <- sort(years)
+    if (length(years) == 0L || any(is.na(years))) {
+      stop("`years` must be a non-empty integer vector with no NA values")
+    }
+    years <- sort(unique(years))
   }
 
   # Validate types
@@ -174,12 +185,10 @@ read_mtbs <- function(
   where_clauses <- character(0)
 
   if (!is.null(years)) {
+    year_strs <- paste(sprintf("'%04d'", years), collapse = ", ")
     where_clauses <- c(
       where_clauses,
-      sprintf(
-        "CAST(Ig_Date AS character(10)) >= '%04d-01-01' AND CAST(Ig_Date AS character(10)) <= '%04d-12-31'",
-        years[1], years[2]
-      )
+      sprintf("substr(CAST(Ig_Date AS character), 1, 4) IN (%s)", year_strs)
     )
   }
   if (!is.null(type)) {

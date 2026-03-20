@@ -14,11 +14,12 @@ read_mtbs(
 )
 }
 \arguments{
-\item{years}{\code{integer} vector of length 1 or 2 specifying the year
-range to keep. If a single year is supplied, only fires from that year
-are returned. If two years are supplied they are treated as
-\code{c(start_year, end_year)} (inclusive). \code{NULL} (the default)
-returns all years without filtering.}
+\item{years}{\code{integer} vector of years to keep.  Accepts a single
+year (\code{2020}), a contiguous range created with \code{:} notation
+(\code{2010:2020}), or a vector of specific years
+(\code{c(2000, 2010, 2020)}).  Only fires whose ignition year appears in
+\code{years} are returned.  \code{NULL} (the default) returns all years
+without filtering.}
 
 \item{type}{\code{character} vector of incident types to keep, matched
 against the \code{Incid_Type} column. Valid values are
@@ -68,7 +69,16 @@ to obtain the ZIP archive.
 \dontrun{
 zip_path <- get_mtbs()
 fires <- read_mtbs(output = "sf")
+
+# Single year
 fires_2020 <- read_mtbs(years = 2020, type = "Wildfire", output = "sf")
+
+# Contiguous range
+fires_recent <- read_mtbs(years = 2018:2023, output = "sf")
+
+# Specific years only
+fires_sel <- read_mtbs(years = c(2010, 2015, 2020), output = "sf")
+
 tbl <- read_mtbs(geometry = FALSE)
 }
 }

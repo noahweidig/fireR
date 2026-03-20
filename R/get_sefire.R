@@ -1,8 +1,8 @@
-#' Download Southeast FireMap Annual Burn Severity Mosaic
+#' Download Southeast FireMap Annual Burn Severity Mosaics
 #'
-#' Downloads a single-year Southeast FireMap (SE FireMap) Annual Burn Severity
-#' Mosaic ZIP archive from the USGS to a local directory.  If the ZIP already
-#' exists and \code{overwrite = FALSE}, no network call is made.
+#' Downloads one or more Southeast FireMap (SE FireMap) Annual Burn Severity
+#' Mosaic ZIP archives from the USGS to a local directory.  If a ZIP already
+#' exists and \code{overwrite = FALSE}, no network call is made for that year.
 #'
 #' @section About SE FireMap:
 #' The southeastern United States experiences frequent wild and prescribed fire
@@ -19,59 +19,77 @@
 #' of fire-related emissions, fuel loads, aboveground carbon storage, and land
 #' management activities.
 #'
-#' @param year \code{integer(1)} the year of the mosaic to download.
-#'   Must be a single value between \code{2000} and \code{2022} (inclusive).
-#' @param directory \code{character(1)} directory where the ZIP file is saved.
-#'   Defaults to the current working directory.
+#' @param years \code{integer} vector of years to download.  Accepts a single
+#'   year (\code{2020}), a contiguous range created with \code{:} notation
+#'   (\code{2010:2015}), or a vector of specific years
+#'   (\code{c(2000, 2010, 2020)}).  All values must be between \code{2000}
+#'   and \code{2022} (inclusive).  Duplicate years are silently ignored.
+#' @param directory \code{character(1)} directory where the ZIP file(s) are
+#'   saved.  Defaults to the current working directory.
 #' @param overwrite \code{logical(1)} re-download when \code{TRUE};
 #'   defaults to \code{FALSE}.
 #' @param timeout \code{numeric(1)} download timeout in seconds.
 #'   Defaults to \code{3600} (one hour).
 #' @param verbose \code{logical(1)} print progress messages.
 #'
-#' @return \code{character(1)} path to the downloaded ZIP file (invisibly).
+#' @return \code{character} vector of paths to the downloaded ZIP files
+#'   (returned invisibly).  The length equals the number of unique years
+#'   requested.
 #' @export
 #'
 #' @examples
 #' \dontrun{
+#' # Single year
 #' zip_path <- get_sefire(2010)
-#' zip_path <- get_sefire(2020, directory = "data/sefire")
+#'
+#' # Contiguous range (2015 through 2020)
+#' zip_paths <- get_sefire(2015:2020, directory = "data/sefire")
+#'
+#' # Specific years only
+#' zip_paths <- get_sefire(c(2000, 2010, 2020))
 #' }
 get_sefire <- function(
-    year,
+    years,
     directory = getwd(),
     overwrite = FALSE,
     timeout   = 3600,
     verbose   = TRUE
 ) {
-  year <- as.integer(year)
-  if (length(year) != 1L || is.na(year)) {
-    stop("`year` must be a single integer value")
+  years <- as.integer(years)
+  if (length(years) == 0L || any(is.na(years))) {
+    stop("`years` must be a non-empty integer vector with no NA values")
   }
-  if (year < 2000L || year > 2022L) {
-    stop("`year` must be between 2000 and 2022 (inclusive)")
+  if (any(years < 2000L) || any(years > 2022L)) {
+    stop("`years` must be between 2000 and 2022 (inclusive)")
   }
-
-  url      <- paste0(
-    "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/SeFiremap/cbi_mosaic_",
-    year, ".zip"
-  )
-  zip_name <- paste0("cbi_mosaic_", year, ".zip")
-  zip_file <- fs::path(directory, zip_name)
+  years <- sort(unique(years))
 
   fs::dir_create(directory, recurse = TRUE)
+  old_timeout <- options(timeout = timeout)
+  on.exit(options(old_timeout), add = TRUE)
 
-  if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
+  zip_files <- character(length(years))
+  for (i in seq_along(years)) {
+    yr       <- years[i]
+    url      <- paste0(
+      "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/SeFiremap/cbi_mosaic_",
+      yr, ".zip"
+    )
+    zip_name <- paste0("cbi_mosaic_", yr, ".zip")
+    zip_file <- fs::path(directory, zip_name)
 
-  if (!fs::file_exists(zip_file)) {
-    if (verbose) cli::cli_inform("Downloading SE FireMap CBI mosaic for {year} \u2026")
-    old_timeout <- options(timeout = timeout)
-    on.exit(options(old_timeout), add = TRUE)
-    utils::download.file(url, zip_file, mode = "wb", quiet = !verbose)
-    if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
-  } else if (verbose) {
-    cli::cli_inform("SE FireMap ZIP already exists: {.path {zip_file}}")
+    if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
+
+    if (!fs::file_exists(zip_file)) {
+      if (verbose) cli::cli_inform("Downloading SE FireMap CBI mosaic for {yr} \u2026")
+      utils::download.file(url, zip_file, mode = "wb", quiet = !verbose)
+      if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
+    } else if (verbose) {
+      cli::cli_inform("SE FireMap ZIP already exists: {.path {zip_file}}")
+    }
+
+    zip_files[i] <- zip_file
   }
 
-  invisible(zip_file)
+  invisible(zip_files)
 }
