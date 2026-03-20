@@ -14,11 +14,10 @@
 "_PACKAGE"
 
 ## usethis namespace: start
-#' @importFrom curl curl_download new_handle
 #' @importFrom fs dir_create file_exists file_delete path
-#' @importFrom cli cli_abort cli_inform cli_warn cli_progress_step cli_progress_done
-#' @importFrom rlang arg_match is_bool
-#' @importFrom sf st_read st_drop_geometry
-#' @importFrom terra vect
+#' @importFrom cli cli_inform
+#' @importFrom rlang arg_match
+#' @importFrom sf st_as_sf
+#' @importFrom terra vect values
 ## usethis namespace: end
 NULL

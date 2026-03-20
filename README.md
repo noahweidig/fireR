@@ -95,15 +95,14 @@ fires <- read_mtbs(cache = "~/data/mtbs_cache")
 
 | Argument | Type | Default | Description |
 |---|---|---|---|
-| `url` | `character` | USGS URL | Source ZIP URL |
 | `years` | `integer` | `NULL` | Year range `c(start, end)` or single year. `NULL` = no filter |
+| `type` | `character` | `NULL` | Incident type(s). `NULL` = all types |
 | `geometry` | `logical` | `TRUE` | Return a spatial object. `FALSE` → `data.frame` |
 | `output` | `character` | `"vect"` | `"sf"` or `"vect"` / `"terra"` |
-| `cache` | `logical`/`character` | `FALSE` | Cache the ZIP file across sessions |
-| `overwrite` | `logical` | `FALSE` | Force fresh download even if cached copy exists |
+| `cache` | `logical`/`character` | `FALSE` | Directory containing the downloaded ZIP |
 | `verbose` | `logical` | `TRUE` | Print progress messages |
 
-To only download data to disk:
+Download data to disk first with `get_mtbs()`:
 
 ```r
 mtbs_dir <- get_mtbs()

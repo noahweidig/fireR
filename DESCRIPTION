@@ -13,14 +13,13 @@ NeedsCompilation: no
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports:
-    curl (>= 5.0.0),
     fs (>= 1.6.0),
     cli (>= 3.6.0),
     sf (>= 1.0.0),
     terra (>= 1.7.0),
-    rlang (>= 1.1.0),
-    withr (>= 2.5.0)
+    rlang (>= 1.1.0)
 Suggests:
+    curl (>= 5.0.0),
     callr (>= 3.7.0),
     testthat (>= 3.0.0),
     devtools,
