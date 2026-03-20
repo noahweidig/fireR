@@ -1,0 +1,142 @@
+# fireR
+
+> Fast access to MTBS (Monitoring Trends in Burn Severity) fire
+> perimeter data straight from the USGS.
+
+## Overview
+
+`fireR` wraps the USGS MTBS composite burned-area extent shapefile in a
+single
+[`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
+function. It downloads the ~100 MB ZIP, unzips it, and hands you back
+either an **`sf`** object or a
+**[`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)**
+ready for analysis — all in one call.
+
+Key features:
+
+- ⚡ **Fast downloads** — uses `curl`’s HTTP/2 persistent connection
+- 🗓️ **Year filtering** — `years = c(1986, 2020)` keeps only fires
+  within that span
+- 🗺️ **Flexible output** — `sf`, `terra`, or plain `data.frame`
+- 💾 **Optional caching** — skip the download on repeat calls
+
+------------------------------------------------------------------------
+
+## Installation
+
+``` r
+# Install from GitHub (once published)
+# install.packages("pak")
+pak::pak("noahweidig/fireR")
+```
+
+During development, install with:
+
+``` r
+devtools::install()    # run from the package root
+```
+
+------------------------------------------------------------------------
+
+## Usage
+
+### All fires, return as `sf` (default)
+
+``` r
+library(fireR)
+
+fires <- get_mtbs()
+plot(fires["BurnBndAc"])
+```
+
+### Filter to a year range
+
+``` r
+fires_recent <- get_mtbs(years = c(2010, 2023))
+```
+
+### Single year
+
+``` r
+fires_2020 <- get_mtbs(years = 2020)
+```
+
+### Return as `terra::SpatVector`
+
+``` r
+fires_vect <- get_mtbs(years = c(2015, 2023), output = "vect")
+```
+
+### Attribute table only (no geometry)
+
+``` r
+tbl <- get_mtbs(return_spatial = FALSE)
+```
+
+### Cache the download for future sessions
+
+``` r
+# Cache in the default user directory
+fires <- get_mtbs(cache = TRUE)
+
+# Or supply your own cache path
+fires <- get_mtbs(cache = "~/data/mtbs_cache")
+```
+
+------------------------------------------------------------------------
+
+## `get_mtbs()` Arguments
+
+| Argument         | Type                  | Default  | Description                                                   |
+|------------------|-----------------------|----------|---------------------------------------------------------------|
+| `url`            | `character`           | USGS URL | Source ZIP URL                                                |
+| `years`          | `integer`             | `NULL`   | Year range `c(start, end)` or single year. `NULL` = no filter |
+| `return_spatial` | `logical`             | `TRUE`   | Return a spatial object. `FALSE` → `data.frame`               |
+| `output`         | `character`           | `"sf"`   | `"sf"` or `"vect"` / `"terra"`                                |
+| `cache`          | `logical`/`character` | `FALSE`  | Cache the ZIP file across sessions                            |
+| `overwrite`      | `logical`             | `FALSE`  | Force fresh download even if cached copy exists               |
+| `verbose`        | `logical`             | `TRUE`   | Print progress messages                                       |
+
+------------------------------------------------------------------------
+
+## About MTBS
+
+[Monitoring Trends in Burn Severity (MTBS)](https://www.mtbs.gov/) is a
+multi-agency programme (USGS, USFS) that maps the location, extent, and
+burn severity of all large wildfires across the conterminous USA,
+Alaska, Hawaii, and Puerto Rico from 1984 to the present.
+
+------------------------------------------------------------------------
+
+## License
+
+MIT © Noah Weidig
+
+# Package index
+
+## Downloading Fire Data
+
+The primary interface for accessing MTBS wildfire perimeter data.
+Downloads the USGS composite burned-area shapefile and returns it as an
+`sf` or
+[`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
+object.
+
+- [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
+  : Download and Load MTBS Fire Perimeter Data
+
+## Package
+
+Package-level documentation.
+
+- [`fireR`](https://noahweidig.github.io/fireR/reference/fireR-package.md)
+  [`fireR-package`](https://noahweidig.github.io/fireR/reference/fireR-package.md)
+  : fireR: Fast Access to MTBS Fire Perimeter Data
+
+# Articles
+
+### Tutorials
+
+- [Getting Started with
+  fireR](https://noahweidig.github.io/fireR/articles/getting-started.md):
