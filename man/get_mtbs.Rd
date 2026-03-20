@@ -5,27 +5,18 @@
 \title{Download MTBS perimeter data}
 \usage{
 get_mtbs(
-  url =
-    "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip",
   directory = getwd(),
   overwrite = FALSE,
-  retries = 3L,
-  timeout = 300L,
   verbose = TRUE
 )
 }
 \arguments{
-\item{url}{\code{character(1)} URL of the MTBS perimeter ZIP archive.}
-
 \item{directory}{\code{character(1)} directory where
-\code{mtbs_perimeter_data.zip} is stored.}
+\code{mtbs_perimeter_data.zip} is stored. Defaults to the current
+working directory.}
 
 \item{overwrite}{\code{logical(1)} re-download when \code{TRUE}; defaults to
 \code{FALSE}.}
-
-\item{retries}{\code{integer(1)} number of download retry attempts.}
-
-\item{timeout}{\code{integer(1)} timeout in seconds for each download attempt.}
 
 \item{verbose}{\code{logical(1)} print progress messages.}
 }
@@ -37,11 +28,8 @@ Downloads the MTBS composite burned-area extent ZIP archive to a directory.
 If the ZIP already exists and \code{overwrite = FALSE}, no network call is
 made.
 }
-\details{
-This function downloads the MTBS composite burned-area extent data directly.
-}
 \examples{
 \dontrun{
-mtbs_dir <- get_mtbs()
+zip_path <- get_mtbs()
 }
 }

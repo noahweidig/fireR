@@ -36,11 +36,10 @@ footer:
     right: built_with
 
 reference:
-  - title: "Downloading Fire Data"
+  - title: "Fire Data"
     desc: >
       Download and read MTBS wildfire perimeter data.
     contents:
-      - download_mtbs
       - get_mtbs
       - read_mtbs
 

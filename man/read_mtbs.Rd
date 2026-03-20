@@ -5,23 +5,15 @@
 \title{Read MTBS fire perimeter data}
 \usage{
 read_mtbs(
-  url =
-    "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip",
   years = NULL,
   type = NULL,
   geometry = TRUE,
   output = c("vect", "sf", "terra"),
   cache = FALSE,
-  overwrite = FALSE,
-  retries = 3L,
-  timeout = 300L,
   verbose = TRUE
 )
 }
 \arguments{
-\item{url}{\code{character(1)} retained for backward compatibility; not used
-by \code{read_mtbs()}.}
-
 \item{years}{\code{integer} vector of length 1 or 2 specifying the year
 range to keep. If a single year is supplied, only fires from that year
 are returned. If two years are supplied they are treated as
@@ -30,8 +22,8 @@ returns all years without filtering.}
 
 \item{type}{\code{character} vector of incident types to keep, matched
 against the \code{Incid_Type} column. Valid values are
-\code{"Wildfire"}, \code{"Prescribed Fire"}, \code{"Unknown"},
-\code{"Wildland Fire Use"}, and \code{"Complex"}. \code{NULL} (the
+\code{"Wildfire"}, \code{"Prescribed Fire"}, \code{"Unknown"}, and
+\code{"Wildland Fire Use"}. \code{NULL} (the
 default) returns all incident types.}
 
 \item{geometry}{\code{logical(1)} When \code{TRUE} (the default) the
@@ -45,20 +37,12 @@ object. Either \code{"vect"} / \code{"terra"} (default) for a
 \code{terra::SpatVector}, or \code{"sf"} for an \code{sf} object.
 Ignored when \code{geometry = FALSE}.}
 
-\item{cache}{\code{logical(1)} or \code{character(1)}. When \code{FALSE}
-(the default) data are read from the current working directory. When
-\code{TRUE} data are read from
-\code{tools::R_user_dir("fireR", "cache")}. Alternatively, supply a
-directory path as a string to control the location.}
-
-\item{overwrite}{\code{logical(1)} retained for backward compatibility; not
-used by \code{read_mtbs()}.}
-
-\item{retries}{\code{integer(1)} retained for backward compatibility; not
-used by \code{read_mtbs()}.}
-
-\item{timeout}{\code{integer(1)} retained for backward compatibility; not
-used by \code{read_mtbs()}.}
+\item{cache}{\code{logical(1)} or \code{character(1)}. Controls where
+\code{read_mtbs()} looks for the downloaded ZIP file. When \code{FALSE}
+(the default) the current working directory is used. When \code{TRUE}
+the platform user cache directory
+(\code{tools::R_user_dir("fireR", "cache")}) is used. Supply a
+directory path as a string to specify a custom location.}
 
 \item{verbose}{\code{logical(1)} print progress messages.}
 }
@@ -72,17 +56,18 @@ used by \code{read_mtbs()}.}
 }
 }
 \description{
-Reads MTBS fire perimeters from an existing local MTBS ZIP downloaded with
+Reads MTBS fire perimeters from a local MTBS ZIP downloaded with
 \code{\link[=get_mtbs]{get_mtbs()}} and returns either a spatial object or a plain
 attribute table.
 }
 \details{
-\code{read_mtbs()} does not download data. Download the ZIP first with
-\code{\link[=get_mtbs]{get_mtbs()}}.
+\code{read_mtbs()} does not download data. Use \code{\link[=get_mtbs]{get_mtbs()}} first
+to obtain the ZIP archive.
 }
 \examples{
 \dontrun{
-fires <- read_mtbs()
+zip_path <- get_mtbs()
+fires <- read_mtbs(output = "sf")
 fires_2020 <- read_mtbs(years = 2020, type = "Wildfire", output = "sf")
 tbl <- read_mtbs(geometry = FALSE)
 }
