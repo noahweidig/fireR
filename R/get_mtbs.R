@@ -1,12 +1,14 @@
-#' Download MTBS perimeter data
+#' Download MTBS perimeter or occurrence data
 #'
-#' Downloads the MTBS composite burned-area extent ZIP archive to a directory.
+#' Downloads an MTBS composite data ZIP archive to a directory.
 #' If the ZIP already exists and \code{overwrite = FALSE}, no network call is
 #' made.
 #'
-#' @param directory \code{character(1)} directory where
-#'   \code{mtbs_perimeter_data.zip} is stored. Defaults to the current
-#'   working directory.
+#' @param directory \code{character(1)} directory where the ZIP file is stored.
+#'   Defaults to the current working directory.
+#' @param dataset \code{character(1)} which dataset to download. Either
+#'   \code{"perimeters"} (default) for the burned-area extent polygon
+#'   shapefile, or \code{"occurrence"} for the fire occurrence point shapefile.
 #' @param overwrite \code{logical(1)} re-download when \code{TRUE};
 #'   defaults to \code{FALSE}.
 #' @param timeout \code{numeric(1)} download timeout in seconds. The MTBS ZIP
@@ -20,21 +22,32 @@
 #' @examples
 #' \dontrun{
 #' zip_path <- get_mtbs()
+#' zip_path_pts <- get_mtbs(dataset = "occurrence")
 #' }
 get_mtbs <- function(
     directory = getwd(),
+    dataset   = c("perimeters", "occurrence"),
     overwrite = FALSE,
     timeout   = 3600,
     verbose   = TRUE
 ) {
-  url <- "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip"
-  zip_file <- fs::path(directory, "mtbs_perimeter_data.zip")
+  dataset <- rlang::arg_match(dataset)
+
+  if (dataset == "occurrence") {
+    url      <- "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/fod_pt_shapefile/mtbs_fod_pts_data.zip"
+    zip_name <- "mtbs_fod_pts_data.zip"
+  } else {
+    url      <- "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip"
+    zip_name <- "mtbs_perimeter_data.zip"
+  }
+
+  zip_file <- fs::path(directory, zip_name)
   fs::dir_create(directory, recurse = TRUE)
 
   if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
 
   if (!fs::file_exists(zip_file)) {
-    if (verbose) cli::cli_inform("Downloading MTBS perimeter data \u2026")
+    if (verbose) cli::cli_inform("Downloading MTBS {dataset} data \u2026")
     old_timeout <- options(timeout = timeout)
     on.exit(options(old_timeout), add = TRUE)
     utils::download.file(url, zip_file, mode = "wb", quiet = !verbose)

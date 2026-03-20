@@ -1,3 +1,7 @@
+test_that("get_mtbs() rejects invalid dataset argument", {
+  expect_error(get_mtbs(dataset = "bad"), "bad")
+})
+
 test_that("read_mtbs() input validation works", {
 
   # years length > 2
