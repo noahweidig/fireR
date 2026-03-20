@@ -1,0 +1,254 @@
+url: https://noahweidig.github.io/fireR/
+
+template:
+  bootstrap: 5
+  bslib:
+    primary: "#E25822"
+    secondary: "#8B1A1A"
+    success: "#2D6A4F"
+    danger: "#C0392B"
+    light: "#FFF8F0"
+    dark: "#1A0A00"
+    base_font:
+      google:
+        family: "Source Sans 3"
+    heading_font:
+      google:
+        family: "Montserrat"
+        wght: [600, 700]
+    code_font:
+      google:
+        family: "Fira Code"
+    bg: "#FFFFFF"
+    fg: "#1A0A00"
+    navbar-bg: "#1A0A00"
+    navbar-fg: "#FFF8F0"
+    navbar-brand-color: "#E25822"
+    link-color: "#C0392B"
+    link-hover-color: "#E25822"
+    pkgdown-navbar-bg: "#1A0A00"
+  includes:
+    in_header: |
+      <style>
+        /* ── Navbar ──────────────────────────────────────────────── */
+        .navbar {
+          background: linear-gradient(135deg, #1A0A00 0%, #3D1008 100%) !important;
+          border-bottom: 2px solid #E25822;
+          box-shadow: 0 2px 12px rgba(226, 88, 34, 0.3);
+        }
+        .navbar-brand {
+          font-weight: 700;
+          font-size: 1.4rem;
+          letter-spacing: 0.02em;
+          color: #E25822 !important;
+        }
+        .nav-link {
+          color: #FFF0E0 !important;
+          font-weight: 500;
+          transition: color 0.2s ease;
+        }
+        .nav-link:hover {
+          color: #E25822 !important;
+        }
+        .nav-link.active {
+          color: #E25822 !important;
+          border-bottom: 2px solid #E25822;
+        }
+
+        /* ── Hero / Home ─────────────────────────────────────────── */
+        .page-header {
+          background: linear-gradient(160deg, #1A0A00 0%, #6B1A0A 50%, #1A0A00 100%);
+          color: #FFF8F0;
+          padding: 3.5rem 0 3rem;
+          margin-bottom: 2rem;
+          border-bottom: 3px solid #E25822;
+          box-shadow: 0 4px 20px rgba(226, 88, 34, 0.2);
+        }
+        .page-header h1 {
+          color: #FFF8F0;
+          font-weight: 700;
+        }
+        .page-header .lead {
+          color: #FFCBA4;
+          font-size: 1.15rem;
+        }
+
+        /* ── Badges ──────────────────────────────────────────────── */
+        .badge {
+          font-weight: 600;
+          letter-spacing: 0.04em;
+        }
+
+        /* ── Code blocks ─────────────────────────────────────────── */
+        div.sourceCode {
+          background: #1C0F05;
+          border-radius: 8px;
+          border-left: 4px solid #E25822;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+        pre.sourceCode {
+          background: transparent;
+          color: #FFD9B5;
+        }
+        code.sourceCode .sc { color: #FF8C42; }
+        code.sourceCode .st { color: #FF6B35; }
+        code.sourceCode .kw { color: #E25822; font-weight: 600; }
+        code.sourceCode .co { color: #8B6B5A; font-style: italic; }
+        code.sourceCode .dv { color: #FFAA5A; }
+        code.sourceCode .fu { color: #FF9F1C; }
+        pre code {
+          color: #FFD9B5;
+        }
+        .r.highlite, p code, li code {
+          background: #FFF0E5;
+          color: #8B1A1A;
+          padding: 0.1em 0.35em;
+          border-radius: 3px;
+          font-size: 0.9em;
+        }
+
+        /* ── Cards / Feature tiles ───────────────────────────────── */
+        .card {
+          border: 1px solid #FFCBA4;
+          border-radius: 10px;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 6px 20px rgba(226, 88, 34, 0.15);
+        }
+        .card-header {
+          background: linear-gradient(135deg, #E25822, #C0392B);
+          color: #FFF8F0;
+          font-weight: 600;
+          border-radius: 9px 9px 0 0 !important;
+        }
+
+        /* ── Reference page ──────────────────────────────────────── */
+        .ref-index h2 {
+          color: #C0392B;
+          border-bottom: 2px solid #E25822;
+          padding-bottom: 0.4rem;
+          margin-top: 2rem;
+        }
+        .ref-index .alias a {
+          color: #C0392B;
+          font-weight: 600;
+        }
+        .ref-index .alias a:hover {
+          color: #E25822;
+        }
+
+        /* ── Function docs ───────────────────────────────────────── */
+        .page-ref h2 {
+          color: #C0392B;
+          border-bottom: 1px solid #FFCBA4;
+          padding-bottom: 0.3rem;
+        }
+        .page-ref h3 {
+          color: #8B1A1A;
+          font-size: 1.05rem;
+          font-weight: 700;
+          margin-top: 1.5rem;
+        }
+
+        /* ── Tables ──────────────────────────────────────────────── */
+        .table thead {
+          background: linear-gradient(135deg, #E25822, #C0392B);
+          color: #FFF8F0;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+          background-color: #FFF5EE;
+        }
+        .table-hover tbody tr:hover {
+          background-color: #FFE8D6;
+        }
+
+        /* ── Sidebar ─────────────────────────────────────────────── */
+        .sidebar {
+          background: #FFF8F4;
+          border-left: 3px solid #E25822;
+          border-radius: 8px;
+          padding: 1rem;
+        }
+        .sidebar h2 {
+          color: #8B1A1A;
+          font-size: 0.95rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+        }
+
+        /* ── Footer ──────────────────────────────────────────────── */
+        footer {
+          background: #1A0A00;
+          color: #FFCBA4;
+          border-top: 2px solid #E25822;
+          padding: 1.5rem 0;
+        }
+        footer a {
+          color: #E25822;
+        }
+        footer a:hover {
+          color: #FF8C42;
+        }
+
+        /* ── Pkgdown logo ────────────────────────────────────────── */
+        .navbar-brand img {
+          filter: drop-shadow(0 0 6px rgba(226, 88, 34, 0.5));
+          transition: filter 0.3s ease;
+        }
+        .navbar-brand img:hover {
+          filter: drop-shadow(0 0 10px rgba(226, 88, 34, 0.8));
+        }
+      </style>
+
+home:
+  title: "fireR • MTBS Wildfire Perimeters for R"
+  description: >
+    Fast, convenient access to MTBS (Monitoring Trends in Burn Severity)
+    fire perimeter data straight from the USGS. One function. Zero fuss.
+  sidebar:
+    structure: [links, license, community, citation, authors, dev]
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github]
+  components:
+    intro:
+      text: Get Started
+      href: articles/getting-started.html
+    github:
+      icon: fa-github
+      href: https://github.com/noahweidig/fireR
+      aria-label: GitHub
+
+authors:
+  Noah Weidig:
+    href: https://github.com/noahweidig
+
+footer:
+  structure:
+    left: developed_by
+    right: built_with
+
+reference:
+  - title: "Downloading Fire Data"
+    desc: >
+      The primary interface for accessing MTBS wildfire perimeter data.
+      Downloads the USGS composite burned-area shapefile and returns it
+      as an `sf` or `terra::SpatVector` object.
+    contents:
+      - get_mtbs
+
+  - title: "Package"
+    desc: "Package-level documentation."
+    contents:
+      - fireR-package
+
+articles:
+  - title: "Tutorials"
+    navbar: ~
+    contents:
+      - getting-started
