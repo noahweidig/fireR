@@ -1,14 +1,14 @@
 #' fireR: Fast Access to MTBS Fire Perimeter Data
 #'
-#' @description `fireR` provides a single, ergonomic entry point — [get_mtbs()] — for
-#' downloading the MTBS (Monitoring Trends in Burn Severity) composite burned-
-#' area extent shapefile published by the USGS. The download uses
-#' `curl`'s persistent HTTP/2 connection for maximum throughput.  Results can
-#' be returned as an [`sf`][sf::sf] object, a [`terra::SpatVector`][terra::vect],
-#' or a plain `data.frame`.
+#' @description `fireR` provides two ergonomic entry points for MTBS
+#' (Monitoring Trends in Burn Severity) composite burned-area extent data:
+#' [get_mtbs()] for downloading/unzipping, and [read_mtbs()] for reading and
+#' filtering data as an [`sf`][sf::sf] object, a
+#' [`terra::SpatVector`][terra::vect], or a plain `data.frame`.
 #'
 #' @section Main functions:
-#' * [get_mtbs()] — download, unzip, and load MTBS fire perimeters.
+#' * [get_mtbs()] — download and unzip MTBS fire perimeter data.
+#' * [read_mtbs()] — read, filter, and return MTBS fire perimeters.
 #'
 #' @keywords internal
 "_PACKAGE"

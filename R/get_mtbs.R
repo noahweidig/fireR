@@ -1,21 +1,107 @@
-#' Download and Load MTBS Fire Perimeter Data
+#' Download and unzip MTBS perimeter data
 #'
-#' Downloads the MTBS composite burned-area extent shapefile from the USGS
-#' and returns fire perimeters as a spatial object. The shapefile is read
-#' directly from the ZIP archive via GDAL's \code{/vsizip/} virtual
-#' filesystem — no extraction to disk. Reading is performed via \code{terra}
-#' and converted to \code{sf} only when requested. Year and type filtering
-#' is performed via an OGR SQL query so only matching features are read into
-#' memory.
+#' Downloads the MTBS composite burned-area extent ZIP archive to a directory
+#' and unzips it to \code{mtbs_perimeter_data/}. If data are already extracted
+#' and \code{overwrite = FALSE}, no network call is made.
 #'
 #' @param url \code{character(1)} URL of the MTBS perimeter ZIP archive.
-#'   Defaults to the official USGS composite data endpoint.
+#' @param directory \code{character(1)} parent directory where
+#'   \code{mtbs_perimeter_data.zip} and \code{mtbs_perimeter_data/} are stored.
+#' @param overwrite \code{logical(1)} re-download and re-extract when
+#'   \code{TRUE}; defaults to \code{FALSE}.
+#' @param retries \code{integer(1)} number of download retry attempts.
+#' @param timeout \code{integer(1)} timeout in seconds for each download
+#'   attempt.
+#' @param verbose \code{logical(1)} print progress messages.
+#'
+#' @return \code{character(1)} path to the extracted directory (invisibly).
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' mtbs_dir <- download_mtbs()
+#' }
+download_mtbs <- function(
+    url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip",
+    directory = getwd(),
+    overwrite = FALSE,
+    retries = 3L,
+    timeout = 300L,
+    verbose = TRUE
+) {
+  retries <- max(1L, as.integer(retries))
+  timeout <- max(30L, as.integer(timeout))
+
+  zip_file <- fs::path(directory, "mtbs_perimeter_data.zip")
+  out_dir  <- fs::path(directory, "mtbs_perimeter_data")
+  fs::dir_create(directory, recurse = TRUE)
+
+  extracted <- fs::dir_exists(out_dir) && length(fs::dir_ls(out_dir, all = TRUE)) > 0L
+  if (overwrite && extracted) {
+    fs::dir_delete(out_dir)
+    extracted <- FALSE
+  }
+
+  if (!extracted) {
+    if (overwrite && fs::file_exists(zip_file)) {
+      fs::file_delete(zip_file)
+    }
+
+    if (!fs::file_exists(zip_file)) {
+      if (verbose) cli::cli_inform("Downloading MTBS perimeter data …")
+      .download_zip(url, zip_file, retries = retries, timeout = timeout, verbose = verbose)
+      if (verbose) cli::cli_inform("Download complete.")
+    } else if (verbose) {
+      cli::cli_inform("ZIP already exists: {.path {zip_file}}")
+    }
+
+    if (verbose) cli::cli_inform("Unzipping MTBS data …")
+    utils::unzip(zip_file, exdir = out_dir, overwrite = TRUE)
+    if (verbose) cli::cli_inform("Unzip complete.")
+  } else if (verbose) {
+    cli::cli_inform("MTBS data already extracted: {.path {out_dir}}")
+  }
+
+  invisible(as.character(out_dir))
+}
+
+#' Download MTBS perimeter data (wrapper)
+#'
+#' Convenience wrapper for [download_mtbs()].
+#'
+#' @inheritParams download_mtbs
+#' @return \code{character(1)} path to the extracted directory (invisibly).
+#' @export
+get_mtbs <- function(
+    url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip",
+    directory = getwd(),
+    overwrite = FALSE,
+    retries = 3L,
+    timeout = 300L,
+    verbose = TRUE
+) {
+  download_mtbs(
+    url = url,
+    directory = directory,
+    overwrite = overwrite,
+    retries = retries,
+    timeout = timeout,
+    verbose = verbose
+  )
+}
+
+#' Read MTBS fire perimeter data
+#'
+#' Reads MTBS fire perimeters from locally extracted data and returns either a
+#' spatial object or a plain attribute table. Data are downloaded/unzipped via
+#' [get_mtbs()] when needed.
+#'
+#' @param url \code{character(1)} URL of the MTBS perimeter ZIP archive.
 #' @param years \code{integer} vector of length 1 or 2 specifying the year
 #'   range to keep. If a single year is supplied, only fires from that year
 #'   are returned. If two years are supplied they are treated as
 #'   \code{c(start_year, end_year)} (inclusive). \code{NULL} (the default)
-#'   returns all years without filtering. Filtering is based on the
-#'   \code{Ig_Date} column (format \code{YYYY-MM-DD}) via OGR SQL.
+#'   returns all years without filtering.
 #' @param type \code{character} vector of incident types to keep, matched
 #'   against the \code{Incid_Type} column. Valid values are
 #'   \code{"Wildfire"}, \code{"Prescribed Fire"}, \code{"Unknown"},
@@ -31,21 +117,14 @@
 #'   \code{terra::SpatVector}, or \code{"sf"} for an \code{sf} object.
 #'   Ignored when \code{geometry = FALSE}.
 #' @param cache \code{logical(1)} or \code{character(1)}. When \code{FALSE}
-#'   (the default) the ZIP is downloaded to a per-session temporary directory
-#'   and deleted when the R session ends. When \code{TRUE} the file is cached
-#'   in \code{tools::R_user_dir("fireR", "cache")} so subsequent calls skip
-#'   the download entirely. Alternatively, supply a directory path as a
-#'   string to control the cache location yourself.
-#' @param overwrite \code{logical(1)} When \code{cache} is enabled, set
-#'   \code{TRUE} to force a fresh download even if a cached copy exists.
-#'   Defaults to \code{FALSE}.
-#' @param retries \code{integer(1)} Number of download retry attempts on
-#'   failure or stall. Defaults to \code{3L}.
-#' @param timeout \code{integer(1)} Maximum number of seconds to allow for
-#'   the entire download before aborting and retrying. Defaults to
-#'   \code{300L} (5 minutes). Increase for very slow connections.
-#' @param verbose \code{logical(1)} Print progress messages. Defaults to
-#'   \code{TRUE}.
+#'   (the default) data are downloaded/extracted in a per-session temporary
+#'   directory. When \code{TRUE} data are cached in
+#'   \code{tools::R_user_dir("fireR", "cache")}. Alternatively, supply a
+#'   directory path as a string to control the location.
+#' @param overwrite \code{logical(1)} force re-download and re-extraction.
+#' @param retries \code{integer(1)} number of download retry attempts.
+#' @param timeout \code{integer(1)} timeout in seconds per download attempt.
+#' @param verbose \code{logical(1)} print progress messages.
 #'
 #' @return
 #' \itemize{
@@ -56,65 +135,14 @@
 #'   \item A \code{data.frame} when \code{geometry = FALSE}.
 #' }
 #'
-#' @details
-#' ## Speed
-#' Three design decisions keep this function fast:
-#'
-#' 1. **No extraction to disk.** The shapefile is read directly from the ZIP
-#'    via GDAL's \code{/vsizip/} virtual filesystem.
-#'
-#' 2. **\code{terra::SpatVector} is the default output.** The \code{terra}
-#'    C++ layer reads shapefiles substantially faster than \code{sf::st_read()}.
-#'    Pass \code{output = "sf"} explicitly when you need an \code{sf} object.
-#'
-#' 3. **OGR SQL filtering** is applied at read time, so only matching features
-#'    are loaded into memory.
-#'
-#' ## Caching
-#' The first call with \code{cache = TRUE} downloads the ~100 MB archive once.
-#' All subsequent calls read from disk and skip the download entirely.
-#' This is the most effective way to avoid slow or stalled downloads.
-#'
-#' ```r
-#' # First call: downloads and caches
-#' fires <- get_mtbs(cache = TRUE)
-#'
-#' # All future calls: instant, no network
-#' fires <- get_mtbs(cache = TRUE)
-#' ```
-#'
-#' ## Retries
-#' On slow or unreliable connections, \code{retries} controls how many times
-#' the download is attempted before giving up. Each attempt honours
-#' \code{timeout} seconds. A partial file is deleted before each retry.
-#'
-#' ## Year and type filtering
-#' Years are matched against the \code{Ig_Date} column (e.g.
-#' \code{1997-04-23}); incident types are matched against \code{Incid_Type}.
-#'
 #' @examples
 #' \dontrun{
-#' # Default: all years, return as terra SpatVector
-#' fires <- get_mtbs()
-#'
-#' # Cache for instant loads in future sessions (recommended)
-#' fires <- get_mtbs(cache = TRUE)
-#'
-#' # Only fires from 2020 to 2023
-#' fires_recent <- get_mtbs(years = c(2020, 2023), cache = TRUE)
-#'
-#' # Single year, wildfires only, as sf
-#' fires_2020 <- get_mtbs(years = 2020, type = "Wildfire", output = "sf")
-#'
-#' # Attribute table only (no geometry)
-#' tbl <- get_mtbs(geometry = FALSE)
-#'
-#' # Slow connection: extend timeout, add retries
-#' fires <- get_mtbs(cache = TRUE, timeout = 600L, retries = 5L)
+#' fires <- read_mtbs()
+#' fires_2020 <- read_mtbs(years = 2020, type = "Wildfire", output = "sf")
+#' tbl <- read_mtbs(geometry = FALSE)
 #' }
-#'
 #' @export
-get_mtbs <- function(
+read_mtbs <- function(
     url      = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip",
     years    = NULL,
     type     = NULL,
@@ -126,8 +154,6 @@ get_mtbs <- function(
     timeout  = 300L,
     verbose  = TRUE
 ) {
-
-  # ── Argument validation ────────────────────────────────────────────────────
   output <- rlang::arg_match(output)
 
   if (!is.null(years)) {
@@ -159,38 +185,27 @@ get_mtbs <- function(
     cli::cli_abort("{.arg geometry} must be {.code TRUE} or {.code FALSE}.")
   }
 
-  retries <- max(1L, as.integer(retries))
-  timeout <- max(30L, as.integer(timeout))
+  data_dir <- .resolve_download_dir(cache)
+  mtbs_dir <- get_mtbs(
+    url = url,
+    directory = data_dir,
+    overwrite = overwrite,
+    retries = retries,
+    timeout = timeout,
+    verbose = verbose
+  )
 
-  # ── Resolve download destination ───────────────────────────────────────────
-  zip_path <- .resolve_cache(url, cache, overwrite, verbose)
-
-  # ── Download (with retries) ────────────────────────────────────────────────
-  if (!fs::file_exists(zip_path)) {
-    .download_zip(url, zip_path, retries = retries, timeout = timeout,
-                  verbose = verbose)
-  } else {
-    if (verbose) cli::cli_inform("Using cached file: {.path {zip_path}}")
-  }
-
-  # ── Locate shapefile inside ZIP ────────────────────────────────────────────
-  zip_contents <- utils::unzip(zip_path, list = TRUE)$Name
-  shp_name     <- zip_contents[grepl("\\.shp$", zip_contents,
-                                     ignore.case = TRUE)]
-
-  if (length(shp_name) == 0L) {
+  shp_files <- list.files(mtbs_dir, pattern = "\\.shp$", recursive = TRUE, full.names = TRUE)
+  if (length(shp_files) == 0L) {
     cli::cli_abort(c(
-      "No {.file .shp} found inside {.path {zip_path}}.",
-      "i" = "The ZIP may be corrupt. Re-run with {.code overwrite = TRUE} to force a fresh download."
+      "No {.file .shp} found inside {.path {mtbs_dir}}.",
+      "i" = "The extracted data may be corrupt. Re-run with {.code overwrite = TRUE}."
     ))
   }
 
-  shp_name <- shp_name[[1L]]
-  vsi_path <- paste0("/vsizip/", normalizePath(zip_path, winslash = "/"),
-                     "/", shp_name)
+  shp_path <- shp_files[[1L]]
 
-  # ── Build OGR SQL WHERE clause ─────────────────────────────────────────────
-  layer         <- tools::file_path_sans_ext(basename(shp_name))
+  layer         <- tools::file_path_sans_ext(basename(shp_path))
   where_clauses <- character(0)
 
   if (!is.null(years)) {
@@ -215,22 +230,18 @@ get_mtbs <- function(
     NULL
   }
 
-  # ── Read via terra ─────────────────────────────────────────────────────────
-  if (verbose) cli::cli_progress_step("Reading {.path {basename(shp_name)}} \u2026")
-
+  if (verbose) cli::cli_progress_step("Reading {.path {basename(shp_path)}} …")
   data_sv <- if (!is.null(sql_query)) {
-    terra::vect(vsi_path, query = sql_query)
+    terra::vect(shp_path, query = sql_query)
   } else {
-    terra::vect(vsi_path)
+    terra::vect(shp_path)
   }
-
   if (verbose) cli::cli_progress_done()
 
   if (verbose && (!is.null(years) || !is.null(type))) {
     cli::cli_inform("Returned {nrow(data_sv)} fire perimeter{?s}.")
   }
 
-  # ── Return ─────────────────────────────────────────────────────────────────
   if (!geometry) return(as.data.frame(terra::values(data_sv)))
   if (output == "sf") return(sf::st_as_sf(data_sv))
   data_sv
@@ -240,30 +251,14 @@ get_mtbs <- function(
 # ── Internal helpers ──────────────────────────────────────────────────────────
 
 #' @keywords internal
-.resolve_cache <- function(url, cache, overwrite, verbose) {
-  file_name <- basename(url)
-
+.resolve_download_dir <- function(cache) {
   if (isFALSE(cache)) {
-    tmp_dir <- file.path(tempfile(pattern = "fireR_"), "dl")
-    fs::dir_create(tmp_dir, recurse = TRUE)
-    return(fs::path(tmp_dir, file_name))
+    return(file.path(tempfile(pattern = "fireR_"), "dl"))
   }
-
-  cache_dir <- if (isTRUE(cache)) {
-    fs::path(tools::R_user_dir("fireR", "cache"))
-  } else {
-    fs::path(cache)
+  if (isTRUE(cache)) {
+    return(tools::R_user_dir("fireR", "cache"))
   }
-
-  fs::dir_create(cache_dir, recurse = TRUE)
-  zip_path <- fs::path(cache_dir, file_name)
-
-  if (overwrite && fs::file_exists(zip_path)) {
-    if (verbose) cli::cli_inform("Removing cached copy for fresh download.")
-    fs::file_delete(zip_path)
-  }
-
-  zip_path
+  as.character(cache)
 }
 
 
@@ -277,7 +272,7 @@ get_mtbs <- function(
 
     if (verbose) {
       cli::cli_progress_step(
-        "Downloading MTBS perimeter data (attempt {attempt}/{retries}) \u2026"
+        "Downloading MTBS perimeter data (attempt {attempt}/{retries}) …"
       )
     }
 
@@ -294,10 +289,10 @@ get_mtbs <- function(
           tcp_keepalive  = 1L,
           followlocation = 1L,
           ssl_verifypeer = 1L,
-          timeout        = timeout,   # hard ceiling per attempt
+          timeout        = timeout,
           connecttimeout = 30L,
-          low_speed_limit = 1000L,    # abort if < 1 KB/s …
-          low_speed_time  = 30L       # … for 30 consecutive seconds
+          low_speed_limit = 1000L,
+          low_speed_time  = 30L
         )
       )
       TRUE
@@ -323,7 +318,7 @@ get_mtbs <- function(
       ))
     }
 
-    if (verbose) cli::cli_inform("Retrying in 5 seconds \u2026")
+    if (verbose) cli::cli_inform("Retrying in 5 seconds …")
     Sys.sleep(5)
   }
 }

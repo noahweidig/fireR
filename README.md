@@ -12,10 +12,11 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 
 ## Overview
 
-`fireR` wraps the USGS MTBS composite burned-area extent shapefile in a single
-`get_mtbs()` function. It downloads the ~100 MB ZIP, unzips it, and hands you
-back either an **`sf`** object or a **`terra::SpatVector`** ready for analysis —
-all in one call.
+`fireR` splits MTBS access into two functions:
+
+- `get_mtbs()` downloads and unzips the data to a directory
+- `read_mtbs()` reads, filters, and returns the data as **`sf`**,
+  **`terra::SpatVector`**, or `data.frame`
 
 Key features:
 
@@ -45,62 +46,68 @@ devtools::install()    # run from the package root
 
 ## Usage
 
-### All fires, return as `sf` (default)
+### All fires, return as `sf`
 
 ```r
 library(fireR)
 
-fires <- get_mtbs()
+fires <- read_mtbs(output = "sf")
 plot(fires["BurnBndAc"])
 ```
 
 ### Filter to a year range
 
 ```r
-fires_recent <- get_mtbs(years = c(2010, 2023))
+fires_recent <- read_mtbs(years = c(2010, 2023), output = "sf")
 ```
 
 ### Single year
 
 ```r
-fires_2020 <- get_mtbs(years = 2020)
+fires_2020 <- read_mtbs(years = 2020, output = "sf")
 ```
 
 ### Return as `terra::SpatVector`
 
 ```r
-fires_vect <- get_mtbs(years = c(2015, 2023), output = "vect")
+fires_vect <- read_mtbs(years = c(2015, 2023), output = "vect")
 ```
 
 ### Attribute table only (no geometry)
 
 ```r
-tbl <- get_mtbs(return_spatial = FALSE)
+tbl <- read_mtbs(geometry = FALSE)
 ```
 
 ### Cache the download for future sessions
 
 ```r
 # Cache in the default user directory
-fires <- get_mtbs(cache = TRUE)
+fires <- read_mtbs(cache = TRUE)
 
 # Or supply your own cache path
-fires <- get_mtbs(cache = "~/data/mtbs_cache")
+fires <- read_mtbs(cache = "~/data/mtbs_cache")
 ```
 
 ---
 
-## `get_mtbs()` Arguments
+## `read_mtbs()` Arguments
 
 | Argument | Type | Default | Description |
 |---|---|---|---|
 | `url` | `character` | USGS URL | Source ZIP URL |
 | `years` | `integer` | `NULL` | Year range `c(start, end)` or single year. `NULL` = no filter |
-| `return_spatial` | `logical` | `TRUE` | Return a spatial object. `FALSE` → `data.frame` |
-| `output` | `character` | `"sf"` | `"sf"` or `"vect"` / `"terra"` |
+| `geometry` | `logical` | `TRUE` | Return a spatial object. `FALSE` → `data.frame` |
+| `output` | `character` | `"vect"` | `"sf"` or `"vect"` / `"terra"` |
 | `cache` | `logical`/`character` | `FALSE` | Cache the ZIP file across sessions |
 | `overwrite` | `logical` | `FALSE` | Force fresh download even if cached copy exists |
 | `verbose` | `logical` | `TRUE` | Print progress messages |
+
+To only download and unzip data to disk:
+
+```r
+mtbs_dir <- get_mtbs()
+```
 
 ---
 

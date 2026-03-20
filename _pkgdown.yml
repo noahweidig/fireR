@@ -38,11 +38,11 @@ footer:
 reference:
   - title: "Downloading Fire Data"
     desc: >
-      The primary interface for accessing MTBS wildfire perimeter data.
-      Downloads the USGS composite burned-area shapefile and returns it
-      as an `sf` or `terra::SpatVector` object.
+      Download and read MTBS wildfire perimeter data.
     contents:
+      - download_mtbs
       - get_mtbs
+      - read_mtbs
 
   - title: "Package"
     desc: "Package-level documentation."
