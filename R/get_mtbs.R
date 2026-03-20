@@ -23,8 +23,10 @@
 #'   When `FALSE` the shapefile attributes are returned as a plain
 #'   `data.frame` with the geometry column dropped.
 #' @param output `character(1)` The class of the returned spatial object.
-#'   Either `"sf"` (default) or `"vect"` / `"terra"` for a `terra::SpatVector`.
-#'   Ignored when `geometry = FALSE`.
+#'   Either `"vect"` / `"terra"` (default) for a `terra::SpatVector`, or
+#'   `"sf"` for an `sf` object. Defaulting to `"vect"` avoids the overhead
+#'   of converting to `sf` when it is not needed. Ignored when
+#'   `geometry = FALSE`.
 #' @param cache `logical(1)` or `character(1)`. When `FALSE` (the default)
 #'   the ZIP is downloaded to a per-session temporary directory and deleted
 #'   when the R session ends. When `TRUE` the file is cached in
@@ -34,25 +36,60 @@
 #' @param overwrite `logical(1)` When `cache` is enabled, set `TRUE` to
 #'   force a fresh download even if a cached copy exists. Defaults to `FALSE`.
 #' @param verbose `logical(1)` Print progress messages. Defaults to `TRUE`.
+#' @param method `character(1)` Download back-end. `"curl"` (default) uses
+#'   `curl::curl_download()` with an HTTP/2 persistent connection. `"wget"`
+#'   delegates to the system `wget` executable via `download.file()` and may
+#'   be faster on systems where `wget` is installed and tuned. Falls back to
+#'   `"curl"` with a warning if `wget` is not found on `PATH`.
+#' @param background `logical(1)` When `TRUE` the download (and all
+#'   subsequent processing) runs in a background R process via
+#'   `callr::r_bg()`, so your interactive session stays responsive.
+#'   The function returns a `callr` process object immediately; call
+#'   `$wait()` to block until it finishes and `$get_result()` to retrieve
+#'   the spatial object. Requires the \pkg{callr} package. Defaults to
+#'   `FALSE`.
 #'
 #' @return
-#'   * An `sf` object when `output = "sf"` and `geometry = TRUE`.
-#'   * A `terra::SpatVector` when `output = "vect"` / `"terra"` and
-#'     `geometry = TRUE`.
-#'   * A `data.frame` when `geometry = FALSE`.
+#'   * When `background = FALSE` (default):
+#'     * A `terra::SpatVector` when `output = "vect"` / `"terra"` and
+#'       `geometry = TRUE`.
+#'     * An `sf` object when `output = "sf"` and `geometry = TRUE`.
+#'     * A `data.frame` when `geometry = FALSE`.
+#'   * When `background = TRUE`: a `callr` `r_process` object. Use
+#'     `$wait()` then `$get_result()` to obtain the spatial object.
 #'
 #' @details
 #' ## Speed
-#' Two design decisions keep this function fast:
+#' Three design decisions keep this function fast:
 #'
-#' 1. **`curl::curl_download()`** is used in preference to base
+#' 1. **`terra::SpatVector` is the default output** (`output = "vect"`).
+#'    The `terra` C++ layer reads shapefiles substantially faster than
+#'    `sf::st_read()`, and skipping the `sf::st_as_sf()` conversion saves
+#'    additional time. Pass `output = "sf"` explicitly when you need an
+#'    `sf` object.
+#'
+#' 2. **`curl::curl_download()`** is used in preference to base
 #'    `download.file()` because the `curl` back-end uses a persistent HTTP/2
 #'    connection, avoids spawning an external process, and never times out on
 #'    large files (the handle is configured with `timeout = 0`).
+#'    Pass `method = "wget"` to delegate to the system `wget` instead.
 #'
-#' 2. **`terra::vect()`** reads the shapefile via GDAL's C++ layer and is
-#'    substantially faster than `sf::st_read()` for large files. The result
-#'    is converted to `sf` only when the caller requests `output = "sf"`.
+#' 3. **OGR SQL filtering** is applied at read time via `terra::vect()`, so
+#'    only matching features are loaded into memory.
+#'
+#' ## Non-blocking download
+#' Pass `background = TRUE` to keep your R session responsive while the
+#' ~100 MB archive downloads:
+#'
+#' ```r
+#' proc <- get_mtbs(years = 2020, background = TRUE)
+#' # … do other work …
+#' proc$wait()
+#' fires <- proc$get_result()
+#' ```
+#'
+#' `background = TRUE` requires the \pkg{callr} package
+#' (`install.packages("callr")`).
 #'
 #' ## Year and type filtering
 #' Filtering is performed as an OGR SQL `WHERE` clause passed directly to
@@ -62,20 +99,28 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Default: all years, return as sf
+#' # Default: all years, return as terra SpatVector (fastest)
 #' fires <- get_mtbs()
 #'
-#' # Only fires from 2020 to 2023, as a terra SpatVector
-#' fires_recent <- get_mtbs(years = c(2020, 2023), output = "vect")
+#' # Only fires from 2020 to 2023
+#' fires_recent <- get_mtbs(years = c(2020, 2023))
 #'
-#' # Single year, wildfires only
-#' fires_2020 <- get_mtbs(years = 2020, type = "Wildfire")
+#' # Single year, wildfires only, as sf
+#' fires_2020 <- get_mtbs(years = 2020, type = "Wildfire", output = "sf")
 #'
 #' # Attribute table only (no geometry)
 #' tbl <- get_mtbs(geometry = FALSE)
 #'
 #' # Cache the download for future sessions
 #' fires <- get_mtbs(cache = TRUE)
+#'
+#' # Non-blocking: download in background, keep working
+#' proc <- get_mtbs(years = 2020, background = TRUE)
+#' proc$wait()
+#' fires <- proc$get_result()
+#'
+#' # Use system wget instead of curl
+#' fires <- get_mtbs(method = "wget")
 #' }
 #'
 #' @export
@@ -84,14 +129,43 @@ get_mtbs <- function(
     years        = NULL,
     type         = NULL,
     geometry     = TRUE,
-    output       = c("sf", "vect", "terra"),
+    output       = c("vect", "sf", "terra"),
     cache        = FALSE,
     overwrite    = FALSE,
-    verbose      = TRUE
+    verbose      = TRUE,
+    method       = c("curl", "wget"),
+    background   = FALSE
 ) {
+
+  # ── Background mode ────────────────────────────────────────────────────────
+  if (isTRUE(background)) {
+    if (!requireNamespace("callr", quietly = TRUE)) {
+      cli::cli_abort(c(
+        "{.arg background = TRUE} requires the {.pkg callr} package.",
+        "i" = "Install it with {.code install.packages(\"callr\")}."
+      ))
+    }
+    return(callr::r_bg(
+      func = get_mtbs,
+      args = list(
+        url        = url,
+        years      = years,
+        type       = type,
+        geometry   = geometry,
+        output     = output[[1L]],
+        cache      = cache,
+        overwrite  = overwrite,
+        verbose    = FALSE,
+        method     = method[[1L]],
+        background = FALSE
+      ),
+      package = TRUE
+    ))
+  }
 
   # ── Argument validation ────────────────────────────────────────────────────
   output <- rlang::arg_match(output)
+  method <- rlang::arg_match(method)
 
   if (!is.null(years)) {
     years <- as.integer(years)
@@ -127,7 +201,7 @@ get_mtbs <- function(
 
   # ── Download ───────────────────────────────────────────────────────────────
   if (!fs::file_exists(zip_path)) {
-    .download_fast(url, zip_path, verbose)
+    .download_fast(url, zip_path, verbose, method)
   } else {
     if (verbose) {
       cli::cli_inform(
@@ -172,8 +246,10 @@ get_mtbs <- function(
   }
 
   if (!is.null(type)) {
-    type_sql <- paste(sprintf("'%s'", type), collapse = ", ")
-    where_clauses <- c(where_clauses, sprintf("Incid_Type IN (%s)", type_sql))
+    # Use OR-joined equality tests instead of IN (...) to avoid OGR SQL
+    # parser issues with the IN operator in some GDAL versions.
+    type_eq <- paste(sprintf("Incid_Type = '%s'", type), collapse = " OR ")
+    where_clauses <- c(where_clauses, sprintf("(%s)", type_eq))
   }
 
   sql_query <- if (length(where_clauses) > 0L) {
@@ -246,37 +322,60 @@ get_mtbs <- function(
 
 
 #' @keywords internal
-.download_fast <- function(url, dest, verbose) {
+.download_fast <- function(url, dest, verbose, method = "curl") {
   if (verbose) {
     cli::cli_progress_step(
       "Downloading MTBS perimeter data ({.url {url}}) \u2026"
     )
   }
 
-  tryCatch(
-    curl::curl_download(
-      url      = url,
-      destfile = dest,
-      quiet    = !verbose,
-      handle   = curl::new_handle(
-        http_version   = 2L,    # CURL_HTTP_VERSION_2 (falls back to 1.1)
-        tcp_keepalive  = 1L,
-        followlocation = 1L,
-        ssl_verifypeer = 1L,
-        timeout        = 0L,    # no timeout — large files need unlimited time
-        connecttimeout = 30L    # but fail fast if the server is unreachable
-      )
-    ),
-    error = function(e) {
-      cli::cli_abort(
-        c(
+  if (method == "wget") {
+    # Check wget is available; fall back to curl with a warning
+    if (nchar(Sys.which("wget")) == 0L) {
+      cli::cli_warn(c(
+        "{.code wget} not found on PATH; falling back to {.pkg curl}.",
+        "i" = "Install wget or use {.code method = \"curl\"}."
+      ))
+      method <- "curl"
+    }
+  }
+
+  if (method == "wget") {
+    tryCatch(
+      utils::download.file(url, destfile = dest, method = "wget",
+                           quiet = !verbose, mode = "wb"),
+      error = function(e) {
+        cli::cli_abort(c(
           "Download failed.",
           "i" = "URL: {.url {url}}",
           "x" = conditionMessage(e)
+        ))
+      }
+    )
+  } else {
+    tryCatch(
+      curl::curl_download(
+        url      = url,
+        destfile = dest,
+        quiet    = !verbose,
+        handle   = curl::new_handle(
+          http_version   = 2L,    # CURL_HTTP_VERSION_2 (falls back to 1.1)
+          tcp_keepalive  = 1L,
+          followlocation = 1L,
+          ssl_verifypeer = 1L,
+          timeout        = 0L,    # no timeout — large files need unlimited time
+          connecttimeout = 30L    # but fail fast if the server is unreachable
         )
-      )
-    }
-  )
+      ),
+      error = function(e) {
+        cli::cli_abort(c(
+          "Download failed.",
+          "i" = "URL: {.url {url}}",
+          "x" = conditionMessage(e)
+        ))
+      }
+    )
+  }
 
   if (verbose) cli::cli_progress_done()
   invisible(dest)

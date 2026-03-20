@@ -10,10 +10,12 @@ get_mtbs(
   years = NULL,
   type = NULL,
   geometry = TRUE,
-  output = c("sf", "vect", "terra"),
+  output = c("vect", "sf", "terra"),
   cache = FALSE,
   overwrite = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  method = c("curl", "wget"),
+  background = FALSE
 )
 }
 \arguments{
@@ -38,8 +40,10 @@ When \code{FALSE} the shapefile attributes are returned as a plain
 \code{data.frame} with the geometry column dropped.}
 
 \item{output}{\code{character(1)} The class of the returned spatial object.
-Either \code{"sf"} (default) or \code{"vect"} / \code{"terra"} for a \code{terra::SpatVector}.
-Ignored when \code{geometry = FALSE}.}
+Either \code{"vect"} / \code{"terra"} (default) for a \code{terra::SpatVector}, or
+\code{"sf"} for an \code{sf} object. Defaulting to \code{"vect"} avoids the overhead
+of converting to \code{sf} when it is not needed. Ignored when
+\code{geometry = FALSE}.}
 
 \item{cache}{\code{logical(1)} or \code{character(1)}. When \code{FALSE} (the default)
 the ZIP is downloaded to a per-session temporary directory and deleted
@@ -52,13 +56,32 @@ to control the cache location yourself.}
 force a fresh download even if a cached copy exists. Defaults to \code{FALSE}.}
 
 \item{verbose}{\code{logical(1)} Print progress messages. Defaults to \code{TRUE}.}
+
+\item{method}{\code{character(1)} Download back-end. \code{"curl"} (default) uses
+\code{curl::curl_download()} with an HTTP/2 persistent connection. \code{"wget"}
+delegates to the system \code{wget} executable via \code{download.file()} and may
+be faster on systems where \code{wget} is installed and tuned. Falls back to
+\code{"curl"} with a warning if \code{wget} is not found on \code{PATH}.}
+
+\item{background}{\code{logical(1)} When \code{TRUE} the download (and all
+subsequent processing) runs in a background R process via
+\code{callr::r_bg()}, so your interactive session stays responsive.
+The function returns a \code{callr} process object immediately; call
+\code{$wait()} to block until it finishes and \code{$get_result()} to retrieve
+the spatial object. Requires the \pkg{callr} package. Defaults to
+\code{FALSE}.}
 }
 \value{
 \itemize{
-\item An \code{sf} object when \code{output = "sf"} and \code{geometry = TRUE}.
+\item When \code{background = FALSE} (default):
+\itemize{
 \item A \code{terra::SpatVector} when \code{output = "vect"} / \code{"terra"} and
 \code{geometry = TRUE}.
+\item An \code{sf} object when \code{output = "sf"} and \code{geometry = TRUE}.
 \item A \code{data.frame} when \code{geometry = FALSE}.
+}
+\item When \code{background = TRUE}: a \code{callr} \code{r_process} object. Use
+\code{$wait()} then \code{$get_result()} to obtain the spatial object.
 }
 }
 \description{
@@ -71,14 +94,36 @@ via an OGR SQL query so only matching features are read into memory.
 \details{
 \subsection{Speed}{
 
-\code{curl::curl_download()} is used in preference to base \code{download.file()}
-because the \code{curl} back-end uses a persistent HTTP/2 connection, avoids
-spawning an external process, and never times out on large files (the
-handle is configured with \code{timeout = 0}).
+Three design decisions keep this function fast:
+\enumerate{
+\item \strong{\code{terra::SpatVector} is the default output} (\code{output = "vect"}).
+The \code{terra} C++ layer reads shapefiles substantially faster than
+\code{sf::st_read()}, and skipping the \code{sf::st_as_sf()} conversion saves
+additional time. Pass \code{output = "sf"} explicitly when you need an
+\code{sf} object.
+\item \strong{\code{curl::curl_download()}} is used in preference to base
+\code{download.file()} because the \code{curl} back-end uses a persistent HTTP/2
+connection, avoids spawning an external process, and never times out on
+large files (the handle is configured with \code{timeout = 0}).
+Pass \code{method = "wget"} to delegate to the system \code{wget} instead.
+\item \strong{OGR SQL filtering} is applied at read time via \code{terra::vect()}, so
+only matching features are loaded into memory.
+}
+}
 
-\code{terra::vect()} reads the shapefile via GDAL's C++ layer and is
-substantially faster than \code{sf::st_read()} for large files. The result is
-converted to \code{sf} only when the caller requests \code{output = "sf"}.
+\subsection{Non-blocking download}{
+
+Pass \code{background = TRUE} to keep your R session responsive while the
+~100 MB archive downloads:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{proc <- get_mtbs(years = 2020, background = TRUE)
+# ... do other work ...
+proc$wait()
+fires <- proc$get_result()
+}\if{html}{\out{</div>}}
+
+\code{background = TRUE} requires the \pkg{callr} package
+(\code{install.packages("callr")}).
 }
 
 \subsection{Year and type filtering}{
@@ -91,20 +136,28 @@ are matched against the \code{Incid_Type} column.
 }
 \examples{
 \dontrun{
-# Default: all years, return as sf
+# Default: all years, return as terra SpatVector (fastest)
 fires <- get_mtbs()
 
-# Only fires from 2020 to 2023, as a terra SpatVector
-fires_recent <- get_mtbs(years = c(2020, 2023), output = "vect")
+# Only fires from 2020 to 2023
+fires_recent <- get_mtbs(years = c(2020, 2023))
 
-# Single year, wildfires only
-fires_2020 <- get_mtbs(years = 2020, type = "Wildfire")
+# Single year, wildfires only, as sf
+fires_2020 <- get_mtbs(years = 2020, type = "Wildfire", output = "sf")
 
 # Attribute table only (no geometry)
 tbl <- get_mtbs(geometry = FALSE)
 
 # Cache the download for future sessions
 fires <- get_mtbs(cache = TRUE)
+
+# Non-blocking: download in background, keep working
+proc <- get_mtbs(years = 2020, background = TRUE)
+proc$wait()
+fires <- proc$get_result()
+
+# Use system wget instead of curl
+fires <- get_mtbs(method = "wget")
 }
 
 }
