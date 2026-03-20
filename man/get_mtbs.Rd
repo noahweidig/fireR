@@ -2,19 +2,23 @@
 % Please edit documentation in R/get_mtbs.R
 \name{get_mtbs}
 \alias{get_mtbs}
-\title{Download MTBS perimeter data}
+\title{Download MTBS perimeter or occurrence data}
 \usage{
 get_mtbs(
   directory = getwd(),
+  dataset = c("perimeters", "occurrence"),
   overwrite = FALSE,
   timeout = 3600,
   verbose = TRUE
 )
 }
 \arguments{
-\item{directory}{\code{character(1)} directory where
-\code{mtbs_perimeter_data.zip} is stored. Defaults to the current
-working directory.}
+\item{directory}{\code{character(1)} directory where the ZIP file is stored.
+Defaults to the current working directory.}
+
+\item{dataset}{\code{character(1)} which dataset to download. Use
+\code{"perimeters"} (default) to get fire perimeters as polygons, or
+\code{"occurrence"} to get fire centroids as points.}
 
 \item{overwrite}{\code{logical(1)} re-download when \code{TRUE}; defaults to
 \code{FALSE}.}
@@ -29,12 +33,13 @@ value if you want a stricter limit.}
 \code{character(1)} path to the downloaded ZIP file (invisibly).
 }
 \description{
-Downloads the MTBS composite burned-area extent ZIP archive to a directory.
+Downloads an MTBS composite data ZIP archive to a directory.
 If the ZIP already exists and \code{overwrite = FALSE}, no network call is
 made.
 }
 \examples{
 \dontrun{
 zip_path <- get_mtbs()
+zip_path_pts <- get_mtbs(dataset = "occurrence")
 }
 }

@@ -6,9 +6,9 @@
 #'
 #' @param directory \code{character(1)} directory where the ZIP file is stored.
 #'   Defaults to the current working directory.
-#' @param dataset \code{character(1)} which dataset to download. Either
-#'   \code{"perimeters"} (default) for the burned-area extent polygon
-#'   shapefile, or \code{"occurrence"} for the fire occurrence point shapefile.
+#' @param dataset \code{character(1)} which dataset to download. Use
+#'   \code{"perimeters"} (default) to get fire perimeters as polygons, or
+#'   \code{"occurrence"} to get fire centroids as points.
 #' @param overwrite \code{logical(1)} re-download when \code{TRUE};
 #'   defaults to \code{FALSE}.
 #' @param timeout \code{numeric(1)} download timeout in seconds. The MTBS ZIP
