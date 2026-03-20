@@ -9,6 +9,7 @@ Description: Provides fast, convenient access to MTBS fire perimeter data from
     filters results to a user-supplied range of fire years.
 License: MIT + file LICENSE
 Encoding: UTF-8
+NeedsCompilation: no
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports:
