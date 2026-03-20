@@ -11,7 +11,7 @@ attribute table."><meta property="og:image" content="https://noahweidig.github.i
 
     <a class="navbar-brand me-2" href="../index.html">fireR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,11 +63,12 @@ attribute table.</p>
 
 
 <dl><dt id="arg-years">years<a class="anchor" aria-label="anchor" href="#arg-years"></a></dt>
-<dd><p><code>integer</code> vector of length 1 or 2 specifying the year
-range to keep. If a single year is supplied, only fires from that year
-are returned. If two years are supplied they are treated as
-<code>c(start_year, end_year)</code> (inclusive). <code>NULL</code> (the default)
-returns all years without filtering.</p></dd>
+<dd><p><code>integer</code> vector of years to keep.  Accepts a single
+year (<code>2020</code>), a contiguous range created with <code>:</code> notation
+(<code>2010:2020</code>), or a vector of specific years
+(<code>c(2000, 2010, 2020)</code>).  Only fires whose ignition year appears in
+<code>years</code> are returned.  <code>NULL</code> (the default) returns all years
+without filtering.</p></dd>
 
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
@@ -126,7 +127,16 @@ to obtain the ZIP archive.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">zip_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_mtbs.html">get_mtbs</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fires</span> <span class="op">&lt;-</span> <span class="fu">read_mtbs</span><span class="op">(</span>output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Single year</span></span></span>
 <span class="r-in"><span><span class="va">fires_2020</span> <span class="op">&lt;-</span> <span class="fu">read_mtbs</span><span class="op">(</span>years <span class="op">=</span> <span class="fl">2020</span>, type <span class="op">=</span> <span class="st">"Wildfire"</span>, output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Contiguous range</span></span></span>
+<span class="r-in"><span><span class="va">fires_recent</span> <span class="op">&lt;-</span> <span class="fu">read_mtbs</span><span class="op">(</span>years <span class="op">=</span> <span class="fl">2018</span><span class="op">:</span><span class="fl">2023</span>, output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Specific years only</span></span></span>
+<span class="r-in"><span><span class="va">fires_sel</span> <span class="op">&lt;-</span> <span class="fu">read_mtbs</span><span class="op">(</span>years <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2010</span>, <span class="fl">2015</span>, <span class="fl">2020</span><span class="op">)</span>, output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu">read_mtbs</span><span class="op">(</span>geometry <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>

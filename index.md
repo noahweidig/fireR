@@ -1,11 +1,13 @@
 # fireR
 
 > Fast access to MTBS (Monitoring Trends in Burn Severity) fire
-> perimeter data straight from the USGS.
+> perimeter data, SE FireMap burn severity mosaics, and EPA/CEC
+> ecoregion boundaries straight from the source.
 
 ## Overview
 
-`fireR` splits MTBS access into two functions:
+`fireR` provides convenient access to USGS fire datasets and EPA/CEC
+ecoregion boundaries:
 
 - [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
   downloads the MTBS ZIP to a directory
@@ -13,12 +15,26 @@
   reads, filters, and returns data from that ZIP as **`sf`**,
   **[`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)**,
   or `data.frame`
+- [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
+  downloads SE FireMap Annual Burn Severity Mosaic ZIP(s) for one or
+  more years (2000–2022)
+- [`get_nal1eco()`](https://noahweidig.github.io/fireR/reference/get_nal1eco.md)
+  /
+  [`get_nal2eco()`](https://noahweidig.github.io/fireR/reference/get_nal2eco.md)
+  /
+  [`get_nal3eco()`](https://noahweidig.github.io/fireR/reference/get_nal3eco.md)
+  — download and load CEC North America ecoregions at Levels 1–3
+- [`get_usl3eco()`](https://noahweidig.github.io/fireR/reference/get_usl3eco.md)
+  /
+  [`get_usl4eco()`](https://noahweidig.github.io/fireR/reference/get_usl4eco.md)
+  — download and load US EPA ecoregions at Levels 3–4 (with optional
+  state boundaries)
 
 Key features:
 
 - ⚡ **Fast downloads** — uses `curl`’s HTTP/2 persistent connection
-- 🗓️ **Year filtering** — `years = c(1986, 2020)` keeps only fires
-  within that span
+- 🗓️ **Flexible year filtering** — single year (`2020`), range
+  (`2010:2020`), or specific years (`c(2000, 2010, 2020)`)
 - 🗺️ **Flexible output** — `sf`, `terra`, or plain `data.frame`
 - 💾 **Optional caching** — skip the download on repeat calls
 
@@ -54,7 +70,7 @@ plot(fires["BurnBndAc"])
 ### Filter to a year range
 
 ``` r
-fires_recent <- read_mtbs(years = c(2010, 2023), output = "sf")
+fires_recent <- read_mtbs(years = 2010:2023, output = "sf")
 ```
 
 ### Single year
@@ -63,10 +79,16 @@ fires_recent <- read_mtbs(years = c(2010, 2023), output = "sf")
 fires_2020 <- read_mtbs(years = 2020, output = "sf")
 ```
 
+### Specific years only
+
+``` r
+fires_sel <- read_mtbs(years = c(2000, 2010, 2020), output = "sf")
+```
+
 ### Return as `terra::SpatVector`
 
 ``` r
-fires_vect <- read_mtbs(years = c(2015, 2023), output = "vect")
+fires_vect <- read_mtbs(years = 2015:2023, output = "vect")
 ```
 
 ### Attribute table only (no geometry)
@@ -87,16 +109,68 @@ fires <- read_mtbs(cache = "~/data/mtbs_cache")
 
 ------------------------------------------------------------------------
 
+## SE FireMap
+
+Download burn severity mosaics for one or more years:
+
+``` r
+# Single year
+zip_path <- get_sefire(2020)
+
+# Contiguous range
+zip_paths <- get_sefire(2015:2020, directory = "data/sefire")
+
+# Specific years
+zip_paths <- get_sefire(c(2000, 2010, 2020))
+```
+
+------------------------------------------------------------------------
+
+## Ecoregions
+
+### North America (CEC Levels 1–3)
+
+``` r
+# Level 1 — broadest continental divisions
+na_l1 <- get_nal1eco()
+
+# Level 2 — finer continental subdivisions
+na_l2 <- get_nal2eco()
+
+# Level 3 — finest continental scale (= US EPA Level III)
+na_l3 <- get_nal3eco(output = "vect")
+```
+
+### US EPA (Levels 3–4, with optional state boundaries)
+
+``` r
+# Level 3 — without state boundaries (default)
+us_l3 <- get_usl3eco()
+
+# Level 3 — with state boundaries
+us_l3_states <- get_usl3eco(state = TRUE)
+
+# Level 4 — finest US subdivisions
+us_l4 <- get_usl4eco()
+us_l4_states <- get_usl4eco(state = TRUE)
+```
+
+All ecoregion functions accept `output = "sf"` (default) or
+`output = "vect"` and a `cache` argument to persist downloads between
+sessions.
+
+------------------------------------------------------------------------
+
 ## `read_mtbs()` Arguments
 
-| Argument   | Type                  | Default  | Description                                                   |
-|------------|-----------------------|----------|---------------------------------------------------------------|
-| `years`    | `integer`             | `NULL`   | Year range `c(start, end)` or single year. `NULL` = no filter |
-| `type`     | `character`           | `NULL`   | Incident type(s). `NULL` = all types                          |
-| `geometry` | `logical`             | `TRUE`   | Return a spatial object. `FALSE` → `data.frame`               |
-| `output`   | `character`           | `"vect"` | `"sf"` or `"vect"` / `"terra"`                                |
-| `cache`    | `logical`/`character` | `FALSE`  | Directory containing the downloaded ZIP                       |
-| `verbose`  | `logical`             | `TRUE`   | Print progress messages                                       |
+| Argument   | Type                  | Default  | Description                                                                               |
+|------------|-----------------------|----------|-------------------------------------------------------------------------------------------|
+| `years`    | `integer`             | `NULL`   | Single year, range (`2010:2020`), or specific years (`c(2000, 2010)`). `NULL` = no filter |
+| `type`     | `character`           | `NULL`   | Incident type(s). `NULL` = all types                                                      |
+| `geometry` | `logical`             | `TRUE`   | Return a spatial object. `FALSE` → `data.frame`                                           |
+| `output`   | `character`           | `"vect"` | `"sf"` or `"vect"` / `"terra"`                                                            |
+| `cache`    | `logical`/`character` | `FALSE`  | Directory containing the downloaded ZIP                                                   |
+| `verbose`  | `logical`             | `TRUE`   | Print progress messages                                                                   |
 
 Download data to disk first with
 [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md):

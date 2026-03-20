@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fireR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,16 +72,29 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p><strong>fireR</strong> provides two functions for <a href="https://www.mtbs.gov/" class="external-link">Monitoring Trends in Burn Severity
-(MTBS)</a> wildfire perimeter data: <code><a href="../reference/get_mtbs.html">get_mtbs()</a></code> downloads
-the ZIP archive, and <code><a href="../reference/read_mtbs.html">read_mtbs()</a></code> reads and filters it into
-a ready-to-analyse object.</p>
+<p><strong>fireR</strong> provides convenient access to USGS fire
+datasets and EPA/CEC ecoregion boundaries:</p>
+<ul>
+<li>
+<code><a href="../reference/get_mtbs.html">get_mtbs()</a></code> / <code><a href="../reference/read_mtbs.html">read_mtbs()</a></code> for <a href="https://www.mtbs.gov/" class="external-link">MTBS (Monitoring Trends in Burn
+Severity)</a> wildfire perimeter data</li>
+<li>
+<code><a href="../reference/get_sefire.html">get_sefire()</a></code> for SE FireMap Annual Burn Severity
+Mosaics</li>
+<li>
+<code><a href="../reference/get_nal1eco.html">get_nal1eco()</a></code>, <code><a href="../reference/get_nal2eco.html">get_nal2eco()</a></code>,
+<code><a href="../reference/get_nal3eco.html">get_nal3eco()</a></code> for CEC North America ecoregion
+boundaries</li>
+<li>
+<code><a href="../reference/get_usl3eco.html">get_usl3eco()</a></code>, <code><a href="../reference/get_usl4eco.html">get_usl4eco()</a></code> for US EPA
+ecoregion boundaries</li>
+</ul>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://noahweidig.github.io/fireR">fireR</a></span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="basic-usage">Basic usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
+<h2 id="mtbs-fire-perimeters">MTBS fire perimeters<a class="anchor" aria-label="anchor" href="#mtbs-fire-perimeters"></a>
 </h2>
 <div class="section level3">
 <h3 id="all-fires">All fires<a class="anchor" aria-label="anchor" href="#all-fires"></a>
@@ -119,18 +132,26 @@ calendar year:</p>
 <div class="section level3">
 <h3 id="year-range">Year range<a class="anchor" aria-label="anchor" href="#year-range"></a>
 </h3>
-<p>Supply a two-element vector to keep all fires within an inclusive
-span:</p>
+<p>Use R’s <code>:</code> operator to keep all fires within a contiguous
+span of years:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fires_recent</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2018</span>, <span class="fl">2023</span><span class="op">)</span>, output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">fires_recent</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fl">2018</span><span class="op">:</span><span class="fl">2023</span>, output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">fires_recent</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1 328</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 1328</span></span></code></pre></div>
 <p>Quickly visualise where the major fires of the last decade fell:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">fires_recent</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"#E25822AA"</span>, border <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>     main <span class="op">=</span> <span class="st">"MTBS Fire Perimeters 2018–2023"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="specific-years-only">Specific years only<a class="anchor" aria-label="anchor" href="#specific-years-only"></a>
+</h3>
+<p>Supply a vector of individual years to return only fires from those
+exact years (non-contiguous):</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fires_sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2000</span>, <span class="fl">2010</span>, <span class="fl">2020</span><span class="op">)</span>, output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 </div>
@@ -143,10 +164,10 @@ span:</p>
 <p>Set <code>output = "vect"</code> (or <code>"terra"</code>) to receive
 a <code><a href="https://rspatial.github.io/terra/reference/SpatVector-class.html" class="external-link">terra::SpatVector</a></code> instead of an <code>sf</code> object —
 handy when the rest of your workflow uses <strong>terra</strong>:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">fires_vect</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2020</span>, <span class="fl">2023</span><span class="op">)</span>, output <span class="op">=</span> <span class="st">"vect"</span><span class="op">)</span></span>
+<span><span class="va">fires_vect</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fl">2020</span><span class="op">:</span><span class="fl">2023</span>, output <span class="op">=</span> <span class="st">"vect"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">fires_vect</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "SpatVector"</span></span>
 <span><span class="co">#&gt; attr(,"package")</span></span>
@@ -160,7 +181,7 @@ handy when the rest of your workflow uses <strong>terra</strong>:</p>
 <p>Set <code>geometry = FALSE</code> to drop geometry and get a plain
 <code>data.frame</code>. Useful when you only need the metadata (fire
 name, year, acreage, etc.):</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>geometry <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Incid_Name"</span>, <span class="st">"Ig_Date"</span>, <span class="st">"BurnBndAc"</span>, <span class="st">"Incid_Type"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Incid_Name   Ig_Date BurnBndAc Incid_Type</span></span>
@@ -183,7 +204,7 @@ name, year, acreage, etc.):</p>
 for the ZIP in <code>tools::R_user_dir("fireR", "cache")</code> — a
 platform-appropriate user directory that persists between R
 sessions:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Download once to the user cache directory</span></span>
 <span><span class="fu"><a href="../reference/get_mtbs.html">get_mtbs</a></span><span class="op">(</span>directory <span class="op">=</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/userdir.html" class="external-link">R_user_dir</a></span><span class="op">(</span><span class="st">"fireR"</span>, <span class="st">"cache"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -195,7 +216,7 @@ sessions:</p>
 </h3>
 <p>Supply a directory path to both functions to control where the file
 is stored:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_mtbs.html">get_mtbs</a></span><span class="op">(</span>directory <span class="op">=</span> <span class="st">"~/data/mtbs_cache"</span><span class="op">)</span></span>
 <span><span class="va">fires</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>cache <span class="op">=</span> <span class="st">"~/data/mtbs_cache"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -205,7 +226,7 @@ is stored:</p>
 <p>If the USGS releases an updated dataset, use
 <code>overwrite = TRUE</code> on <code><a href="../reference/get_mtbs.html">get_mtbs()</a></code> to bypass the
 cache and re-download:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_mtbs.html">get_mtbs</a></span><span class="op">(</span>directory <span class="op">=</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/userdir.html" class="external-link">R_user_dir</a></span><span class="op">(</span><span class="st">"fireR"</span>, <span class="st">"cache"</span><span class="op">)</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">fires</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <hr>
@@ -216,9 +237,69 @@ cache and re-download:</p>
 </h2>
 <p>Progress messages are printed by default. Suppress them with
 <code>verbose = FALSE</code>:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fires</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fl">2022</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <hr>
+</div>
+<div class="section level2">
+<h2 id="se-firemap-mosaics">SE FireMap mosaics<a class="anchor" aria-label="anchor" href="#se-firemap-mosaics"></a>
+</h2>
+<p><code><a href="../reference/get_sefire.html">get_sefire()</a></code> downloads Annual Burn Severity Mosaic ZIP
+archives for the southeastern United States (2000–2022). Pass a single
+year, a range, or a vector of specific years:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Single year</span></span>
+<span><span class="va">zip_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_sefire.html">get_sefire</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Contiguous range</span></span>
+<span><span class="va">zip_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_sefire.html">get_sefire</a></span><span class="op">(</span><span class="fl">2015</span><span class="op">:</span><span class="fl">2020</span>, directory <span class="op">=</span> <span class="st">"data/sefire"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Specific years only</span></span>
+<span><span class="va">zip_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_sefire.html">get_sefire</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2000</span>, <span class="fl">2010</span>, <span class="fl">2020</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="ecoregion-boundaries">Ecoregion boundaries<a class="anchor" aria-label="anchor" href="#ecoregion-boundaries"></a>
+</h2>
+<div class="section level3">
+<h3 id="north-america-cec-levels-13">North America (CEC Levels 1–3)<a class="anchor" aria-label="anchor" href="#north-america-cec-levels-13"></a>
+</h3>
+<p>The Commission for Environmental Cooperation (CEC) ecoregion
+framework divides North America into hierarchical ecological units.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Level 1 — broadest continental divisions</span></span>
+<span><span class="va">na_l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_nal1eco.html">get_nal1eco</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Level 2 — finer continental subdivisions</span></span>
+<span><span class="va">na_l2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_nal2eco.html">get_nal2eco</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Level 3 — finest continental scale (= US EPA Level III)</span></span>
+<span><span class="va">na_l3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_nal3eco.html">get_nal3eco</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">na_l1</span><span class="op">[</span><span class="st">"NA_L1NAME"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"North America Level 1 Ecoregions"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="us-epa-levels-34">US EPA (Levels 3–4)<a class="anchor" aria-label="anchor" href="#us-epa-levels-34"></a>
+</h3>
+<p>US EPA ecoregions are available at Levels 3 and 4, with an option to
+include state boundaries in the polygons.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Level 3 — without state boundaries (default)</span></span>
+<span><span class="va">us_l3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_usl3eco.html">get_usl3eco</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Level 3 — with state boundaries dissolved in</span></span>
+<span><span class="va">us_l3_states</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_usl3eco.html">get_usl3eco</a></span><span class="op">(</span>state <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Level 4 — finest US subdivisions</span></span>
+<span><span class="va">us_l4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_usl4eco.html">get_usl4eco</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">us_l4_states</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_usl4eco.html">get_usl4eco</a></span><span class="op">(</span>state <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>All ecoregion functions accept <code>output = "vect"</code> for a
+<code><a href="https://rspatial.github.io/terra/reference/SpatVector-class.html" class="external-link">terra::SpatVector</a></code> and a <code>cache</code> argument to
+persist downloads across sessions:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">us_l3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_usl3eco.html">get_usl3eco</a></span><span class="op">(</span>output <span class="op">=</span> <span class="st">"vect"</span>, cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
 </div>
 <div class="section level2">
 <h2 id="working-with-the-data">Working with the data<a class="anchor" aria-label="anchor" href="#working-with-the-data"></a>
@@ -264,10 +345,10 @@ and <strong>dplyr</strong> ecosystem is available to you.</p>
 <div class="section level3">
 <h3 id="example-largest-fires-since-2000">Example: largest fires since 2000<a class="anchor" aria-label="anchor" href="#example-largest-fires-since-2000"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">fires_2000s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2000</span>, <span class="fl">2023</span><span class="op">)</span>, output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span>
+<span><span class="va">fires_2000s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fl">2000</span><span class="op">:</span><span class="fl">2023</span>, output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">top10</span> <span class="op">&lt;-</span> <span class="va">fires_2000s</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_max</a></span><span class="op">(</span><span class="va">BurnBndAc</span>, n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -279,13 +360,13 @@ and <strong>dplyr</strong> ecosystem is available to you.</p>
 <div class="section level3">
 <h3 id="example-area-burned-and-fires-per-year">Example: area burned and fires per year<a class="anchor" aria-label="anchor" href="#example-area-burned-and-fires-per-year"></a>
 </h3>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fires_all</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fires_all</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">Ig_Date</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -297,7 +378,7 @@ and <strong>dplyr</strong> ecosystem is available to you.</p>
 <span>       x <span class="op">=</span> <span class="st">"Year"</span>,</span>
 <span>       y <span class="op">=</span> <span class="st">"Area Burned (Acres)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fires_all</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">Ig_Date</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>

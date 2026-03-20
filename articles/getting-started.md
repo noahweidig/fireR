@@ -2,12 +2,23 @@
 
 ## Overview
 
-**fireR** provides two functions for [Monitoring Trends in Burn Severity
-(MTBS)](https://www.mtbs.gov/) wildfire perimeter data:
-[`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
-downloads the ZIP archive, and
-[`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
-reads and filters it into a ready-to-analyse object.
+**fireR** provides convenient access to USGS fire datasets and EPA/CEC
+ecoregion boundaries:
+
+- [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
+  /
+  [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
+  for [MTBS (Monitoring Trends in Burn Severity)](https://www.mtbs.gov/)
+  wildfire perimeter data
+- [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
+  for SE FireMap Annual Burn Severity Mosaics
+- [`get_nal1eco()`](https://noahweidig.github.io/fireR/reference/get_nal1eco.md),
+  [`get_nal2eco()`](https://noahweidig.github.io/fireR/reference/get_nal2eco.md),
+  [`get_nal3eco()`](https://noahweidig.github.io/fireR/reference/get_nal3eco.md)
+  for CEC North America ecoregion boundaries
+- [`get_usl3eco()`](https://noahweidig.github.io/fireR/reference/get_usl3eco.md),
+  [`get_usl4eco()`](https://noahweidig.github.io/fireR/reference/get_usl4eco.md)
+  for US EPA ecoregion boundaries
 
 ``` r
 library(fireR)
@@ -15,7 +26,7 @@ library(fireR)
 
 ------------------------------------------------------------------------
 
-## Basic usage
+## MTBS fire perimeters
 
 ### All fires
 
@@ -57,12 +68,13 @@ nrow(fires_2020)
 
 ### Year range
 
-Supply a two-element vector to keep all fires within an inclusive span:
+Use R’s `:` operator to keep all fires within a contiguous span of
+years:
 
 ``` r
-fires_recent <- read_mtbs(years = c(2018, 2023), output = "sf")
+fires_recent <- read_mtbs(years = 2018:2023, output = "sf")
 nrow(fires_recent)
-#> [1] 1 328
+#> [1] 1328
 ```
 
 Quickly visualise where the major fires of the last decade fell:
@@ -72,6 +84,15 @@ library(sf)
 
 plot(st_geometry(fires_recent), col = "#E25822AA", border = NA,
      main = "MTBS Fire Perimeters 2018–2023")
+```
+
+### Specific years only
+
+Supply a vector of individual years to return only fires from those
+exact years (non-contiguous):
+
+``` r
+fires_sel <- read_mtbs(years = c(2000, 2010, 2020), output = "sf")
 ```
 
 ------------------------------------------------------------------------
@@ -88,7 +109,7 @@ instead of an `sf` object — handy when the rest of your workflow uses
 ``` r
 library(terra)
 
-fires_vect <- read_mtbs(years = c(2020, 2023), output = "vect")
+fires_vect <- read_mtbs(years = 2020:2023, output = "vect")
 class(fires_vect)
 #> [1] "SpatVector"
 #> attr(,"package")
@@ -170,6 +191,77 @@ fires <- read_mtbs(years = 2022, verbose = FALSE)
 
 ------------------------------------------------------------------------
 
+## SE FireMap mosaics
+
+[`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
+downloads Annual Burn Severity Mosaic ZIP archives for the southeastern
+United States (2000–2022). Pass a single year, a range, or a vector of
+specific years:
+
+``` r
+# Single year
+zip_path <- get_sefire(2020)
+```
+
+``` r
+# Contiguous range
+zip_paths <- get_sefire(2015:2020, directory = "data/sefire")
+```
+
+``` r
+# Specific years only
+zip_paths <- get_sefire(c(2000, 2010, 2020))
+```
+
+------------------------------------------------------------------------
+
+## Ecoregion boundaries
+
+### North America (CEC Levels 1–3)
+
+The Commission for Environmental Cooperation (CEC) ecoregion framework
+divides North America into hierarchical ecological units.
+
+``` r
+# Level 1 — broadest continental divisions
+na_l1 <- get_nal1eco()
+
+# Level 2 — finer continental subdivisions
+na_l2 <- get_nal2eco()
+
+# Level 3 — finest continental scale (= US EPA Level III)
+na_l3 <- get_nal3eco()
+
+plot(na_l1["NA_L1NAME"], main = "North America Level 1 Ecoregions")
+```
+
+### US EPA (Levels 3–4)
+
+US EPA ecoregions are available at Levels 3 and 4, with an option to
+include state boundaries in the polygons.
+
+``` r
+# Level 3 — without state boundaries (default)
+us_l3 <- get_usl3eco()
+
+# Level 3 — with state boundaries dissolved in
+us_l3_states <- get_usl3eco(state = TRUE)
+
+# Level 4 — finest US subdivisions
+us_l4 <- get_usl4eco()
+us_l4_states <- get_usl4eco(state = TRUE)
+```
+
+All ecoregion functions accept `output = "vect"` for a
+[`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
+and a `cache` argument to persist downloads across sessions:
+
+``` r
+us_l3 <- get_usl3eco(output = "vect", cache = TRUE)
+```
+
+------------------------------------------------------------------------
+
 ## Working with the data
 
 Once you have an `sf` object, the full **sf** and **dplyr** ecosystem is
@@ -191,7 +283,7 @@ available to you.
 ``` r
 library(dplyr)
 
-fires_2000s <- read_mtbs(years = c(2000, 2023), output = "sf")
+fires_2000s <- read_mtbs(years = 2000:2023, output = "sf")
 
 top10 <- fires_2000s |>
   slice_max(BurnBndAc, n = 10) |>
