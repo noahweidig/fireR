@@ -14,7 +14,6 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports:
     curl (>= 5.0.0),
-    withr (>= 2.5.0),
     fs (>= 1.6.0),
     cli (>= 3.6.0),
     sf (>= 1.0.0),

@@ -164,8 +164,11 @@ get_mtbs <- function(
   file_name <- basename(url)
 
   if (isFALSE(cache)) {
-    # Session-scoped temp dir (auto-cleaned on exit)
-    tmp_dir  <- fs::path(withr::local_tempdir(pattern = "fireR_"), "dl")
+    # Session-scoped temp dir (auto-cleaned when R session ends)
+    # withr::local_tempdir() must NOT be used here – it registers cleanup for
+    # .resolve_cache's own frame, so the directory would be deleted before the
+    # caller gets a chance to download into it.
+    tmp_dir  <- fs::path(tempdir(), paste0("fireR_", format(Sys.time(), "%Y%m%d%H%M%OS3")), "dl")
     fs::dir_create(tmp_dir)
     zip_path <- fs::path(tmp_dir, file_name)
 
