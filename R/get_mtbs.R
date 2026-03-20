@@ -21,13 +21,15 @@
 #' \dontrun{
 #' mtbs_dir <- download_mtbs()
 #' }
-
-get_mtbs <- function(
+download_mtbs <- function(
+    url =
+      "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip",
     directory = getwd(),
     overwrite = FALSE,
-    verbose   = TRUE
+    retries = 3L,
+    timeout = 300L,
+    verbose = TRUE
 ) {
-  url <- "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip"
   zip_file <- fs::path(directory, "mtbs_perimeter_data.zip")
   fs::dir_create(directory, recurse = TRUE)
 
@@ -35,13 +37,61 @@ get_mtbs <- function(
 
   if (!fs::file_exists(zip_file)) {
     if (verbose) cli::cli_inform("Downloading MTBS perimeter data …")
-    utils::download.file(url, zip_file, mode = "wb", quiet = !verbose)
+    retries <- max(1L, as.integer(retries))
+    timeout <- as.integer(timeout)
+    last_error <- NULL
+
+    for (attempt in seq_len(retries)) {
+      ok <- tryCatch({
+        withr::with_options(
+          list(timeout = timeout),
+          utils::download.file(url, zip_file, mode = "wb", quiet = !verbose)
+        )
+        TRUE
+      }, error = function(e) {
+        last_error <<- e
+        FALSE
+      })
+
+      if (ok) break
+
+      if (fs::file_exists(zip_file)) fs::file_delete(zip_file)
+      if (verbose && attempt < retries) {
+        cli::cli_warn("Download attempt {attempt}/{retries} failed; retrying …")
+      }
+    }
+
+    if (!fs::file_exists(zip_file)) {
+      cli::cli_abort("Failed to download MTBS perimeter data: {last_error$message}")
+    }
+
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
   } else if (verbose) {
     cli::cli_inform("MTBS ZIP already exists: {.path {zip_file}}")
   }
 
   invisible(zip_file)
+}
+
+#' @rdname get_mtbs
+#' @export
+get_mtbs <- function(
+    url =
+      "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip",
+    directory = getwd(),
+    overwrite = FALSE,
+    retries = 3L,
+    timeout = 300L,
+    verbose = TRUE
+) {
+  download_mtbs(
+    url = url,
+    directory = directory,
+    overwrite = overwrite,
+    retries = retries,
+    timeout = timeout,
+    verbose = verbose
+  )
 }
 
 #' Read MTBS fire perimeter data
