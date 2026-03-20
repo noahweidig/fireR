@@ -9,6 +9,9 @@
 #'   working directory.
 #' @param overwrite \code{logical(1)} re-download when \code{TRUE};
 #'   defaults to \code{FALSE}.
+#' @param timeout \code{numeric(1)} download timeout in seconds. The MTBS ZIP
+#'   is ~360 MB, so the default is \code{3600} (one hour). Set to a lower
+#'   value if you want a stricter limit.
 #' @param verbose \code{logical(1)} print progress messages.
 #'
 #' @return \code{character(1)} path to the downloaded ZIP file (invisibly).
@@ -21,6 +24,7 @@
 get_mtbs <- function(
     directory = getwd(),
     overwrite = FALSE,
+    timeout   = 3600,
     verbose   = TRUE
 ) {
   url <- "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip"
@@ -31,6 +35,8 @@ get_mtbs <- function(
 
   if (!fs::file_exists(zip_file)) {
     if (verbose) cli::cli_inform("Downloading MTBS perimeter data \u2026")
+    old_timeout <- options(timeout = timeout)
+    on.exit(options(old_timeout), add = TRUE)
     utils::download.file(url, zip_file, mode = "wb", quiet = !verbose)
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
   } else if (verbose) {
