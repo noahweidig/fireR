@@ -7,6 +7,7 @@
 get_mtbs(
   directory = getwd(),
   overwrite = FALSE,
+  timeout = 3600,
   verbose = TRUE
 )
 }
@@ -17,6 +18,10 @@ working directory.}
 
 \item{overwrite}{\code{logical(1)} re-download when \code{TRUE}; defaults to
 \code{FALSE}.}
+
+\item{timeout}{\code{numeric(1)} download timeout in seconds. The MTBS ZIP
+is ~360 MB, so the default is \code{3600} (one hour). Set to a lower
+value if you want a stricter limit.}
 
 \item{verbose}{\code{logical(1)} print progress messages.}
 }
