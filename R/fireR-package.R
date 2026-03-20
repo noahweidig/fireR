@@ -2,12 +2,12 @@
 #'
 #' @description `fireR` provides two ergonomic entry points for MTBS
 #' (Monitoring Trends in Burn Severity) composite burned-area extent data:
-#' [get_mtbs()] for downloading/unzipping, and [read_mtbs()] for reading and
+#' [get_mtbs()] for downloading, and [read_mtbs()] for reading and
 #' filtering data as an [`sf`][sf::sf] object, a
 #' [`terra::SpatVector`][terra::vect], or a plain `data.frame`.
 #'
 #' @section Main functions:
-#' * [get_mtbs()] — download and unzip MTBS fire perimeter data.
+#' * [get_mtbs()] — download MTBS fire perimeter ZIP data.
 #' * [read_mtbs()] — read, filter, and return MTBS fire perimeters.
 #'
 #' @keywords internal

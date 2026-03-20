@@ -1,20 +1,20 @@
-#' Download and unzip MTBS perimeter data
+#' Download MTBS perimeter data
 #'
-#' Downloads the MTBS composite burned-area extent ZIP archive to a directory
-#' and unzips it to \code{mtbs_perimeter_data/}. If data are already extracted
-#' and \code{overwrite = FALSE}, no network call is made.
+#' Downloads the MTBS composite burned-area extent ZIP archive to a directory.
+#' If the ZIP already exists and \code{overwrite = FALSE}, no network call is
+#' made.
 #'
 #' @param url \code{character(1)} URL of the MTBS perimeter ZIP archive.
-#' @param directory \code{character(1)} parent directory where
-#'   \code{mtbs_perimeter_data.zip} and \code{mtbs_perimeter_data/} are stored.
-#' @param overwrite \code{logical(1)} re-download and re-extract when
-#'   \code{TRUE}; defaults to \code{FALSE}.
+#' @param directory \code{character(1)} directory where
+#'   \code{mtbs_perimeter_data.zip} is stored.
+#' @param overwrite \code{logical(1)} re-download when \code{TRUE};
+#'   defaults to \code{FALSE}.
 #' @param retries \code{integer(1)} number of download retry attempts.
 #' @param timeout \code{integer(1)} timeout in seconds for each download
 #'   attempt.
 #' @param verbose \code{logical(1)} print progress messages.
 #'
-#' @return \code{character(1)} path to the extracted directory (invisibly).
+#' @return \code{character(1)} path to the downloaded ZIP file (invisibly).
 #' @export
 #'
 #' @examples
@@ -33,36 +33,21 @@ download_mtbs <- function(
   timeout <- max(30L, as.integer(timeout))
 
   zip_file <- fs::path(directory, "mtbs_perimeter_data.zip")
-  out_dir  <- fs::path(directory, "mtbs_perimeter_data")
   fs::dir_create(directory, recurse = TRUE)
 
-  extracted <- fs::dir_exists(out_dir) && length(fs::dir_ls(out_dir, all = TRUE)) > 0L
-  if (overwrite && extracted) {
-    fs::dir_delete(out_dir)
-    extracted <- FALSE
+  if (overwrite && fs::file_exists(zip_file)) {
+    fs::file_delete(zip_file)
   }
 
-  if (!extracted) {
-    if (overwrite && fs::file_exists(zip_file)) {
-      fs::file_delete(zip_file)
-    }
-
-    if (!fs::file_exists(zip_file)) {
-      if (verbose) cli::cli_inform("Downloading MTBS perimeter data …")
-      .download_zip(url, zip_file, retries = retries, timeout = timeout, verbose = verbose)
-      if (verbose) cli::cli_inform("Download complete.")
-    } else if (verbose) {
-      cli::cli_inform("ZIP already exists: {.path {zip_file}}")
-    }
-
-    if (verbose) cli::cli_inform("Unzipping MTBS data …")
-    utils::unzip(zip_file, exdir = out_dir, overwrite = TRUE)
-    if (verbose) cli::cli_inform("Unzip complete.")
+  if (!fs::file_exists(zip_file)) {
+    if (verbose) cli::cli_inform("Downloading MTBS perimeter data …")
+    .download_zip(url, zip_file, retries = retries, timeout = timeout, verbose = verbose)
+    if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
   } else if (verbose) {
-    cli::cli_inform("MTBS data already extracted: {.path {out_dir}}")
+    cli::cli_inform("MTBS ZIP already exists: {.path {zip_file}}")
   }
 
-  invisible(as.character(out_dir))
+  invisible(as.character(zip_file))
 }
 
 #' Download MTBS perimeter data (wrapper)
@@ -70,7 +55,7 @@ download_mtbs <- function(
 #' Convenience wrapper for [download_mtbs()].
 #'
 #' @inheritParams download_mtbs
-#' @return \code{character(1)} path to the extracted directory (invisibly).
+#' @return \code{character(1)} path to the downloaded ZIP file (invisibly).
 #' @export
 get_mtbs <- function(
     url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip",
@@ -92,9 +77,8 @@ get_mtbs <- function(
 
 #' Read MTBS fire perimeter data
 #'
-#' Reads MTBS fire perimeters from locally extracted data and returns either a
-#' spatial object or a plain attribute table. Data are downloaded/unzipped via
-#' [get_mtbs()] when needed.
+#' Reads MTBS fire perimeters from an existing local MTBS ZIP downloaded with
+#' [get_mtbs()] and returns either a spatial object or a plain attribute table.
 #'
 #' @param url \code{character(1)} URL of the MTBS perimeter ZIP archive.
 #' @param years \code{integer} vector of length 1 or 2 specifying the year
@@ -117,11 +101,12 @@ get_mtbs <- function(
 #'   \code{terra::SpatVector}, or \code{"sf"} for an \code{sf} object.
 #'   Ignored when \code{geometry = FALSE}.
 #' @param cache \code{logical(1)} or \code{character(1)}. When \code{FALSE}
-#'   (the default) data are downloaded/extracted in a per-session temporary
-#'   directory. When \code{TRUE} data are cached in
+#'   (the default) data are read from the current working directory. When
+#'   \code{TRUE} data are read from
 #'   \code{tools::R_user_dir("fireR", "cache")}. Alternatively, supply a
 #'   directory path as a string to control the location.
-#' @param overwrite \code{logical(1)} force re-download and re-extraction.
+#' @param overwrite \code{logical(1)} retained for backward compatibility; not
+#'   used by \code{read_mtbs()}.
 #' @param retries \code{integer(1)} number of download retry attempts.
 #' @param timeout \code{integer(1)} timeout in seconds per download attempt.
 #' @param verbose \code{logical(1)} print progress messages.
@@ -186,26 +171,30 @@ read_mtbs <- function(
   }
 
   data_dir <- .resolve_download_dir(cache)
-  mtbs_dir <- get_mtbs(
-    url = url,
-    directory = data_dir,
-    overwrite = overwrite,
-    retries = retries,
-    timeout = timeout,
-    verbose = verbose
-  )
-
-  shp_files <- list.files(mtbs_dir, pattern = "\\.shp$", recursive = TRUE, full.names = TRUE)
-  if (length(shp_files) == 0L) {
+  zip_file <- fs::path(data_dir, "mtbs_perimeter_data.zip")
+  if (!fs::file_exists(zip_file)) {
     cli::cli_abort(c(
-      "No {.file .shp} found inside {.path {mtbs_dir}}.",
-      "i" = "The extracted data may be corrupt. Re-run with {.code overwrite = TRUE}."
+      "No MTBS ZIP file found at {.path {zip_file}}.",
+      "i" = "Run {.code get_mtbs(directory = {data_dir})} first."
     ))
   }
 
-  shp_path <- shp_files[[1L]]
+  zip_contents <- utils::unzip(zip_file, list = TRUE)
+  shp_idx <- grep("\\.shp$", zip_contents$Name, ignore.case = TRUE)
+  if (length(shp_idx) == 0L) {
+    cli::cli_abort(c(
+      "No {.file .shp} found inside {.path {zip_file}}.",
+      "i" = "The downloaded ZIP may be corrupt. Re-run {.code get_mtbs(overwrite = TRUE)}."
+    ))
+  }
+  shp_in_zip <- zip_contents$Name[[shp_idx[[1L]]]]
+  shp_path <- sprintf(
+    "/vsizip/%s/%s",
+    normalizePath(zip_file, winslash = "/", mustWork = TRUE),
+    shp_in_zip
+  )
 
-  layer         <- tools::file_path_sans_ext(basename(shp_path))
+  layer         <- tools::file_path_sans_ext(basename(shp_in_zip))
   where_clauses <- character(0)
 
   if (!is.null(years)) {
@@ -230,14 +219,12 @@ read_mtbs <- function(
     NULL
   }
 
-  if (verbose) cli::cli_progress_step("Reading {.path {basename(shp_path)}} …")
+  if (verbose) cli::cli_inform("Reading {.path {basename(shp_in_zip)}} from ZIP …")
   data_sv <- if (!is.null(sql_query)) {
     terra::vect(shp_path, query = sql_query)
   } else {
     terra::vect(shp_path)
   }
-  if (verbose) cli::cli_progress_done()
-
   if (verbose && (!is.null(years) || !is.null(type))) {
     cli::cli_inform("Returned {nrow(data_sv)} fire perimeter{?s}.")
   }
@@ -253,7 +240,7 @@ read_mtbs <- function(
 #' @keywords internal
 .resolve_download_dir <- function(cache) {
   if (isFALSE(cache)) {
-    return(file.path(tempfile(pattern = "fireR_"), "dl"))
+    return(getwd())
   }
   if (isTRUE(cache)) {
     return(tools::R_user_dir("fireR", "cache"))
@@ -283,7 +270,7 @@ read_mtbs <- function(
       curl::curl_download(
         url      = url,
         destfile = dest,
-        quiet    = !verbose,
+        quiet    = TRUE,
         handle   = curl::new_handle(
           http_version   = 2L,
           tcp_keepalive  = 1L,

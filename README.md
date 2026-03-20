@@ -14,8 +14,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 
 `fireR` splits MTBS access into two functions:
 
-- `get_mtbs()` downloads and unzips the data to a directory
-- `read_mtbs()` reads, filters, and returns the data as **`sf`**,
+- `get_mtbs()` downloads the MTBS ZIP to a directory
+- `read_mtbs()` reads, filters, and returns data from that ZIP as **`sf`**,
   **`terra::SpatVector`**, or `data.frame`
 
 Key features:
@@ -103,7 +103,7 @@ fires <- read_mtbs(cache = "~/data/mtbs_cache")
 | `overwrite` | `logical` | `FALSE` | Force fresh download even if cached copy exists |
 | `verbose` | `logical` | `TRUE` | Print progress messages |
 
-To only download and unzip data to disk:
+To only download data to disk:
 
 ```r
 mtbs_dir <- get_mtbs()
