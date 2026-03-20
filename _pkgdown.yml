@@ -41,6 +41,7 @@ reference:
       Download and read MTBS wildfire perimeter data.
     contents:
       - get_mtbs
+      - get_sefire
       - read_mtbs
 
   - title: "Package"
