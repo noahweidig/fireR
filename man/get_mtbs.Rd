@@ -31,7 +31,8 @@ get_mtbs(
 \item{directory}{\code{character(1)} parent directory where
 \code{mtbs_perimeter_data.zip} and \code{mtbs_perimeter_data/} are stored.}
 
-\item{overwrite}{\code{logical(1)} re-download and re-extract when \code{TRUE}.}
+\item{overwrite}{\code{logical(1)} re-download and re-extract when \code{TRUE};
+defaults to \code{FALSE}.}
 
 \item{retries}{\code{integer(1)} number of download retry attempts.}
 

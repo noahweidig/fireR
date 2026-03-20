@@ -8,7 +8,7 @@
 #' @param directory \code{character(1)} parent directory where
 #'   \code{mtbs_perimeter_data.zip} and \code{mtbs_perimeter_data/} are stored.
 #' @param overwrite \code{logical(1)} re-download and re-extract when
-#'   \code{TRUE}. Defaults to \code{FALSE}.
+#'   \code{TRUE}; defaults to \code{FALSE}.
 #' @param retries \code{integer(1)} number of download retry attempts.
 #' @param timeout \code{integer(1)} timeout in seconds for each download
 #'   attempt.
@@ -65,7 +65,7 @@ download_mtbs <- function(
   invisible(as.character(out_dir))
 }
 
-#' Download MTBS perimeter data
+#' Download MTBS perimeter data (wrapper)
 #'
 #' Convenience wrapper for [download_mtbs()].
 #'
