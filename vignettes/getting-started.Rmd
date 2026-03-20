@@ -205,7 +205,8 @@ top10
 ### Example: area burned and fires per year
 
 ```{r fires-load, eval = TRUE, message = FALSE}
-library(tidyverse)
+library(dplyr)
+library(ggplot2)
 library(sf)
 
 fires_all <- read_mtbs(output = "sf")
