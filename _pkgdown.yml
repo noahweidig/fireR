@@ -2,6 +2,8 @@ url: https://noahweidig.github.io/fireR/
 
 template:
   bootstrap: 5
+  bootswatch: darkly
+  light-switch: true
 
 home:
   title: "fireR • MTBS Wildfire Perimeters for R"

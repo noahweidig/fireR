@@ -3,7 +3,8 @@
 #' Downloads the MTBS composite burned-area extent shapefile from the USGS,
 #' unzips it, and returns fire perimeters as a spatial object. The shapefile
 #' is read via `terra` (significantly faster than `sf` for large files) and
-#' converted to `sf` only when requested.
+#' converted to `sf` only when requested. Year and type filtering is performed
+#' via an OGR SQL query so only matching features are read into memory.
 #'
 #' @param url `character(1)` URL of the MTBS perimeter ZIP archive.
 #'   Defaults to the official USGS composite data endpoint.
@@ -11,14 +12,19 @@
 #'   to keep. If a single year is supplied, only fires from that year are
 #'   returned. If two years are supplied they are treated as
 #'   `c(start_year, end_year)` (inclusive). `NULL` (the default) returns all
-#'   years without filtering.
-#' @param return_spatial `logical(1)` When `TRUE` (the default) the result is
+#'   years without filtering. Filtering is based on the `Ig_Date` column
+#'   (format `YYYY-MM-DD`) via OGR SQL.
+#' @param type `character` vector of incident types to keep, matched against
+#'   the `Incid_Type` column. Valid values are `"Wildfire"`,
+#'   `"Prescribed Fire"`, `"Unknown"`, `"Wildland Fire Use"`, and
+#'   `"Complex"`. `NULL` (the default) returns all incident types.
+#' @param geometry `logical(1)` When `TRUE` (the default) the result is
 #'   a spatial object (`sf` or `terra::SpatVector` depending on `output`).
 #'   When `FALSE` the shapefile attributes are returned as a plain
 #'   `data.frame` with the geometry column dropped.
 #' @param output `character(1)` The class of the returned spatial object.
 #'   Either `"sf"` (default) or `"vect"` / `"terra"` for a `terra::SpatVector`.
-#'   Ignored when `return_spatial = FALSE`.
+#'   Ignored when `geometry = FALSE`.
 #' @param cache `logical(1)` or `character(1)`. When `FALSE` (the default)
 #'   the ZIP is downloaded to a per-session temporary directory and deleted
 #'   when the R session ends. When `TRUE` the file is cached in
@@ -30,10 +36,10 @@
 #' @param verbose `logical(1)` Print progress messages. Defaults to `TRUE`.
 #'
 #' @return
-#'   * An `sf` object when `output = "sf"` and `return_spatial = TRUE`.
+#'   * An `sf` object when `output = "sf"` and `geometry = TRUE`.
 #'   * A `terra::SpatVector` when `output = "vect"` / `"terra"` and
-#'     `return_spatial = TRUE`.
-#'   * A `data.frame` when `return_spatial = FALSE`.
+#'     `geometry = TRUE`.
+#'   * A `data.frame` when `geometry = FALSE`.
 #'
 #' @details
 #' ## Speed
@@ -48,10 +54,11 @@
 #'    substantially faster than `sf::st_read()` for large files. The result
 #'    is converted to `sf` only when the caller requests `output = "sf"`.
 #'
-#' ## Year filtering
-#' Filtering is applied to the `Year` column that MTBS includes in the
-#' attribute table. If the column cannot be found the raw data are returned
-#' with a warning.
+#' ## Year and type filtering
+#' Filtering is performed as an OGR SQL `WHERE` clause passed directly to
+#' `terra::vect()`, so only matching features are read into memory. Years are
+#' matched against the `Ig_Date` column (e.g. `1997-04-23`); incident types
+#' are matched against the `Incid_Type` column.
 #'
 #' @examples
 #' \dontrun{
@@ -61,11 +68,11 @@
 #' # Only fires from 2020 to 2023, as a terra SpatVector
 #' fires_recent <- get_mtbs(years = c(2020, 2023), output = "vect")
 #'
-#' # Single year
-#' fires_2020 <- get_mtbs(years = 2020)
+#' # Single year, wildfires only
+#' fires_2020 <- get_mtbs(years = 2020, type = "Wildfire")
 #'
 #' # Attribute table only (no geometry)
-#' tbl <- get_mtbs(return_spatial = FALSE)
+#' tbl <- get_mtbs(geometry = FALSE)
 #'
 #' # Cache the download for future sessions
 #' fires <- get_mtbs(cache = TRUE)
@@ -75,7 +82,8 @@
 get_mtbs <- function(
     url          = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip",
     years        = NULL,
-    return_spatial = TRUE,
+    type         = NULL,
+    geometry     = TRUE,
     output       = c("sf", "vect", "terra"),
     cache        = FALSE,
     overwrite    = FALSE,
@@ -98,8 +106,20 @@ get_mtbs <- function(
     }
   }
 
-  if (!rlang::is_bool(return_spatial)) {
-    cli::cli_abort("{.arg return_spatial} must be {.code TRUE} or {.code FALSE}.")
+  valid_types <- c("Wildfire", "Prescribed Fire", "Unknown",
+                   "Wildland Fire Use", "Complex")
+  if (!is.null(type)) {
+    bad <- setdiff(type, valid_types)
+    if (length(bad) > 0L) {
+      cli::cli_abort(c(
+        "Unknown {.arg type} value{?s}: {.val {bad}}.",
+        "i" = "Must be one or more of: {.val {valid_types}}."
+      ))
+    }
+  }
+
+  if (!rlang::is_bool(geometry)) {
+    cli::cli_abort("{.arg geometry} must be {.code TRUE} or {.code FALSE}.")
   }
 
   # ── Resolve download destination ───────────────────────────────────────────
@@ -138,18 +158,49 @@ get_mtbs <- function(
   perimeter_shp <- shp_files[grepl("perimeter", basename(shp_files), ignore.case = TRUE)]
   shp_path <- if (length(perimeter_shp) >= 1L) perimeter_shp[[1L]] else shp_files[[1L]]
 
+  # ── Build OGR SQL query for efficient attribute-level filtering ────────────
+  layer <- tools::file_path_sans_ext(basename(shp_path))
+  where_clauses <- character(0)
+
+  if (!is.null(years)) {
+    start_date <- sprintf("%04d-01-01", years[[1L]])
+    end_date   <- sprintf("%04d-12-31", years[[2L]])
+    where_clauses <- c(
+      where_clauses,
+      sprintf("Ig_Date >= '%s' AND Ig_Date <= '%s'", start_date, end_date)
+    )
+  }
+
+  if (!is.null(type)) {
+    type_sql <- paste(sprintf("'%s'", type), collapse = ", ")
+    where_clauses <- c(where_clauses, sprintf("Incid_Type IN (%s)", type_sql))
+  }
+
+  sql_query <- if (length(where_clauses) > 0L) {
+    sprintf(
+      "SELECT * FROM \"%s\" WHERE %s",
+      layer,
+      paste(where_clauses, collapse = " AND ")
+    )
+  } else {
+    NULL
+  }
+
   # ── Read shapefile via terra (much faster than sf::st_read for large files) ─
   if (verbose) cli::cli_progress_step("Reading {.path {basename(shp_path)}} \u2026")
-  data_sv <- terra::vect(shp_path)
+  data_sv <- if (!is.null(sql_query)) {
+    terra::vect(shp_path, query = sql_query)
+  } else {
+    terra::vect(shp_path)
+  }
   if (verbose) cli::cli_progress_done()
 
-  # ── Year filtering ─────────────────────────────────────────────────────────
-  if (!is.null(years)) {
-    data_sv <- .filter_years(data_sv, years, verbose)
+  if (verbose && (!is.null(years) || !is.null(type))) {
+    cli::cli_inform("Returned {nrow(data_sv)} fire perimeter{?s}.")
   }
 
   # ── Return ─────────────────────────────────────────────────────────────────
-  if (!return_spatial) {
+  if (!geometry) {
     return(as.data.frame(terra::values(data_sv)))
   }
 
@@ -169,16 +220,10 @@ get_mtbs <- function(
   file_name <- basename(url)
 
   if (isFALSE(cache)) {
-    # Session-scoped temp dir (auto-cleaned when R session ends)
-    # withr::local_tempdir() must NOT be used here – it registers cleanup for
-    # .resolve_cache's own frame, so the directory would be deleted before the
-    # caller gets a chance to download into it.
-    tmp_dir  <- fs::path(tempdir(), paste0("fireR_", format(Sys.time(), "%Y%m%d%H%M%OS3")), "dl")
-    fs::dir_create(tmp_dir)
-    zip_path <- fs::path(tmp_dir, file_name)
-
-    # Always re-download for session temp usage
-    return(zip_path)
+    # Use tempfile() for a unique, cross-platform safe path (no locale issues)
+    tmp_dir <- file.path(tempfile(pattern = "fireR_"), "dl")
+    fs::dir_create(tmp_dir, recurse = TRUE)
+    return(fs::path(tmp_dir, file_name))
   }
 
   # Persistent cache directory
@@ -235,49 +280,4 @@ get_mtbs <- function(
 
   if (verbose) cli::cli_progress_done()
   invisible(dest)
-}
-
-
-#' @keywords internal
-.filter_years <- function(sv, years, verbose) {
-  df <- terra::values(sv)
-
-  # MTBS column names are not always consistent across releases; try several
-  year_col <- intersect(
-    c("Year", "YEAR", "year", "BurnBndLat", "Ig_Date"),
-    names(df)
-  )
-
-  # "Ig_Date" is an ignition-date column — extract year from it
-  if (length(year_col) == 0L) {
-    cli::cli_warn(
-      "Could not locate a year column in the MTBS attribute table. \\
-      Returning unfiltered data."
-    )
-    return(sv)
-  }
-
-  col <- year_col[[1L]]
-
-  if (col == "Ig_Date") {
-    # Ig_Date is typically stored as a date or character "YYYY/MM/DD"
-    yr_vec <- as.integer(
-      format(as.Date(as.character(df[[col]]), tryFormats = c("%Y/%m/%d", "%Y-%m-%d")), "%Y")
-    )
-  } else {
-    yr_vec <- as.integer(df[[col]])
-  }
-
-  keep <- !is.na(yr_vec) & yr_vec >= years[[1L]] & yr_vec <= years[[2L]]
-
-  if (verbose) {
-    n_kept  <- sum(keep)
-    n_total <- nrow(df)
-    cli::cli_inform(
-      "Kept {n_kept} of {n_total} fire perimeters \\
-      ({years[[1L]]}\u2013{years[[2L]]})."
-    )
-  }
-
-  sv[keep, ]
 }
