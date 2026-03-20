@@ -16,10 +16,12 @@ get_mtbs(
   years = NULL,
   type = NULL,
   geometry = TRUE,
-  output = c("sf", "vect", "terra"),
+  output = c("vect", "sf", "terra"),
   cache = FALSE,
   overwrite = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  method = c("curl", "wget"),
+  background = FALSE
 )
 ```
 
@@ -56,10 +58,12 @@ get_mtbs(
 
 - output:
 
-  `character(1)` The class of the returned spatial object. Either `"sf"`
-  (default) or `"vect"` / `"terra"` for a
-  [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html).
-  Ignored when `geometry = FALSE`.
+  `character(1)` The class of the returned spatial object. Either
+  `"vect"` / `"terra"` (default) for a
+  [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html),
+  or `"sf"` for an `sf` object. Defaulting to `"vect"` avoids the
+  overhead of converting to `sf` when it is not needed. Ignored when
+  `geometry = FALSE`.
 
 - cache:
 
@@ -79,33 +83,80 @@ get_mtbs(
 
   `logical(1)` Print progress messages. Defaults to `TRUE`.
 
+- method:
+
+  `character(1)` Download back-end. `"curl"` (default) uses
+  [`curl::curl_download()`](https://jeroen.r-universe.dev/curl/reference/curl_download.html)
+  with an HTTP/2 persistent connection. `"wget"` delegates to the system
+  `wget` executable via
+  [`download.file()`](https://rdrr.io/r/utils/download.file.html) and
+  may be faster on systems where `wget` is installed and tuned. Falls
+  back to `"curl"` with a warning if `wget` is not found on `PATH`.
+
+- background:
+
+  `logical(1)` When `TRUE` the download (and all subsequent processing)
+  runs in a background R process via
+  [`callr::r_bg()`](https://callr.r-lib.org/reference/r_bg.html), so
+  your interactive session stays responsive. The function returns a
+  `callr` process object immediately; call `$wait()` to block until it
+  finishes and `$get_result()` to retrieve the spatial object. Requires
+  the callr package. Defaults to `FALSE`.
+
 ## Value
 
-- An `sf` object when `output = "sf"` and `geometry = TRUE`.
+- When `background = FALSE` (default):
 
-- A
-  [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
-  when `output = "vect"` / `"terra"` and `geometry = TRUE`.
+  - A
+    [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
+    when `output = "vect"` / `"terra"` and `geometry = TRUE`.
 
-- A `data.frame` when `geometry = FALSE`.
+  - An `sf` object when `output = "sf"` and `geometry = TRUE`.
+
+  - A `data.frame` when `geometry = FALSE`.
+
+- When `background = TRUE`: a `callr` `r_process` object. Use `$wait()`
+  then `$get_result()` to obtain the spatial object.
 
 ## Details
 
 ### Speed
 
-[`curl::curl_download()`](https://jeroen.r-universe.dev/curl/reference/curl_download.html)
-is used in preference to base
-[`download.file()`](https://rdrr.io/r/utils/download.file.html) because
-the `curl` back-end uses a persistent HTTP/2 connection, avoids spawning
-an external process, and never times out on large files (the handle is
-configured with `timeout = 0`).
+Three design decisions keep this function fast:
 
-[`terra::vect()`](https://rspatial.github.io/terra/reference/vect.html)
-reads the shapefile via GDAL's C++ layer and is substantially faster
-than
-[`sf::st_read()`](https://r-spatial.github.io/sf/reference/st_read.html)
-for large files. The result is converted to `sf` only when the caller
-requests `output = "sf"`.
+1.  **[`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
+    is the default output** (`output = "vect"`). The `terra` C++ layer
+    reads shapefiles substantially faster than
+    [`sf::st_read()`](https://r-spatial.github.io/sf/reference/st_read.html),
+    and skipping the
+    [`sf::st_as_sf()`](https://r-spatial.github.io/sf/reference/st_as_sf.html)
+    conversion saves additional time. Pass `output = "sf"` explicitly
+    when you need an `sf` object.
+
+2.  **[`curl::curl_download()`](https://jeroen.r-universe.dev/curl/reference/curl_download.html)**
+    is used in preference to base
+    [`download.file()`](https://rdrr.io/r/utils/download.file.html)
+    because the `curl` back-end uses a persistent HTTP/2 connection,
+    avoids spawning an external process, and never times out on large
+    files (the handle is configured with `timeout = 0`). Pass
+    `method = "wget"` to delegate to the system `wget` instead.
+
+3.  **OGR SQL filtering** is applied at read time via
+    [`terra::vect()`](https://rspatial.github.io/terra/reference/vect.html),
+    so only matching features are loaded into memory.
+
+### Non-blocking download
+
+Pass `background = TRUE` to keep your R session responsive while the
+~100 MB archive downloads:
+
+    proc <- get_mtbs(years = 2020, background = TRUE)
+    # ... do other work ...
+    proc$wait()
+    fires <- proc$get_result()
+
+`background = TRUE` requires the callr package
+(`install.packages("callr")`).
 
 ### Year and type filtering
 
@@ -119,19 +170,27 @@ matched against the `Incid_Type` column.
 
 ``` r
 if (FALSE) { # \dontrun{
-# Default: all years, return as sf
+# Default: all years, return as terra SpatVector (fastest)
 fires <- get_mtbs()
 
-# Only fires from 2020 to 2023, as a terra SpatVector
-fires_recent <- get_mtbs(years = c(2020, 2023), output = "vect")
+# Only fires from 2020 to 2023
+fires_recent <- get_mtbs(years = c(2020, 2023))
 
-# Single year, wildfires only
-fires_2020 <- get_mtbs(years = 2020, type = "Wildfire")
+# Single year, wildfires only, as sf
+fires_2020 <- get_mtbs(years = 2020, type = "Wildfire", output = "sf")
 
 # Attribute table only (no geometry)
 tbl <- get_mtbs(geometry = FALSE)
 
 # Cache the download for future sessions
 fires <- get_mtbs(cache = TRUE)
+
+# Non-blocking: download in background, keep working
+proc <- get_mtbs(years = 2020, background = TRUE)
+proc$wait()
+fires <- proc$get_result()
+
+# Use system wget instead of curl
+fires <- get_mtbs(method = "wget")
 } # }
 ```
