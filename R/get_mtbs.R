@@ -60,8 +60,8 @@ get_mtbs <- function(
 #'   returns all years without filtering.
 #' @param type \code{character} vector of incident types to keep, matched
 #'   against the \code{Incid_Type} column. Valid values are
-#'   \code{"Wildfire"}, \code{"Prescribed Fire"}, \code{"Unknown"},
-#'   \code{"Wildland Fire Use"}, and \code{"Complex"}. \code{NULL} (the
+#'   \code{"Wildfire"}, \code{"Prescribed Fire"}, \code{"Unknown"}, and
+#'   \code{"Wildland Fire Use"}. \code{NULL} (the
 #'   default) returns all incident types.
 #' @param geometry \code{logical(1)} When \code{TRUE} (the default) the
 #'   result is a spatial object (\code{sf} or \code{terra::SpatVector}
