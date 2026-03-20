@@ -104,10 +104,10 @@ Useful when you only need the metadata (fire name, year, acreage, etc.):
 
 ``` r
 tbl <- read_mtbs(geometry = FALSE)
-head(tbl[, c("Fire_Name", "Year", "BurnBndAc", "Incid_Type")])
-#>       Fire_Name Year BurnBndAc   Incid_Type
-#> 1   LOWDEN FIRE 1984   4537.35 Wildfire
-#> 2   EUREKA FIRE 1984  11202.06 Wildfire
+head(tbl[, c("Incid_Name", "Ig_Date", "BurnBndAc", "Incid_Type")])
+#>     Incid_Name   Ig_Date BurnBndAc Incid_Type
+#> 1  LOWDEN FIRE 1984-07-01   4537.35   Wildfire
+#> 2  EUREKA FIRE 1984-08-15  11202.06   Wildfire
 #> ...
 ```
 
@@ -179,11 +179,10 @@ available to you.
 
 | Column       | Description                                     |
 |--------------|-------------------------------------------------|
-| `Fire_Name`  | Name of the fire event                          |
-| `Year`       | Year of ignition                                |
+| `Incid_Name` | Name of the fire event                          |
+| `Ig_Date`    | Ignition date (YYYY-MM-DD)                      |
 | `BurnBndAc`  | Burned area in acres                            |
 | `Incid_Type` | Incident type (Wildfire, Prescribed Fire, etc.) |
-| `Ig_Date`    | Ignition date                                   |
 | `irwinID`    | Unique IRWIN identifier                         |
 | `geometry`   | Fire perimeter polygon(s)                       |
 
@@ -195,9 +194,8 @@ library(dplyr)
 fires_2000s <- read_mtbs(years = c(2000, 2023), output = "sf")
 
 top10 <- fires_2000s |>
-  filter(Incid_Type == "Wildfire") |>
   slice_max(BurnBndAc, n = 10) |>
-  select(Fire_Name, Year, BurnBndAc) |>
+  select(Incid_Name, Ig_Date, BurnBndAc) |>
   st_drop_geometry()
 
 top10
@@ -212,9 +210,9 @@ fires_all <- read_mtbs(output = "sf")
 
 fires_all |>
   st_drop_geometry() |>
-  filter(Incid_Type == "Wildfire") |>
-  count(Year) |>
-  ggplot(aes(Year, n)) +
+  mutate(year = as.integer(substr(Ig_Date, 1, 4))) |>
+  count(year) |>
+  ggplot(aes(year, n)) +
   geom_col(fill = "#E25822", colour = "#8B1A1A", linewidth = 0.3) +
   labs(
     title = "Number of MTBS Wildfire Perimeters by Year",

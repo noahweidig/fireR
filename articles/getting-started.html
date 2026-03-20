@@ -162,10 +162,10 @@ handy when the rest of your workflow uses <strong>terra</strong>:</p>
 name, year, acreage, etc.):</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>geometry <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Fire_Name"</span>, <span class="st">"Year"</span>, <span class="st">"BurnBndAc"</span>, <span class="st">"Incid_Type"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Fire_Name Year BurnBndAc   Incid_Type</span></span>
-<span><span class="co">#&gt; 1   LOWDEN FIRE 1984   4537.35 Wildfire</span></span>
-<span><span class="co">#&gt; 2   EUREKA FIRE 1984  11202.06 Wildfire</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Incid_Name"</span>, <span class="st">"Ig_Date"</span>, <span class="st">"BurnBndAc"</span>, <span class="st">"Incid_Type"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     Incid_Name   Ig_Date BurnBndAc Incid_Type</span></span>
+<span><span class="co">#&gt; 1  LOWDEN FIRE 1984-07-01   4537.35   Wildfire</span></span>
+<span><span class="co">#&gt; 2  EUREKA FIRE 1984-08-15  11202.06   Wildfire</span></span>
 <span><span class="co">#&gt; ...</span></span></code></pre></div>
 <hr>
 </div>
@@ -235,12 +235,12 @@ and <strong>dplyr</strong> ecosystem is available to you.</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code>Fire_Name</code></td>
+<td><code>Incid_Name</code></td>
 <td>Name of the fire event</td>
 </tr>
 <tr class="even">
-<td><code>Year</code></td>
-<td>Year of ignition</td>
+<td><code>Ig_Date</code></td>
+<td>Ignition date (YYYY-MM-DD)</td>
 </tr>
 <tr class="odd">
 <td><code>BurnBndAc</code></td>
@@ -251,14 +251,10 @@ and <strong>dplyr</strong> ecosystem is available to you.</p>
 <td>Incident type (Wildfire, Prescribed Fire, etc.)</td>
 </tr>
 <tr class="odd">
-<td><code>Ig_Date</code></td>
-<td>Ignition date</td>
-</tr>
-<tr class="even">
 <td><code>irwinID</code></td>
 <td>Unique IRWIN identifier</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>geometry</code></td>
 <td>Fire perimeter polygon(s)</td>
 </tr>
@@ -274,9 +270,8 @@ and <strong>dplyr</strong> ecosystem is available to you.</p>
 <span><span class="va">fires_2000s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2000</span>, <span class="fl">2023</span><span class="op">)</span>, output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">top10</span> <span class="op">&lt;-</span> <span class="va">fires_2000s</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Incid_Type</span> <span class="op">==</span> <span class="st">"Wildfire"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_max</a></span><span class="op">(</span><span class="va">BurnBndAc</span>, n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Fire_Name</span>, <span class="va">Year</span>, <span class="va">BurnBndAc</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Incid_Name</span>, <span class="va">Ig_Date</span>, <span class="va">BurnBndAc</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">top10</span></span></code></pre></div>
@@ -291,9 +286,9 @@ and <strong>dplyr</strong> ecosystem is available to you.</p>
 <span></span>
 <span><span class="va">fires_all</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Incid_Type</span> <span class="op">==</span> <span class="st">"Wildfire"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">Year</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">Year</span>, <span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">Ig_Date</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"#E25822"</span>, colour <span class="op">=</span> <span class="st">"#8B1A1A"</span>, linewidth <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
 <span>    title <span class="op">=</span> <span class="st">"Number of MTBS Wildfire Perimeters by Year"</span>,</span>
