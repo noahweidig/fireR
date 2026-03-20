@@ -1,8 +1,9 @@
 #' Download and Load MTBS Fire Perimeter Data
 #'
 #' Downloads the MTBS composite burned-area extent shapefile from the USGS,
-#' unzips it, and returns fire perimeters as a spatial object. Downloads are
-#' performed using `curl`'s multi-handle for maximum throughput.
+#' unzips it, and returns fire perimeters as a spatial object. The shapefile
+#' is read via `terra` (significantly faster than `sf` for large files) and
+#' converted to `sf` only when requested.
 #'
 #' @param url `character(1)` URL of the MTBS perimeter ZIP archive.
 #'   Defaults to the official USGS composite data endpoint.
@@ -36,12 +37,16 @@
 #'
 #' @details
 #' ## Speed
-#' `curl::curl_download()` is used in preference to base `download.file()`
-#' because the `curl` back-end uses a persistent HTTP/2 connection and avoids
-#' the overhead of spawning an external process. For very large files you can
-#' squeeze out additional throughput by setting the `CURL_CA_BUNDLE`
-#' environment variable to point at a local CA bundle so TLS handshakes are
-#' faster.
+#' Two design decisions keep this function fast:
+#'
+#' 1. **`curl::curl_download()`** is used in preference to base
+#'    `download.file()` because the `curl` back-end uses a persistent HTTP/2
+#'    connection, avoids spawning an external process, and never times out on
+#'    large files (the handle is configured with `timeout = 0`).
+#'
+#' 2. **`terra::vect()`** reads the shapefile via GDAL's C++ layer and is
+#'    substantially faster than `sf::st_read()` for large files. The result
+#'    is converted to `sf` only when the caller requests `output = "sf"`.
 #'
 #' ## Year filtering
 #' Filtering is applied to the `Year` column that MTBS includes in the
@@ -133,27 +138,27 @@ get_mtbs <- function(
   perimeter_shp <- shp_files[grepl("perimeter", basename(shp_files), ignore.case = TRUE)]
   shp_path <- if (length(perimeter_shp) >= 1L) perimeter_shp[[1L]] else shp_files[[1L]]
 
-  if (verbose) cli::cli_inform("Reading {.path {basename(shp_path)}} \u2026")
-
-  # ── Read shapefile ─────────────────────────────────────────────────────────
-  data_sf <- sf::st_read(shp_path, quiet = !verbose)
+  # ── Read shapefile via terra (much faster than sf::st_read for large files) ─
+  if (verbose) cli::cli_progress_step("Reading {.path {basename(shp_path)}} \u2026")
+  data_sv <- terra::vect(shp_path)
+  if (verbose) cli::cli_progress_done()
 
   # ── Year filtering ─────────────────────────────────────────────────────────
   if (!is.null(years)) {
-    data_sf <- .filter_years(data_sf, years, verbose)
+    data_sv <- .filter_years(data_sv, years, verbose)
   }
 
   # ── Return ─────────────────────────────────────────────────────────────────
   if (!return_spatial) {
-    return(sf::st_drop_geometry(data_sf))
+    return(as.data.frame(terra::values(data_sv)))
   }
 
   if (output == "sf") {
-    return(data_sf)
+    return(sf::st_as_sf(data_sv))
   }
 
   # terra::SpatVector
-  terra::vect(data_sf)
+  data_sv
 }
 
 
@@ -208,12 +213,13 @@ get_mtbs <- function(
       url      = url,
       destfile = dest,
       quiet    = !verbose,
-      # Use HTTP/2 multiplexing and keep-alive where available
       handle   = curl::new_handle(
-        http_version  = 2L,   # CURL_HTTP_VERSION_2 (falls back to 1.1)
-        tcp_keepalive = 1L,
+        http_version   = 2L,    # CURL_HTTP_VERSION_2 (falls back to 1.1)
+        tcp_keepalive  = 1L,
         followlocation = 1L,
-        ssl_verifypeer = 1L
+        ssl_verifypeer = 1L,
+        timeout        = 0L,    # no timeout — large files need unlimited time
+        connecttimeout = 30L    # but fail fast if the server is unreachable
       )
     ),
     error = function(e) {
@@ -233,11 +239,13 @@ get_mtbs <- function(
 
 
 #' @keywords internal
-.filter_years <- function(data_sf, years, verbose) {
+.filter_years <- function(sv, years, verbose) {
+  df <- terra::values(sv)
+
   # MTBS column names are not always consistent across releases; try several
   year_col <- intersect(
     c("Year", "YEAR", "year", "BurnBndLat", "Ig_Date"),
-    names(data_sf)
+    names(df)
   )
 
   # "Ig_Date" is an ignition-date column — extract year from it
@@ -246,7 +254,7 @@ get_mtbs <- function(
       "Could not locate a year column in the MTBS attribute table. \\
       Returning unfiltered data."
     )
-    return(data_sf)
+    return(sv)
   }
 
   col <- year_col[[1L]]
@@ -254,22 +262,22 @@ get_mtbs <- function(
   if (col == "Ig_Date") {
     # Ig_Date is typically stored as a date or character "YYYY/MM/DD"
     yr_vec <- as.integer(
-      format(as.Date(as.character(data_sf[[col]]), tryFormats = c("%Y/%m/%d", "%Y-%m-%d")), "%Y")
+      format(as.Date(as.character(df[[col]]), tryFormats = c("%Y/%m/%d", "%Y-%m-%d")), "%Y")
     )
   } else {
-    yr_vec <- as.integer(data_sf[[col]])
+    yr_vec <- as.integer(df[[col]])
   }
 
   keep <- !is.na(yr_vec) & yr_vec >= years[[1L]] & yr_vec <= years[[2L]]
 
   if (verbose) {
     n_kept  <- sum(keep)
-    n_total <- nrow(data_sf)
+    n_total <- nrow(df)
     cli::cli_inform(
       "Kept {n_kept} of {n_total} fire perimeters \\
       ({years[[1L]]}\u2013{years[[2L]]})."
     )
   }
 
-  data_sf[keep, ]
+  sv[keep, ]
 }
