@@ -1,12 +1,16 @@
 Package: fireR
-Title: Download and Load MTBS (Monitoring Trends in Burn Severity) Data
-Version: 0.1.0
-Authors@R: 
+Title: Download and Load USGS Fire Data (MTBS and SE FireMap)
+Version: 0.2.0
+Authors@R:
     person("Noah", "Weidig", email = "noah.weidig@ufl.edu", role = c("aut", "cre"))
-Description: Provides fast, convenient access to MTBS fire perimeter data from
-    the USGS. Downloads the composite burned-area extent shapefile, unzips it,
-    and returns it as either an 'sf' or 'terra' SpatVector object. Optionally
-    filters results to a user-supplied range of fire years.
+Description: Provides fast, convenient access to USGS fire datasets.
+    For MTBS (Monitoring Trends in Burn Severity), downloads the composite
+    burned-area extent shapefile and returns it as either an 'sf' or 'terra'
+    SpatVector object with optional filtering by year and incident type.
+    For the Southeast FireMap (SE FireMap) Annual Burn Severity Mosaics,
+    downloads per-year ZIP archives of predicted Composite Burn Index (CBI)
+    values (0-3) covering 78 ARD Landsat tiles across the southeastern
+    United States for years 2000-2022.
 License: MIT + file LICENSE
 Encoding: UTF-8
 NeedsCompilation: no
