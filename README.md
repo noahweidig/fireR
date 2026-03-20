@@ -1,9 +1,10 @@
-# fireR <img src="man/figures/logo.png" align="right" height="139" alt="" />
+# fireR <img src="man/figures/logo.svg" align="right" height="139" alt="" />
 
 <!-- badges: start -->
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/noahweidig/fireR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/noahweidig/fireR/actions/workflows/R-CMD-check.yaml)
+[![pkgdown](https://github.com/noahweidig/fireR/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/noahweidig/fireR/actions/workflows/pkgdown.yaml)
 <!-- badges: end -->
 
 > Fast access to MTBS (Monitoring Trends in Burn Severity) fire perimeter data
