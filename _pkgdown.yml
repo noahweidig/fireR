@@ -6,10 +6,11 @@ template:
   light-switch: true
 
 home:
-  title: "fireR • MTBS Wildfire Perimeters for R"
+  title: "fireR • USGS Fire Data and Ecoregion Boundaries for R"
   description: >
-    Fast, convenient access to MTBS (Monitoring Trends in Burn Severity)
-    fire perimeter data straight from the USGS. One function. Zero fuss.
+    Fast, convenient access to MTBS fire perimeter data, SE FireMap burn
+    severity mosaics, and EPA/CEC ecoregion boundaries straight from the
+    source.
   sidebar:
     structure: [links, license, community, citation, authors, dev]
 
@@ -36,13 +37,29 @@ footer:
     right: built_with
 
 reference:
-  - title: "Fire Data"
+  - title: "MTBS Fire Data"
     desc: >
-      Download and read MTBS wildfire perimeter data.
+      Download and read MTBS (Monitoring Trends in Burn Severity) wildfire
+      perimeter data.
     contents:
       - get_mtbs
-      - get_sefire
       - read_mtbs
+
+  - title: "SE FireMap"
+    desc: >
+      Download Southeast FireMap Annual Burn Severity Mosaics.
+    contents:
+      - get_sefire
+
+  - title: "Ecoregion Boundaries"
+    desc: >
+      Download and load CEC North America and US EPA ecoregion boundaries.
+    contents:
+      - get_nal1eco
+      - get_nal2eco
+      - get_nal3eco
+      - get_usl3eco
+      - get_usl4eco
 
   - title: "Package"
     desc: "Package-level documentation."

@@ -2,10 +2,10 @@
 % Please edit documentation in R/get_sefire.R
 \name{get_sefire}
 \alias{get_sefire}
-\title{Download Southeast FireMap Annual Burn Severity Mosaic}
+\title{Download Southeast FireMap Annual Burn Severity Mosaics}
 \usage{
 get_sefire(
-  year,
+  years,
   directory = getwd(),
   overwrite = FALSE,
   timeout = 3600,
@@ -13,11 +13,14 @@ get_sefire(
 )
 }
 \arguments{
-\item{year}{\code{integer(1)} the year of the mosaic to download.
-Must be a single value between \code{2000} and \code{2022} (inclusive).}
+\item{years}{\code{integer} vector of years to download.  Accepts a single
+year (\code{2020}), a contiguous range created with \code{:} notation
+(\code{2010:2015}), or a vector of specific years
+(\code{c(2000, 2010, 2020)}).  All values must be between \code{2000}
+and \code{2022} (inclusive).  Duplicate years are silently ignored.}
 
-\item{directory}{\code{character(1)} directory where the ZIP file is saved.
-Defaults to the current working directory.}
+\item{directory}{\code{character(1)} directory where the ZIP file(s) are
+saved.  Defaults to the current working directory.}
 
 \item{overwrite}{\code{logical(1)} re-download when \code{TRUE}; defaults to
 \code{FALSE}.}
@@ -28,12 +31,14 @@ Defaults to \code{3600} (one hour).}
 \item{verbose}{\code{logical(1)} print progress messages.}
 }
 \value{
-\code{character(1)} path to the downloaded ZIP file (invisibly).
+\code{character} vector of paths to the downloaded ZIP files
+(returned invisibly).  The length equals the number of unique years
+requested.
 }
 \description{
-Downloads a single-year Southeast FireMap (SE FireMap) Annual Burn Severity
-Mosaic ZIP archive from the USGS to a local directory. If the ZIP already
-exists and \code{overwrite = FALSE}, no network call is made.
+Downloads one or more Southeast FireMap (SE FireMap) Annual Burn Severity
+Mosaic ZIP archives from the USGS to a local directory. If a ZIP already
+exists and \code{overwrite = FALSE}, no network call is made for that year.
 }
 \details{
 The southeastern United States experiences frequent wild and prescribed fire
@@ -52,7 +57,13 @@ management activities.
 }
 \examples{
 \dontrun{
+# Single year
 zip_path <- get_sefire(2010)
-zip_path <- get_sefire(2020, directory = "data/sefire")
+
+# Contiguous range (2015 through 2020)
+zip_paths <- get_sefire(2015:2020, directory = "data/sefire")
+
+# Specific years only
+zip_paths <- get_sefire(c(2000, 2010, 2020))
 }
 }

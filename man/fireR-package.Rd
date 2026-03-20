@@ -4,20 +4,34 @@
 \name{fireR-package}
 \alias{fireR}
 \alias{fireR-package}
-\title{fireR: Fast Access to MTBS Fire Perimeter Data}
+\title{fireR: Fast Access to MTBS, SE FireMap, and Ecoregion Data}
 \description{
-\code{fireR} provides two ergonomic entry points for MTBS
-(Monitoring Trends in Burn Severity) composite burned-area extent data:
-\code{\link[=get_mtbs]{get_mtbs()}} for downloading, and
-\code{\link[=read_mtbs]{read_mtbs()}} for reading and filtering data as an
-\code{\link[sf:sf]{sf}} object, a \code{\link[terra:vect]{terra::SpatVector}}, or a
-plain \code{data.frame}.
+\code{fireR} provides ergonomic entry points for USGS fire data and
+EPA/CEC ecoregion boundaries:
+\code{\link[=get_mtbs]{get_mtbs()}} and \code{\link[=read_mtbs]{read_mtbs()}}
+for MTBS (Monitoring Trends in Burn Severity) composite burned-area extent
+data, \code{\link[=get_sefire]{get_sefire()}} for Southeast FireMap Annual Burn
+Severity Mosaics, and a family of ecoregion loaders
+(\code{\link[=get_nal1eco]{get_nal1eco()}},
+\code{\link[=get_nal2eco]{get_nal2eco()}},
+\code{\link[=get_nal3eco]{get_nal3eco()}},
+\code{\link[=get_usl3eco]{get_usl3eco()}},
+\code{\link[=get_usl4eco]{get_usl4eco()}}) for CEC North America and US EPA
+ecoregion boundaries. Spatial results can be returned as an
+\code{\link[sf:sf]{sf}} object, a
+\code{\link[terra:vect]{terra::SpatVector}}, or a plain \code{data.frame}.
 }
 \section{Main functions}{
 
 \itemize{
 \item \code{\link[=get_mtbs]{get_mtbs()}} — download MTBS fire perimeter ZIP data.
 \item \code{\link[=read_mtbs]{read_mtbs()}} — read, filter, and return MTBS fire perimeters.
+\item \code{\link[=get_sefire]{get_sefire()}} — download SE FireMap Annual Burn Severity Mosaic ZIP(s) for one or more years (2000–2022).
+\item \code{\link[=get_nal1eco]{get_nal1eco()}} — download and load North America Level 1 Ecoregions.
+\item \code{\link[=get_nal2eco]{get_nal2eco()}} — download and load North America Level 2 Ecoregions.
+\item \code{\link[=get_nal3eco]{get_nal3eco()}} — download and load North America Level 3 Ecoregions.
+\item \code{\link[=get_usl3eco]{get_usl3eco()}} — download and load US Level 3 Ecoregions.
+\item \code{\link[=get_usl4eco]{get_usl4eco()}} — download and load US Level 4 Ecoregions.
 }
 }
 
