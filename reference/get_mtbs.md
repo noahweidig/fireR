@@ -10,6 +10,7 @@ call is made.
 get_mtbs(
   directory = getwd(),
   overwrite = FALSE,
+  timeout = 3600,
   verbose = TRUE
 )
 ```
@@ -24,6 +25,12 @@ get_mtbs(
 - overwrite:
 
   `logical(1)` re-download when `TRUE`; defaults to `FALSE`.
+
+- timeout:
+
+  `numeric(1)` download timeout in seconds. The MTBS ZIP is ~360 MB, so
+  the default is `3600` (one hour). Set to a lower value if you want a
+  stricter limit.
 
 - verbose:
 

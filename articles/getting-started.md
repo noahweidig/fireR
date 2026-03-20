@@ -201,29 +201,41 @@ top10 <- fires_2000s |>
 top10
 ```
 
-### Example: fires per year
+### Example: area burned and fires per year
 
 ``` r
+library(dplyr)
 library(ggplot2)
+library(sf)
 
 fires_all <- read_mtbs(output = "sf")
+```
 
+``` r
+fires_all |>
+  st_drop_geometry() |>
+  mutate(year = as.integer(substr(Ig_Date, 1, 4))) |>
+  group_by(year) |>
+  summarize(area_burned = sum(BurnBndAc)) |>
+  ggplot(aes(year, area_burned)) +
+  geom_col(fill = "#8B1A1A") +
+  labs(title = "Area Burned by Year",
+       x = "Year",
+       y = "Area Burned (Acres)") +
+  theme_classic()
+```
+
+``` r
 fires_all |>
   st_drop_geometry() |>
   mutate(year = as.integer(substr(Ig_Date, 1, 4))) |>
   count(year) |>
   ggplot(aes(year, n)) +
-  geom_col(fill = "#E25822", colour = "#8B1A1A", linewidth = 0.3) +
-  labs(
-    title = "Number of MTBS Wildfire Perimeters by Year",
-    x     = "Year",
-    y     = "Number of fires"
-  ) +
-  theme_minimal(base_size = 13) +
-  theme(
-    plot.title = element_text(face = "bold"),
-    panel.grid.major.x = element_blank()
-  )
+  geom_col(fill = "#8B1A1A") +
+  labs(title = "Number of Fires by Year",
+       x = "Year",
+       y = "Number of Fires") +
+  theme_classic()
 ```
 
 ------------------------------------------------------------------------

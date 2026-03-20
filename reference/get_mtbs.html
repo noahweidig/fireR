@@ -51,6 +51,7 @@ made.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_mtbs</span><span class="op">(</span></span>
 <span>  directory <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  timeout <span class="op">=</span> <span class="fl">3600</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -68,6 +69,12 @@ working directory.</p></dd>
 <dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
 <dd><p><code>logical(1)</code> re-download when <code>TRUE</code>; defaults to
 <code>FALSE</code>.</p></dd>
+
+
+<dt id="arg-timeout">timeout<a class="anchor" aria-label="anchor" href="#arg-timeout"></a></dt>
+<dd><p><code>numeric(1)</code> download timeout in seconds. The MTBS ZIP
+is ~360 MB, so the default is <code>3600</code> (one hour). Set to a lower
+value if you want a stricter limit.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
