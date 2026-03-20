@@ -80,6 +80,8 @@ get_mtbs <- function(
 #' Reads MTBS fire perimeters from an existing local MTBS ZIP downloaded with
 #' [get_mtbs()] and returns either a spatial object or a plain attribute table.
 #'
+#' `read_mtbs()` does not download data.
+#'
 #' @param url \code{character(1)} retained for backward compatibility; not used
 #'   by \code{read_mtbs()}.
 #' @param years \code{integer} vector of length 1 or 2 specifying the year
@@ -122,6 +124,9 @@ get_mtbs <- function(
 #'     \code{geometry = TRUE}.
 #'   \item A \code{data.frame} when \code{geometry = FALSE}.
 #' }
+#'
+#' @details
+#' `read_mtbs()` does not download data. Download the ZIP first with [get_mtbs()].
 #'
 #' @examples
 #' \dontrun{
@@ -178,7 +183,7 @@ read_mtbs <- function(
   if (!fs::file_exists(zip_file)) {
     cli::cli_abort(c(
       "No MTBS ZIP file found at {.path {zip_file}}.",
-      "i" = "Run {.code get_mtbs(directory = {data_dir})} first."
+      "i" = "Run {.code get_mtbs(directory = \"{data_dir}\")} first."
     ))
   }
 

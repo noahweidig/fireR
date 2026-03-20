@@ -76,6 +76,10 @@ Reads MTBS fire perimeters from an existing local MTBS ZIP downloaded with
 \code{\link[=get_mtbs]{get_mtbs()}} and returns either a spatial object or a plain
 attribute table.
 }
+\details{
+\code{read_mtbs()} does not download data. Download the ZIP first with
+\code{\link[=get_mtbs]{get_mtbs()}}.
+}
 \examples{
 \dontrun{
 fires <- read_mtbs()
