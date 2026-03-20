@@ -19,7 +19,8 @@ read_mtbs(
 )
 }
 \arguments{
-\item{url}{\code{character(1)} URL of the MTBS perimeter ZIP archive.}
+\item{url}{\code{character(1)} retained for backward compatibility; not used
+by \code{read_mtbs()}.}
 
 \item{years}{\code{integer} vector of length 1 or 2 specifying the year
 range to keep. If a single year is supplied, only fires from that year
@@ -45,16 +46,19 @@ object. Either \code{"vect"} / \code{"terra"} (default) for a
 Ignored when \code{geometry = FALSE}.}
 
 \item{cache}{\code{logical(1)} or \code{character(1)}. When \code{FALSE}
-(the default) data are downloaded/extracted in a per-session temporary
-directory. When \code{TRUE} data are cached in
+(the default) data are read from the current working directory. When
+\code{TRUE} data are read from
 \code{tools::R_user_dir("fireR", "cache")}. Alternatively, supply a
 directory path as a string to control the location.}
 
-\item{overwrite}{\code{logical(1)} force re-download and re-extraction.}
+\item{overwrite}{\code{logical(1)} retained for backward compatibility; not
+used by \code{read_mtbs()}.}
 
-\item{retries}{\code{integer(1)} number of download retry attempts.}
+\item{retries}{\code{integer(1)} retained for backward compatibility; not
+used by \code{read_mtbs()}.}
 
-\item{timeout}{\code{integer(1)} timeout in seconds per download attempt.}
+\item{timeout}{\code{integer(1)} retained for backward compatibility; not
+used by \code{read_mtbs()}.}
 
 \item{verbose}{\code{logical(1)} print progress messages.}
 }
@@ -68,9 +72,13 @@ directory path as a string to control the location.}
 }
 }
 \description{
-Reads MTBS fire perimeters from locally extracted data and returns either a
-spatial object or a plain attribute table. Data are downloaded/unzipped via
-\code{\link[=get_mtbs]{get_mtbs()}} when needed.
+Reads MTBS fire perimeters from an existing local MTBS ZIP downloaded with
+\code{\link[=get_mtbs]{get_mtbs()}} and returns either a spatial object or a plain
+attribute table.
+}
+\details{
+\code{read_mtbs()} does not download data. Download the ZIP first with
+\code{\link[=get_mtbs]{get_mtbs()}}.
 }
 \examples{
 \dontrun{
