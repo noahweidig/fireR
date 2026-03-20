@@ -89,17 +89,17 @@ fires <- read_mtbs(cache = "~/data/mtbs_cache")
 
 ## `read_mtbs()` Arguments
 
-| Argument    | Type                  | Default  | Description                                                   |
-|-------------|-----------------------|----------|---------------------------------------------------------------|
-| `url`       | `character`           | USGS URL | Source ZIP URL                                                |
-| `years`     | `integer`             | `NULL`   | Year range `c(start, end)` or single year. `NULL` = no filter |
-| `geometry`  | `logical`             | `TRUE`   | Return a spatial object. `FALSE` → `data.frame`               |
-| `output`    | `character`           | `"vect"` | `"sf"` or `"vect"` / `"terra"`                                |
-| `cache`     | `logical`/`character` | `FALSE`  | Cache the ZIP file across sessions                            |
-| `overwrite` | `logical`             | `FALSE`  | Force fresh download even if cached copy exists               |
-| `verbose`   | `logical`             | `TRUE`   | Print progress messages                                       |
+| Argument   | Type                  | Default  | Description                                                   |
+|------------|-----------------------|----------|---------------------------------------------------------------|
+| `years`    | `integer`             | `NULL`   | Year range `c(start, end)` or single year. `NULL` = no filter |
+| `type`     | `character`           | `NULL`   | Incident type(s). `NULL` = all types                          |
+| `geometry` | `logical`             | `TRUE`   | Return a spatial object. `FALSE` → `data.frame`               |
+| `output`   | `character`           | `"vect"` | `"sf"` or `"vect"` / `"terra"`                                |
+| `cache`    | `logical`/`character` | `FALSE`  | Directory containing the downloaded ZIP                       |
+| `verbose`  | `logical`             | `TRUE`   | Print progress messages                                       |
 
-To only download data to disk:
+Download data to disk first with
+[`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md):
 
 ``` r
 mtbs_dir <- get_mtbs()

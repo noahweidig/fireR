@@ -5,7 +5,7 @@
 **fireR** provides two functions for [Monitoring Trends in Burn Severity
 (MTBS)](https://www.mtbs.gov/) wildfire perimeter data:
 [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
-downloads + unzips the data, and
+downloads the ZIP archive, and
 [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
 reads and filters it into a ready-to-analyse object.
 
@@ -115,41 +115,46 @@ head(tbl[, c("Fire_Name", "Year", "BurnBndAc", "Incid_Type")])
 
 ## Caching downloads
 
-The MTBS ZIP archive is ~100 MB. If you call
+The MTBS ZIP archive is ~100 MB. Download it once with
+[`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md),
+then read from disk with
 [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
-repeatedly (across sessions or in reports), enable caching to avoid
-redundant downloads.
+on every subsequent call.
 
 ### Default cache directory
 
-`cache = TRUE` stores the file in `tools::R_user_dir("fireR", "cache")`
-— a platform-appropriate user directory that persists between R
-sessions:
+Pass `cache = TRUE` to
+[`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
+to look for the ZIP in `tools::R_user_dir("fireR", "cache")` — a
+platform-appropriate user directory that persists between R sessions:
 
 ``` r
-# First call: downloads ~100 MB
-fires <- read_mtbs(cache = TRUE)
+# Download once to the user cache directory
+get_mtbs(directory = tools::R_user_dir("fireR", "cache"))
 
-# Subsequent calls: reads from disk instantly
+# Read from cache on every subsequent call
 fires <- read_mtbs(cache = TRUE)
-#> ℹ Using cached file: ~/.local/share/fireR/...
 ```
 
 ### Custom cache directory
 
-Supply a directory path to control where the file is stored:
+Supply a directory path to both functions to control where the file is
+stored:
 
 ``` r
+get_mtbs(directory = "~/data/mtbs_cache")
 fires <- read_mtbs(cache = "~/data/mtbs_cache")
 ```
 
 ### Force a fresh download
 
-If the USGS releases an updated dataset, use `overwrite = TRUE` to
-bypass the cache and re-download:
+If the USGS releases an updated dataset, use `overwrite = TRUE` on
+[`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
+to bypass the cache and re-download:
 
 ``` r
-fires <- read_mtbs(cache = TRUE, overwrite = TRUE)
+get_mtbs(directory = tools::R_user_dir("fireR", "cache"), overwrite = TRUE)
+fires <- read_mtbs(cache = TRUE)
 ```
 
 ------------------------------------------------------------------------

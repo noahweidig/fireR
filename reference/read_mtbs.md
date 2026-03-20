@@ -1,7 +1,6 @@
 # Read MTBS fire perimeter data
 
-Reads MTBS fire perimeters from an existing local MTBS ZIP downloaded
-with
+Reads MTBS fire perimeters from a local MTBS ZIP downloaded with
 [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
 and returns either a spatial object or a plain attribute table.
 
@@ -9,26 +8,16 @@ and returns either a spatial object or a plain attribute table.
 
 ``` r
 read_mtbs(
-  url =
-    "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip",
   years = NULL,
   type = NULL,
   geometry = TRUE,
   output = c("vect", "sf", "terra"),
   cache = FALSE,
-  overwrite = FALSE,
-  retries = 3L,
-  timeout = 300L,
   verbose = TRUE
 )
 ```
 
 ## Arguments
-
-- url:
-
-  `character(1)` retained for backward compatibility; not used by
-  `read_mtbs()`.
 
 - years:
 
@@ -42,8 +31,8 @@ read_mtbs(
 
   `character` vector of incident types to keep, matched against the
   `Incid_Type` column. Valid values are `"Wildfire"`,
-  `"Prescribed Fire"`, `"Unknown"`, `"Wildland Fire Use"`, and
-  `"Complex"`. `NULL` (the default) returns all incident types.
+  `"Prescribed Fire"`, `"Unknown"`, and `"Wildland Fire Use"`. `NULL`
+  (the default) returns all incident types.
 
 - geometry:
 
@@ -62,25 +51,11 @@ read_mtbs(
 
 - cache:
 
-  `logical(1)` or `character(1)`. When `FALSE` (the default) data are
-  read from the current working directory. When `TRUE` data are read
-  from `tools::R_user_dir("fireR", "cache")`. Alternatively, supply a
-  directory path as a string to control the location.
-
-- overwrite:
-
-  `logical(1)` retained for backward compatibility; not used by
-  `read_mtbs()`.
-
-- retries:
-
-  `integer(1)` retained for backward compatibility; not used by
-  `read_mtbs()`.
-
-- timeout:
-
-  `integer(1)` retained for backward compatibility; not used by
-  `read_mtbs()`.
+  `logical(1)` or `character(1)`. Controls where `read_mtbs()` looks for
+  the downloaded ZIP file. When `FALSE` (the default) the current
+  working directory is used. When `TRUE` the platform user cache
+  directory (`tools::R_user_dir("fireR", "cache")`) is used. Supply a
+  directory path as a string to specify a custom location.
 
 - verbose:
 
@@ -98,14 +73,16 @@ read_mtbs(
 
 ## Details
 
-`read_mtbs()` does not download data. Download the ZIP first with
-[`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md).
+`read_mtbs()` does not download data. Use
+[`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
+first to obtain the ZIP archive.
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
-fires <- read_mtbs()
+zip_path <- get_mtbs()
+fires <- read_mtbs(output = "sf")
 fires_2020 <- read_mtbs(years = 2020, type = "Wildfire", output = "sf")
 tbl <- read_mtbs(geometry = FALSE)
 } # }

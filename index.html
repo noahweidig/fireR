@@ -167,16 +167,16 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code>url</code></td>
-<td><code>character</code></td>
-<td>USGS URL</td>
-<td>Source ZIP URL</td>
-</tr>
-<tr class="even">
 <td><code>years</code></td>
 <td><code>integer</code></td>
 <td><code>NULL</code></td>
 <td>Year range <code>c(start, end)</code> or single year. <code>NULL</code> = no filter</td>
+</tr>
+<tr class="even">
+<td><code>type</code></td>
+<td><code>character</code></td>
+<td><code>NULL</code></td>
+<td>Incident type(s). <code>NULL</code> = all types</td>
 </tr>
 <tr class="odd">
 <td><code>geometry</code></td>
@@ -199,15 +199,9 @@
 <code>logical</code>/<code>character</code>
 </td>
 <td><code>FALSE</code></td>
-<td>Cache the ZIP file across sessions</td>
+<td>Directory containing the downloaded ZIP</td>
 </tr>
 <tr class="even">
-<td><code>overwrite</code></td>
-<td><code>logical</code></td>
-<td><code>FALSE</code></td>
-<td>Force fresh download even if cached copy exists</td>
-</tr>
-<tr class="odd">
 <td><code>verbose</code></td>
 <td><code>logical</code></td>
 <td><code>TRUE</code></td>
@@ -215,7 +209,7 @@
 </tr>
 </tbody>
 </table>
-<p>To only download data to disk:</p>
+<p>Download data to disk first with <code><a href="reference/get_mtbs.html">get_mtbs()</a></code>:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mtbs_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_mtbs.html">get_mtbs</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <hr>
