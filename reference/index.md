@@ -2,8 +2,9 @@
 
 ## MTBS Fire Data
 
-Download and read MTBS (Monitoring Trends in Burn Severity) wildfire
-perimeter data.
+Download MTBS (Monitoring Trends in Burn Severity) fire data archives
+(perimeter polygons or occurrence points) and read perimeter records as
+spatial objects with optional year and incident-type filtering.
 
 - [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
   : Download MTBS perimeter or occurrence data
@@ -12,14 +13,17 @@ perimeter data.
 
 ## SE FireMap
 
-Download Southeast FireMap Annual Burn Severity Mosaics.
+Download Southeast FireMap Annual Burn Severity Mosaic ZIP archives for
+one or more years (2000-2022), covering 78 ARD Landsat tiles across the
+southeastern United States.
 
 - [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
   : Download Southeast FireMap Annual Burn Severity Mosaics
 
 ## Ecoregion Boundaries
 
-Download and load CEC North America and US EPA ecoregion boundaries.
+Load CEC North America ecoregion boundaries at Levels 1-3 and US EPA
+ecoregion boundaries at Levels 3-4 as sf or terra SpatVector objects.
 
 - [`get_nal1eco()`](https://noahweidig.github.io/fireR/reference/get_nal1eco.md)
   : Download and load North America Level 1 Ecoregions
@@ -34,7 +38,7 @@ Download and load CEC North America and US EPA ecoregion boundaries.
 
 ## Package
 
-Package-level documentation.
+Package-level documentation and overview.
 
 - [`fireR`](https://noahweidig.github.io/fireR/reference/fireR-package.md)
   [`fireR-package`](https://noahweidig.github.io/fireR/reference/fireR-package.md)
