@@ -1,6 +1,6 @@
 Package: fireR
 Title: Download and Load USGS Fire Data and EPA Ecoregion Boundaries
-Version: 0.3.0
+Version: 1.0.0
 Authors@R:
     person("Noah", "Weidig", email = "noah.weidig@ufl.edu", role = c("aut", "cre"))
 Description: Provides fast, convenient access to USGS fire datasets and EPA/CEC
