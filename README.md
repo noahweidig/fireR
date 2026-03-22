@@ -25,6 +25,10 @@ boundaries:
   North America ecoregions at Levels 1–3
 - `get_usl3eco()` / `get_usl4eco()` — download and load US EPA ecoregions at
   Levels 3–4 (with optional state boundaries)
+- `get_nifc()` — download NIFC (National Interagency Fire Center) wildfire
+  perimeters dataset from figshare
+- `get_fod()` — download the USFS Fire Occurrence Database (FPA-FOD)
+  GeoPackage ZIP from the Forest Service Research Data Archive
 
 Key features:
 
@@ -42,12 +46,6 @@ Key features:
 # Install from GitHub (once published)
 # install.packages("pak")
 pak::pak("noahweidig/fireR")
-```
-
-During development, install with:
-
-```r
-devtools::install()    # run from the package root
 ```
 
 ---
@@ -118,6 +116,34 @@ zip_paths <- get_sefire(2015:2020, directory = "data/sefire")
 
 # Specific years
 zip_paths <- get_sefire(c(2000, 2010, 2020))
+```
+
+---
+
+## NIFC Wildfire Perimeters
+
+Download the NIFC wildfire perimeters dataset from figshare:
+
+```r
+# Download to current directory
+zip_path <- get_nifc()
+
+# Download to a specific directory
+zip_path <- get_nifc(directory = "data/nifc")
+```
+
+---
+
+## USFS Fire Occurrence Database (FOD)
+
+Download the FPA-FOD GeoPackage ZIP from the Forest Service Research Data Archive:
+
+```r
+# Download to current directory
+zip_path <- get_fod()
+
+# Download to a specific directory
+zip_path <- get_fod(directory = "data/fod")
 ```
 
 ---
