@@ -207,6 +207,16 @@ spatial objects with optional year and incident-type filtering.
 - [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
   : Read MTBS fire perimeter data
 
+## NIFC Wildfire Data
+
+Download NIFC (National Interagency Fire Center) wildfire perimeters and
+Fire Occurrence Database (FOD) datasets from figshare.
+
+- [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md)
+  : Download and unzip NIFC wildfire data
+- [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md)
+  : Download and unzip USFS Fire Occurrence Database (FOD)
+
 ## SE FireMap
 
 Download Southeast FireMap Annual Burn Severity Mosaic ZIP archives for
