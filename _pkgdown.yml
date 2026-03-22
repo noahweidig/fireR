@@ -45,6 +45,14 @@ reference:
       - get_mtbs
       - read_mtbs
 
+  - title: "NIFC Wildfire Data"
+    desc: >
+      Download NIFC (National Interagency Fire Center) wildfire perimeters and
+      Fire Occurrence Database (FOD) datasets from figshare.
+    contents:
+      - get_nifc
+      - get_fod
+
   - title: "SE FireMap"
     desc: >
       Download Southeast FireMap Annual Burn Severity Mosaic ZIP archives for
