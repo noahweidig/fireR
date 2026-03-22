@@ -22,11 +22,12 @@ RoxygenNote: 7.3.3
 Imports:
     fs (>= 1.6.0),
     cli (>= 3.6.0),
+    curl (>= 5.0.0),
+    httr2 (>= 1.0.0),
     sf (>= 1.0.0),
     terra (>= 1.7.0),
     rlang (>= 1.1.0)
 Suggests:
-    curl (>= 5.0.0),
     callr (>= 3.7.0),
     testthat (>= 3.0.0),
     devtools,
