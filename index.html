@@ -87,6 +87,10 @@
 <code><a href="reference/get_nal1eco.html">get_nal1eco()</a></code> / <code><a href="reference/get_nal2eco.html">get_nal2eco()</a></code> / <code><a href="reference/get_nal3eco.html">get_nal3eco()</a></code> — download and load CEC North America ecoregions at Levels 1–3</li>
 <li>
 <code><a href="reference/get_usl3eco.html">get_usl3eco()</a></code> / <code><a href="reference/get_usl4eco.html">get_usl4eco()</a></code> — download and load US EPA ecoregions at Levels 3–4 (with optional state boundaries)</li>
+<li>
+<code><a href="reference/get_nifc.html">get_nifc()</a></code> — download NIFC (National Interagency Fire Center) wildfire perimeters dataset from figshare</li>
+<li>
+<code><a href="reference/get_fod.html">get_fod()</a></code> — download the USFS Fire Occurrence Database (FPA-FOD) GeoPackage ZIP from the Forest Service Research Data Archive</li>
 </ul>
 <p>Key features:</p>
 <ul>
@@ -105,9 +109,6 @@
 <code class="sourceCode R"><span><span class="co"># Install from GitHub (once published)</span></span>
 <span><span class="co"># install.packages("pak")</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"noahweidig/fireR"</span><span class="op">)</span></span></code></pre></div>
-<p>During development, install with:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="op">)</span>    <span class="co"># run from the package root</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">
@@ -117,7 +118,7 @@
 <h3 id="all-fires-return-as-sf">All fires, return as <code>sf</code>
 <a class="anchor" aria-label="anchor" href="#all-fires-return-as-sf"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://noahweidig.github.io/fireR">fireR</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fires</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span>
@@ -126,38 +127,38 @@
 <div class="section level3">
 <h3 id="filter-to-a-year-range">Filter to a year range<a class="anchor" aria-label="anchor" href="#filter-to-a-year-range"></a>
 </h3>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fires_recent</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fl">2010</span><span class="op">:</span><span class="fl">2023</span>, output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="single-year">Single year<a class="anchor" aria-label="anchor" href="#single-year"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fires_2020</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fl">2020</span>, output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="specific-years-only">Specific years only<a class="anchor" aria-label="anchor" href="#specific-years-only"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fires_sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2000</span>, <span class="fl">2010</span>, <span class="fl">2020</span><span class="op">)</span>, output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="return-as-terraspatvector">Return as <code>terra::SpatVector</code>
 <a class="anchor" aria-label="anchor" href="#return-as-terraspatvector"></a>
 </h3>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fires_vect</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fl">2015</span><span class="op">:</span><span class="fl">2023</span>, output <span class="op">=</span> <span class="st">"vect"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="attribute-table-only-no-geometry">Attribute table only (no geometry)<a class="anchor" aria-label="anchor" href="#attribute-table-only-no-geometry"></a>
 </h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>geometry <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="cache-the-download-for-future-sessions">Cache the download for future sessions<a class="anchor" aria-label="anchor" href="#cache-the-download-for-future-sessions"></a>
 </h3>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Cache in the default user directory</span></span>
 <span><span class="va">fires</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -170,7 +171,7 @@
 <h2 id="se-firemap">SE FireMap<a class="anchor" aria-label="anchor" href="#se-firemap"></a>
 </h2>
 <p>Download burn severity mosaics for one or more years:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Single year</span></span>
 <span><span class="va">zip_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_sefire.html">get_sefire</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">)</span></span>
 <span></span>
@@ -182,12 +183,36 @@
 <hr>
 </div>
 <div class="section level2">
+<h2 id="nifc-wildfire-perimeters">NIFC Wildfire Perimeters<a class="anchor" aria-label="anchor" href="#nifc-wildfire-perimeters"></a>
+</h2>
+<p>Download the NIFC wildfire perimeters dataset from figshare:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Download to current directory</span></span>
+<span><span class="va">zip_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_nifc.html">get_nifc</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Download to a specific directory</span></span>
+<span><span class="va">zip_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_nifc.html">get_nifc</a></span><span class="op">(</span>directory <span class="op">=</span> <span class="st">"data/nifc"</span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="usfs-fire-occurrence-database-fod">USFS Fire Occurrence Database (FOD)<a class="anchor" aria-label="anchor" href="#usfs-fire-occurrence-database-fod"></a>
+</h2>
+<p>Download the FPA-FOD GeoPackage ZIP from the Forest Service Research Data Archive:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Download to current directory</span></span>
+<span><span class="va">zip_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_fod.html">get_fod</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Download to a specific directory</span></span>
+<span><span class="va">zip_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_fod.html">get_fod</a></span><span class="op">(</span>directory <span class="op">=</span> <span class="st">"data/fod"</span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
+<div class="section level2">
 <h2 id="ecoregions">Ecoregions<a class="anchor" aria-label="anchor" href="#ecoregions"></a>
 </h2>
 <div class="section level3">
 <h3 id="north-america-cec-levels-13">North America (CEC Levels 1–3)<a class="anchor" aria-label="anchor" href="#north-america-cec-levels-13"></a>
 </h3>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Level 1 — broadest continental divisions</span></span>
 <span><span class="va">na_l1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_nal1eco.html">get_nal1eco</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -200,7 +225,7 @@
 <div class="section level3">
 <h3 id="us-epa-levels-34-with-optional-state-boundaries">US EPA (Levels 3–4, with optional state boundaries)<a class="anchor" aria-label="anchor" href="#us-epa-levels-34-with-optional-state-boundaries"></a>
 </h3>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Level 3 — without state boundaries (default)</span></span>
 <span><span class="va">us_l3</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_usl3eco.html">get_usl3eco</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -276,7 +301,7 @@
 </tbody>
 </table>
 <p>Download data to disk first with <code><a href="reference/get_mtbs.html">get_mtbs()</a></code>:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mtbs_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_mtbs.html">get_mtbs</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
