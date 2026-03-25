@@ -13,9 +13,9 @@
 
   if (!fs::file_exists(zip_file)) {
     if (verbose) cli::cli_inform("Downloading {zip_name} \u2026")
-    old_timeout <- options(timeout = 3600)
-    on.exit(options(old_timeout), add = TRUE)
-    utils::download.file(url, zip_file, mode = "wb", quiet = !verbose)
+    curl::curl_download(url, destfile = zip_file,
+                        handle = curl::handle_reset(.dl_handle),
+                        quiet  = FALSE)
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
   } else if (verbose) {
     cli::cli_inform("Using cached file: {.path {zip_file}}")

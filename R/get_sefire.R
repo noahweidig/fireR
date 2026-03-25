@@ -70,21 +70,18 @@
 #' zip_path <- get_sefire(dataset = "Burned Area Rasters", directory = "data/sefire")
 #' }
 get_sefire <- function(
-    dataset   = "Burn Severity",
+    dataset   = c("Burn Severity", "Fire History", "Burned Area Polygons", "Burned Area Rasters"),
     years     = NULL,
     directory = getwd(),
     overwrite = FALSE,
     timeout   = 3600,
     verbose   = TRUE
 ) {
-  dataset <- match.arg(
-    dataset,
-    c("Burn Severity", "Fire History", "Burned Area Polygons", "Burned Area Rasters")
-  )
+  dataset <- rlang::arg_match(dataset)
 
   fs::dir_create(directory, recurse = TRUE)
 
-  ## ── Burn Severity (year-based, USGS) ──────────────────────────────────────
+  ## ── Burn Severity (year-based, USGS, parallel downloads) ─────────────────
   if (dataset == "Burn Severity") {
     if (is.null(years)) {
       stop('`years` must be provided when dataset = "Burn Severity"')
@@ -98,30 +95,39 @@ get_sefire <- function(
     }
     years <- sort(unique(years))
 
-    old_timeout <- options(timeout = timeout)
-    on.exit(options(old_timeout), add = TRUE)
+    urls      <- paste0(
+      "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/SeFiremap/cbi_mosaic_",
+      years, ".zip"
+    )
+    zip_names <- paste0("cbi_mosaic_", years, ".zip")
+    zip_files <- fs::path(directory, zip_names)
 
-    zip_files <- character(length(years))
-    for (i in seq_along(years)) {
-      yr       <- years[i]
-      url      <- paste0(
-        "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/SeFiremap/cbi_mosaic_",
-        yr, ".zip"
-      )
-      zip_name <- paste0("cbi_mosaic_", yr, ".zip")
-      zip_file <- fs::path(directory, zip_name)
+    # Handle overwrite: delete any existing files that should be re-downloaded
+    if (overwrite) {
+      existing <- fs::file_exists(zip_files)
+      if (any(existing)) fs::file_delete(zip_files[existing])
+    }
 
-      if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
+    # Identify which files still need to be downloaded
+    to_download <- !fs::file_exists(zip_files)
 
-      if (!fs::file_exists(zip_file)) {
-        if (verbose) cli::cli_inform("Downloading SE FireMap Burn Severity mosaic for {yr} \u2026")
-        utils::download.file(url, zip_file, mode = "wb", quiet = !verbose)
-        if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
-      } else if (verbose) {
-        cli::cli_inform("SE FireMap ZIP already exists: {.path {zip_file}}")
+    if (any(to_download)) {
+      n <- sum(to_download)
+      if (verbose) {
+        cli::cli_inform(
+          "Downloading {n} SE FireMap Burn Severity mosaic{?s} \u2026"
+        )
       }
-
-      zip_files[i] <- zip_file
+      curl::multi_download(
+        urls[to_download],
+        zip_files[to_download],
+        progress  = FALSE,
+        useragent = .ua_string,
+        timeout   = as.integer(timeout)
+      )
+      if (verbose) cli::cli_inform("Download{?s} complete.")
+    } else if (verbose) {
+      cli::cli_inform("All requested SE FireMap Burn Severity ZIPs already exist.")
     }
 
     return(invisible(zip_files))

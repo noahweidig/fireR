@@ -1,12 +1,3 @@
-.dl_handle <- curl::new_handle(
-  followlocation = TRUE,
-  timeout        = 3600L,
-  useragent      = paste0(
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) ",
-    "AppleWebKit/537.36 (KHTML, like Gecko) ",
-    "Chrome/124.0.0.0 Safari/537.36")
-)
-
 #' Download and unzip NIFC wildfire data
 #'
 #' Downloads the NIFC (National Interagency Fire Center) wildfire perimeters
@@ -40,19 +31,23 @@ get_nifc <- function(
 
   if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
 
+  did_download <- FALSE
   if (!fs::file_exists(zip_file)) {
     if (verbose) cli::cli_inform("Downloading NIFC wildfire perimeters \u2026")
     curl::curl_download(url, destfile = zip_file,
                         handle = curl::handle_reset(.dl_handle),
                         quiet  = FALSE)
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
+    did_download <- TRUE
   } else if (verbose) {
     cli::cli_inform("NIFC ZIP already exists: {.path {zip_file}}")
   }
 
-  if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} \u2026")
-  utils::unzip(zip_file, exdir = directory)
-  if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
+  if (did_download) {
+    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} \u2026")
+    utils::unzip(zip_file, exdir = directory)
+    if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
+  }
 
   invisible(zip_file)
 }
@@ -92,26 +87,28 @@ get_fod <- function(
 
   if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
 
+  did_download <- FALSE
   if (!fs::file_exists(zip_file)) {
     if (verbose) cli::cli_inform("Downloading USFS Fire Occurrence Database (FOD) \u2026")
     httr2::request(url) |>
       httr2::req_headers(
-        "User-Agent" = paste0("Mozilla/5.0 (Windows NT 10.0; Win64; x64) ",
-                              "AppleWebKit/537.36 (KHTML, like Gecko) ",
-                              "Chrome/124.0.0.0 Safari/537.36"),
+        "User-Agent" = .ua_string,
         "Accept"     = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Referer"    = "https://www.fs.usda.gov/rds/archive/catalog/RDS-2013-0009.6"
       ) |>
       httr2::req_timeout(3600) |>
       httr2::req_perform(path = zip_file)
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
+    did_download <- TRUE
   } else if (verbose) {
     cli::cli_inform("FOD ZIP already exists: {.path {zip_file}}")
   }
 
-  if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} \u2026")
-  utils::unzip(zip_file, exdir = directory)
-  if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
+  if (did_download) {
+    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} \u2026")
+    utils::unzip(zip_file, exdir = directory)
+    if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
+  }
 
   invisible(zip_file)
 }
