@@ -7,3 +7,4 @@
 * `get_sefire()`: Download Southeast FireMap Annual Burn Severity Mosaic ZIP archives for one or more years (2000–2022).
 * `get_nal1eco()`, `get_nal2eco()`, `get_nal3eco()`: Load CEC North America ecoregion boundaries at Levels 1–3 as `sf` or `terra::SpatVector` objects.
 * `get_usl3eco()`, `get_usl4eco()`: Load US EPA ecoregion boundaries at Levels 3–4 (with optional state boundaries) as `sf` or `terra::SpatVector` objects.
+* `get_wui()`: Download the USFS Wildland-Urban Interface (WUI) dataset ZIP (~4.65 GB) from the USFS public Box archive.  Issues a warning that the download is large and slow, and recommends running in a background session via `callr::r_bg()`.

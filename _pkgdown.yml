@@ -53,6 +53,16 @@ reference:
       - get_nifc
       - get_fod
 
+  - title: "USFS Wildland-Urban Interface (WUI)"
+    desc: >
+      Download the USFS Wildland-Urban Interface (WUI) dataset (~4.65 GB) from
+      the USFS public Box archive.  This dataset delineates areas where
+      structures and human development meet or intermingle with undeveloped
+      wildland vegetation.  Warning: the download is large and slow; run in a
+      background session.
+    contents:
+      - get_wui
+
   - title: "SE FireMap"
     desc: >
       Download Southeast FireMap Annual Burn Severity Mosaic ZIP archives for
