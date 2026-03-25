@@ -38,21 +38,11 @@
 #' # Download to a specific directory
 #' zip_path <- get_wui(directory = "data/wui")
 #' }
-#'
-#' @importFrom cli cli_warn cli_inform
-#' @importFrom curl curl_download handle_reset
-#' @importFrom fs dir_create file_exists file_delete path
 get_wui <- function(
     directory = getwd(),
     overwrite = FALSE,
     verbose   = TRUE
 ) {
-  cli::cli_warn(c(
-    "!" = "The USFS WUI ZIP is approximately {.strong 4.65 GB} and will be slow to download.",
-    "i" = "Consider running {.fn get_wui} in a background session to keep R responsive:",
-    " " = "{.code bg <- callr::r_bg(function() fireR::get_wui(directory = \"{directory}\"))}"
-  ))
-
   url      <- "https://usfs-public.box.com/shared/static/bjupat9dkwln7yanslfls0zb4n949qv2.zip"
   zip_name <- "usfs_wui.zip"
   zip_file <- fs::path(directory, zip_name)
@@ -61,19 +51,28 @@ get_wui <- function(
 
   if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
 
+  did_download <- FALSE
   if (!fs::file_exists(zip_file)) {
+    cli::cli_warn(c(
+      "!" = "The USFS WUI ZIP is approximately {.strong 4.65 GB} and will be slow to download.",
+      "i" = "Consider running {.fn get_wui} in a background session to keep R responsive:",
+      " " = "{.code bg <- callr::r_bg(function() fireR::get_wui(directory = \"{directory}\"))}"
+    ))
     if (verbose) cli::cli_inform("Downloading USFS Wildland-Urban Interface (WUI) data \u2026")
     curl::curl_download(url, destfile = zip_file,
                         handle = curl::handle_reset(.dl_handle),
                         quiet  = FALSE)
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
+    did_download <- TRUE
   } else if (verbose) {
     cli::cli_inform("WUI ZIP already exists: {.path {zip_file}}")
   }
 
-  if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} \u2026")
-  utils::unzip(zip_file, exdir = directory)
-  if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
+  if (did_download) {
+    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} \u2026")
+    utils::unzip(zip_file, exdir = directory)
+    if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
+  }
 
   invisible(zip_file)
 }
