@@ -1,15 +1,18 @@
-# Download Southeast FireMap Annual Burn Severity Mosaics
+# Download Southeast FireMap Datasets
 
-Downloads one or more Southeast FireMap (SE FireMap) Annual Burn
-Severity Mosaic ZIP archives from the USGS to a local directory. If a
-ZIP already exists and `overwrite = FALSE`, no network call is made for
-that year.
+Downloads Southeast FireMap (SE FireMap) data products from the USGS and
+the SE FireMap S3 archive to a local directory. Four `dataset` options
+are available: annual Burn Severity mosaics (one ZIP per year), a
+single-file Fire History map, Burned Area Polygons, or Burned Area
+Rasters. If a ZIP already exists and `overwrite = FALSE`, no network
+call is made.
 
 ## Usage
 
 ``` r
 get_sefire(
-  years,
+  dataset = "Burn Severity",
+  years = NULL,
   directory = getwd(),
   overwrite = FALSE,
   timeout = 3600,
@@ -19,13 +22,23 @@ get_sefire(
 
 ## Arguments
 
+- dataset:
+
+  `character(1)` the SE FireMap product to download. One of
+  `"Burn Severity"` (default), `"Fire History"`,
+  `"Burned Area Polygons"`, or `"Burned Area Rasters"`.
+  `"Burn Severity"` downloads one ZIP per year from USGS and requires
+  the `years` argument. The remaining three products cover 1994–2024 as
+  a single ZIP each and do not use `years`.
+
 - years:
 
-  `integer` vector of years to download. Accepts a single year (`2020`),
-  a contiguous range created with `:` notation (`2010:2015`), or a
-  vector of specific years (`c(2000, 2010, 2020)`). All values must be
-  between `2000` and `2022` (inclusive). Duplicate years are silently
-  ignored.
+  `integer` vector of years to download. Used only when
+  `dataset = "Burn Severity"`. Accepts a single year (`2020`), a
+  contiguous range created with `:` notation (`2010:2015`), or a vector
+  of specific years (`c(2000, 2010, 2020)`). All values must be between
+  `2000` and `2022` (inclusive). Duplicate years are silently ignored.
+  Ignored for all other datasets.
 
 - directory:
 
@@ -47,8 +60,10 @@ get_sefire(
 
 ## Value
 
-`character` vector of paths to the downloaded ZIP files (returned
-invisibly). The length equals the number of unique years requested.
+For `dataset = "Burn Severity"`: a `character` vector of paths to the
+downloaded ZIP files (returned invisibly), one element per unique year
+requested. For all other datasets: a `character(1)` path to the
+downloaded ZIP file (returned invisibly).
 
 ## Details
 
@@ -61,23 +76,34 @@ second-order fire effects, climate norms, and fire seasonality, then
 applies the trained model to the extent of burned area identified by the
 Landsat Burned Area Product. The result is an annual burn severity
 mosaic covering 78 ARD Landsat tiles across the southeastern United
-States for years 2000–2022. These mosaics improve characterisation of
-burn severity—including small and prescribed fires that are
-under-represented in national datasets—and support estimation of
-fire-related emissions, fuel loads, aboveground carbon storage, and land
-management activities.
+States for years 2000–2022.
+
+The SE FireMap Fall 2024 release additionally provides a Fire History
+Map (1994–2024), Burned Area Polygons (1994–2024), and Burned Area
+Raster grids (1994–2024) as single-file geodatabase ZIPs. Year selection
+is not applicable to these three products; the `years` argument is
+silently ignored when they are requested.
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
-# Single year
-zip_path <- get_sefire(2010)
+# Burn Severity -- single year
+zip_path <- get_sefire(years = 2010)
 
-# Contiguous range (2015 through 2020)
-zip_paths <- get_sefire(2015:2020, directory = "data/sefire")
+# Burn Severity -- contiguous range (2015 through 2020)
+zip_paths <- get_sefire(years = 2015:2020, directory = "data/sefire")
 
-# Specific years only
-zip_paths <- get_sefire(c(2000, 2010, 2020))
+# Burn Severity -- specific years only
+zip_paths <- get_sefire(years = c(2000, 2010, 2020))
+
+# Fire History (1994-2024)
+zip_path <- get_sefire(dataset = "Fire History", directory = "data/sefire")
+
+# Burned Area Polygons (1994-2024)
+zip_path <- get_sefire(dataset = "Burned Area Polygons", directory = "data/sefire")
+
+# Burned Area Rasters (1994-2024)
+zip_path <- get_sefire(dataset = "Burned Area Rasters", directory = "data/sefire")
 } # }
 ```

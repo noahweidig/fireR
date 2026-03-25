@@ -28,7 +28,7 @@ one or more years (2000-2022), covering 78 ARD Landsat tiles across the
 southeastern United States.
 
 - [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
-  : Download Southeast FireMap Annual Burn Severity Mosaics
+  : Download Southeast FireMap Datasets
 
 ## Ecoregion Boundaries
 
