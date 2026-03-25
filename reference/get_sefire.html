@@ -56,7 +56,8 @@ already exists and <code>overwrite = FALSE</code>, no network call is made.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_sefire</span><span class="op">(</span></span>
-<span>  dataset <span class="op">=</span> <span class="st">"Burn Severity"</span>,</span>
+<span>  dataset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Burn Severity"</span>, <span class="st">"Fire History"</span>, <span class="st">"Burned Area Polygons"</span>,</span>
+<span>    <span class="st">"Burned Area Rasters"</span><span class="op">)</span>,</span>
 <span>  years <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  directory <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
