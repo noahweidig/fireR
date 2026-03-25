@@ -26,3 +26,9 @@
   boundaries) as `sf` or
   [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
   objects.
+- [`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md):
+  Download the USFS Wildland-Urban Interface (WUI) dataset ZIP (~4.65
+  GB) from the USFS public Box archive. Issues a warning that the
+  download is large and slow, and recommends running in a background
+  session via
+  [`callr::r_bg()`](https://callr.r-lib.org/reference/r_bg.html).

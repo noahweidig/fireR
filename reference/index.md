@@ -21,6 +21,17 @@ Fire Occurrence Database (FOD) datasets from figshare.
 - [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md)
   : Download and unzip USFS Fire Occurrence Database (FOD)
 
+## USFS Wildland-Urban Interface (WUI)
+
+Download the USFS Wildland-Urban Interface (WUI) dataset (~4.65 GB) from
+the USFS public Box archive. This dataset delineates areas where
+structures and human development meet or intermingle with undeveloped
+wildland vegetation. Warning: the download is large and slow; run in a
+background session.
+
+- [`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md)
+  : Download and unzip USFS Wildland-Urban Interface (WUI) data
+
 ## SE FireMap
 
 Download Southeast FireMap Annual Burn Severity Mosaic ZIP archives for

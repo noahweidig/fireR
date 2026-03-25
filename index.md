@@ -1,8 +1,9 @@
 # fireR
 
 > Fast access to MTBS (Monitoring Trends in Burn Severity) fire
-> perimeter data, SE FireMap burn severity mosaics, and EPA/CEC
-> ecoregion boundaries straight from the source.
+> perimeter data, SE FireMap burn severity mosaics, USFS Wildland-Urban
+> Interface (WUI) data, and EPA/CEC ecoregion boundaries straight from
+> the source.
 
 ## Overview
 
@@ -35,6 +36,9 @@ ecoregion boundaries:
 - [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md)
   — download the USFS Fire Occurrence Database (FPA-FOD) GeoPackage ZIP
   from the Forest Service Research Data Archive
+- [`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md)
+  — download the USFS Wildland-Urban Interface (WUI) dataset from the
+  USFS public Box archive (**4.65 GB** — slow, run in the background)
 
 Key features:
 
@@ -151,6 +155,28 @@ zip_path <- get_fod()
 
 # Download to a specific directory
 zip_path <- get_fod(directory = "data/fod")
+```
+
+------------------------------------------------------------------------
+
+## USFS Wildland-Urban Interface (WUI)
+
+> **Warning:** The WUI ZIP is approximately **4.65 GB** and will be slow
+> to download. It is strongly recommended to run
+> [`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md)
+> in a background R session so your interactive session remains
+> responsive.
+
+``` r
+# Recommended: run in a background session
+bg <- callr::r_bg(function() fireR::get_wui(directory = "data/wui"))
+bg$wait()
+
+# Or download to the current directory (blocks the session)
+zip_path <- get_wui()
+
+# Download to a specific directory
+zip_path <- get_wui(directory = "data/wui")
 ```
 
 ------------------------------------------------------------------------
