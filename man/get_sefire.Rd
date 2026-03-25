@@ -2,10 +2,11 @@
 % Please edit documentation in R/get_sefire.R
 \name{get_sefire}
 \alias{get_sefire}
-\title{Download Southeast FireMap Annual Burn Severity Mosaics}
+\title{Download Southeast FireMap Datasets}
 \usage{
 get_sefire(
-  years,
+  dataset = "Burn Severity",
+  years = NULL,
   directory = getwd(),
   overwrite = FALSE,
   timeout = 3600,
@@ -13,11 +14,19 @@ get_sefire(
 )
 }
 \arguments{
-\item{years}{\code{integer} vector of years to download.  Accepts a single
-year (\code{2020}), a contiguous range created with \code{:} notation
-(\code{2010:2015}), or a vector of specific years
-(\code{c(2000, 2010, 2020)}).  All values must be between \code{2000}
-and \code{2022} (inclusive).  Duplicate years are silently ignored.}
+\item{dataset}{\code{character(1)} the SE FireMap product to download.
+One of \code{"Burn Severity"} (default), \code{"Fire History"},
+\code{"Burned Area Polygons"}, or \code{"Burned Area Rasters"}.
+\code{"Burn Severity"} downloads one ZIP per year from USGS and requires
+the \code{years} argument.  The remaining three products cover 1994--2024
+as a single ZIP each and do not use \code{years}.}
+
+\item{years}{\code{integer} vector of years to download.  Used only when
+\code{dataset = "Burn Severity"}.  Accepts a single year (\code{2020}),
+a contiguous range created with \code{:} notation (\code{2010:2015}), or
+a vector of specific years (\code{c(2000, 2010, 2020)}).  All values must
+be between \code{2000} and \code{2022} (inclusive).  Duplicate years are
+silently ignored.  Ignored for all other datasets.}
 
 \item{directory}{\code{character(1)} directory where the ZIP file(s) are
 saved.  Defaults to the current working directory.}
@@ -31,39 +40,53 @@ Defaults to \code{3600} (one hour).}
 \item{verbose}{\code{logical(1)} print progress messages.}
 }
 \value{
-\code{character} vector of paths to the downloaded ZIP files
-(returned invisibly).  The length equals the number of unique years
-requested.
+For \code{dataset = "Burn Severity"}: a \code{character} vector of
+paths to the downloaded ZIP files (returned invisibly), one element per
+unique year requested.  For all other datasets: a \code{character(1)} path
+to the downloaded ZIP file (returned invisibly).
 }
 \description{
-Downloads one or more Southeast FireMap (SE FireMap) Annual Burn Severity
-Mosaic ZIP archives from the USGS to a local directory. If a ZIP already
-exists and \code{overwrite = FALSE}, no network call is made for that year.
+Downloads Southeast FireMap (SE FireMap) data products from the USGS and the
+SE FireMap S3 archive to a local directory.  Four \code{dataset} options are
+available: annual Burn Severity mosaics (one ZIP per year), a single-file
+Fire History map, Burned Area Polygons, or Burned Area Rasters.  If a ZIP
+already exists and \code{overwrite = FALSE}, no network call is made.
 }
 \details{
 The southeastern United States experiences frequent wild and prescribed fire
-activity. The USGS developed a gradient-boosted decision tree model trained on
-over 5,000 Composite Burn Inventory (CBI) field plots to predict post-fire
-burn severity as a CBI value (0--3) across the region. The model ingests ARD
-Landsat predictors capturing first- and second-order fire effects, climate
-norms, and fire seasonality, then applies the trained model to the extent of
-burned area identified by the Landsat Burned Area Product. The result is an
-annual burn severity mosaic covering 78 ARD Landsat tiles across the
-southeastern United States for years 2000--2022. These mosaics improve
-characterisation of burn severity---including small and prescribed fires that
-are under-represented in national datasets---and support estimation of
-fire-related emissions, fuel loads, aboveground carbon storage, and land
-management activities.
+activity.  The USGS developed a gradient-boosted decision tree model trained
+on over 5,000 Composite Burn Inventory (CBI) field plots to predict
+post-fire burn severity as a CBI value (0--3) across the region.  The model
+ingests ARD Landsat predictors capturing first- and second-order fire
+effects, climate norms, and fire seasonality, then applies the trained model
+to the extent of burned area identified by the Landsat Burned Area Product.
+The result is an annual burn severity mosaic covering 78 ARD Landsat tiles
+across the southeastern United States for years 2000--2022.
+
+The SE FireMap Fall 2024 release additionally provides a Fire History Map
+(1994--2024), Burned Area Polygons (1994--2024), and Burned Area Raster
+grids (1994--2024) as single-file geodatabase ZIPs.  Year selection is not
+applicable to these three products; the \code{years} argument is silently
+ignored when they are requested.
 }
 \examples{
 \dontrun{
-# Single year
-zip_path <- get_sefire(2010)
+# Burn Severity -- single year
+zip_path <- get_sefire(years = 2010)
 
-# Contiguous range (2015 through 2020)
-zip_paths <- get_sefire(2015:2020, directory = "data/sefire")
+# Burn Severity -- contiguous range (2015 through 2020)
+zip_paths <- get_sefire(years = 2015:2020, directory = "data/sefire")
 
-# Specific years only
-zip_paths <- get_sefire(c(2000, 2010, 2020))
+# Burn Severity -- specific years only
+zip_paths <- get_sefire(years = c(2000, 2010, 2020))
+
+# Fire History (1994-2024)
+zip_path <- get_sefire(dataset = "Fire History", directory = "data/sefire")
+
+# Burned Area Polygons (1994-2024)
+zip_path <- get_sefire(dataset = "Burned Area Polygons", directory = "data/sefire")
+
+# Burned Area Rasters (1994-2024)
+zip_path <- get_sefire(dataset = "Burned Area Rasters", directory = "data/sefire")
 }
 }

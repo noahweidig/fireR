@@ -1,8 +1,10 @@
-#' Download Southeast FireMap Annual Burn Severity Mosaics
+#' Download Southeast FireMap Datasets
 #'
-#' Downloads one or more Southeast FireMap (SE FireMap) Annual Burn Severity
-#' Mosaic ZIP archives from the USGS to a local directory.  If a ZIP already
-#' exists and \code{overwrite = FALSE}, no network call is made for that year.
+#' Downloads Southeast FireMap (SE FireMap) data products from the USGS and the
+#' SE FireMap S3 archive to a local directory.  Four \code{dataset} options are
+#' available: annual Burn Severity mosaics (one ZIP per year), a single-file
+#' Fire History map, Burned Area Polygons, or Burned Area Rasters.  If a ZIP
+#' already exists and \code{overwrite = FALSE}, no network call is made.
 #'
 #' @section About SE FireMap:
 #' The southeastern United States experiences frequent wild and prescribed fire
@@ -13,17 +15,26 @@
 #' effects, climate norms, and fire seasonality, then applies the trained model
 #' to the extent of burned area identified by the Landsat Burned Area Product.
 #' The result is an annual burn severity mosaic covering 78 ARD Landsat tiles
-#' across the southeastern United States for years 2000–2022.  These mosaics
-#' improve characterisation of burn severity—including small and prescribed
-#' fires that are under-represented in national datasets—and support estimation
-#' of fire-related emissions, fuel loads, aboveground carbon storage, and land
-#' management activities.
+#' across the southeastern United States for years 2000–2022.
 #'
-#' @param years \code{integer} vector of years to download.  Accepts a single
-#'   year (\code{2020}), a contiguous range created with \code{:} notation
-#'   (\code{2010:2015}), or a vector of specific years
-#'   (\code{c(2000, 2010, 2020)}).  All values must be between \code{2000}
-#'   and \code{2022} (inclusive).  Duplicate years are silently ignored.
+#' The SE FireMap Fall 2024 release additionally provides a Fire History Map
+#' (1994–2024), Burned Area Polygons (1994–2024), and Burned Area Raster grids
+#' (1994–2024) as single-file geodatabase ZIPs.  Year selection is not
+#' applicable to these three products; the \code{years} argument is silently
+#' ignored when they are requested.
+#'
+#' @param dataset \code{character(1)} the SE FireMap product to download.
+#'   One of \code{"Burn Severity"} (default), \code{"Fire History"},
+#'   \code{"Burned Area Polygons"}, or \code{"Burned Area Rasters"}.
+#'   \code{"Burn Severity"} downloads one ZIP per year from USGS and requires
+#'   the \code{years} argument.  The remaining three products cover 1994–2024
+#'   as a single ZIP each and do not use \code{years}.
+#' @param years \code{integer} vector of years to download.  Used only when
+#'   \code{dataset = "Burn Severity"}.  Accepts a single year (\code{2020}),
+#'   a contiguous range created with \code{:} notation (\code{2010:2015}), or
+#'   a vector of specific years (\code{c(2000, 2010, 2020)}).  All values must
+#'   be between \code{2000} and \code{2022} (inclusive).  Duplicate years are
+#'   silently ignored.  Ignored for all other datasets.
 #' @param directory \code{character(1)} directory where the ZIP file(s) are
 #'   saved.  Defaults to the current working directory.
 #' @param overwrite \code{logical(1)} re-download when \code{TRUE};
@@ -32,64 +43,129 @@
 #'   Defaults to \code{3600} (one hour).
 #' @param verbose \code{logical(1)} print progress messages.
 #'
-#' @return \code{character} vector of paths to the downloaded ZIP files
-#'   (returned invisibly).  The length equals the number of unique years
-#'   requested.
+#' @return For \code{dataset = "Burn Severity"}: a \code{character} vector of
+#'   paths to the downloaded ZIP files (returned invisibly), one element per
+#'   unique year requested.  For all other datasets: a \code{character(1)} path
+#'   to the downloaded ZIP file (returned invisibly).
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' # Single year
-#' zip_path <- get_sefire(2010)
+#' # Burn Severity -- single year
+#' zip_path <- get_sefire(years = 2010)
 #'
-#' # Contiguous range (2015 through 2020)
-#' zip_paths <- get_sefire(2015:2020, directory = "data/sefire")
+#' # Burn Severity -- contiguous range (2015 through 2020)
+#' zip_paths <- get_sefire(years = 2015:2020, directory = "data/sefire")
 #'
-#' # Specific years only
-#' zip_paths <- get_sefire(c(2000, 2010, 2020))
+#' # Burn Severity -- specific years only
+#' zip_paths <- get_sefire(years = c(2000, 2010, 2020))
+#'
+#' # Fire History (1994-2024)
+#' zip_path <- get_sefire(dataset = "Fire History", directory = "data/sefire")
+#'
+#' # Burned Area Polygons (1994-2024)
+#' zip_path <- get_sefire(dataset = "Burned Area Polygons", directory = "data/sefire")
+#'
+#' # Burned Area Rasters (1994-2024)
+#' zip_path <- get_sefire(dataset = "Burned Area Rasters", directory = "data/sefire")
 #' }
 get_sefire <- function(
-    years,
+    dataset   = "Burn Severity",
+    years     = NULL,
     directory = getwd(),
     overwrite = FALSE,
     timeout   = 3600,
     verbose   = TRUE
 ) {
-  years <- as.integer(years)
-  if (length(years) == 0L || any(is.na(years))) {
-    stop("`years` must be a non-empty integer vector with no NA values")
-  }
-  if (any(years < 2000L) || any(years > 2022L)) {
-    stop("`years` must be between 2000 and 2022 (inclusive)")
-  }
-  years <- sort(unique(years))
+  dataset <- match.arg(
+    dataset,
+    c("Burn Severity", "Fire History", "Burned Area Polygons", "Burned Area Rasters")
+  )
 
   fs::dir_create(directory, recurse = TRUE)
-  old_timeout <- options(timeout = timeout)
-  on.exit(options(old_timeout), add = TRUE)
 
-  zip_files <- character(length(years))
-  for (i in seq_along(years)) {
-    yr       <- years[i]
-    url      <- paste0(
-      "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/SeFiremap/cbi_mosaic_",
-      yr, ".zip"
-    )
-    zip_name <- paste0("cbi_mosaic_", yr, ".zip")
-    zip_file <- fs::path(directory, zip_name)
+  ## ── Burn Severity (year-based, USGS) ──────────────────────────────────────
+  if (dataset == "Burn Severity") {
+    if (is.null(years)) {
+      stop('`years` must be provided when dataset = "Burn Severity"')
+    }
+    years <- as.integer(years)
+    if (length(years) == 0L || any(is.na(years))) {
+      stop("`years` must be a non-empty integer vector with no NA values")
+    }
+    if (any(years < 2000L) || any(years > 2022L)) {
+      stop("`years` must be between 2000 and 2022 (inclusive)")
+    }
+    years <- sort(unique(years))
 
-    if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
+    old_timeout <- options(timeout = timeout)
+    on.exit(options(old_timeout), add = TRUE)
 
-    if (!fs::file_exists(zip_file)) {
-      if (verbose) cli::cli_inform("Downloading SE FireMap CBI mosaic for {yr} \u2026")
-      utils::download.file(url, zip_file, mode = "wb", quiet = !verbose)
-      if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
-    } else if (verbose) {
-      cli::cli_inform("SE FireMap ZIP already exists: {.path {zip_file}}")
+    zip_files <- character(length(years))
+    for (i in seq_along(years)) {
+      yr       <- years[i]
+      url      <- paste0(
+        "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/SeFiremap/cbi_mosaic_",
+        yr, ".zip"
+      )
+      zip_name <- paste0("cbi_mosaic_", yr, ".zip")
+      zip_file <- fs::path(directory, zip_name)
+
+      if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
+
+      if (!fs::file_exists(zip_file)) {
+        if (verbose) cli::cli_inform("Downloading SE FireMap Burn Severity mosaic for {yr} \u2026")
+        utils::download.file(url, zip_file, mode = "wb", quiet = !verbose)
+        if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
+      } else if (verbose) {
+        cli::cli_inform("SE FireMap ZIP already exists: {.path {zip_file}}")
+      }
+
+      zip_files[i] <- zip_file
     }
 
-    zip_files[i] <- zip_file
+    return(invisible(zip_files))
   }
 
-  invisible(zip_files)
+  ## ── Single-file datasets (SE FireMap S3, curl) ────────────────────────────
+  if (!is.null(years) && verbose) {
+    cli::cli_warn('`years` is ignored when dataset = "{dataset}"')
+  }
+
+  ds_info <- switch(
+    dataset,
+    "Fire History" = list(
+      url      = "https://se-firemap-data-requests.s3.us-east-1.amazonaws.com/SEFM_1994_2024_FallRelease/SEFM_L_FHM_1994_2024.gdb.zip",
+      zip_name = "SEFM_L_FHM_1994_2024.gdb.zip",
+      label    = "SE FireMap Fire History (1994\u20132024)"
+    ),
+    "Burned Area Polygons" = list(
+      url      = "https://se-firemap-data-requests.s3.us-east-1.amazonaws.com/SEFM_1994_2024_FallRelease/SEFM_L_ABA_1994_2024_polys.gdb.zip",
+      zip_name = "SEFM_L_ABA_1994_2024_polys.gdb.zip",
+      label    = "SE FireMap Burned Area Polygons (1994\u20132024)"
+    ),
+    "Burned Area Rasters" = list(
+      url      = "https://se-firemap-data-requests.s3.us-east-1.amazonaws.com/SEFM_1994_2024_FallRelease/SEFM_L_ABA_1994_2024_rasters.gdb.zip",
+      zip_name = "SEFM_L_ABA_1994_2024_rasters.gdb.zip",
+      label    = "SE FireMap Burned Area Rasters (1994\u20132024)"
+    )
+  )
+
+  zip_file <- fs::path(directory, ds_info$zip_name)
+
+  if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
+
+  if (!fs::file_exists(zip_file)) {
+    if (verbose) cli::cli_inform("Downloading {ds_info$label} \u2026")
+    handle <- curl::handle_reset(.dl_handle)
+    curl::handle_setopt(handle, timeout = as.integer(timeout))
+    curl::curl_download(ds_info$url, destfile = zip_file,
+                        handle = handle,
+                        quiet  = FALSE)
+    if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
+  } else if (verbose) {
+    cli::cli_inform("SE FireMap ZIP already exists: {.path {zip_file}}")
+  }
+
+  invisible(zip_file)
 }
