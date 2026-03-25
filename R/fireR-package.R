@@ -28,7 +28,7 @@
 ## usethis namespace: start
 #' @importFrom fs dir_create file_exists file_delete path
 #' @importFrom cli cli_inform cli_warn
-#' @importFrom curl curl_download handle_reset handle_setopt multi_download new_handle
+#' @importFrom curl curl_download multi_download new_handle
 #' @importFrom rlang arg_match
 #' @importFrom sf st_as_sf
 #' @importFrom terra vect values
@@ -41,10 +41,4 @@ NULL
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) ",
   "AppleWebKit/537.36 (KHTML, like Gecko) ",
   "Chrome/124.0.0.0 Safari/537.36"
-)
-
-.dl_handle <- curl::new_handle(
-  followlocation = TRUE,
-  timeout        = 3600L,
-  useragent      = .ua_string
 )

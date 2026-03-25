@@ -5,7 +5,8 @@
 \title{Download Southeast FireMap Datasets}
 \usage{
 get_sefire(
-  dataset = "Burn Severity",
+  dataset = c("Burn Severity", "Fire History", "Burned Area Polygons",
+    "Burned Area Rasters"),
   years = NULL,
   directory = getwd(),
   overwrite = FALSE,

@@ -60,7 +60,7 @@ get_wui <- function(
     ))
     if (verbose) cli::cli_inform("Downloading USFS Wildland-Urban Interface (WUI) data \u2026")
     curl::curl_download(url, destfile = zip_file,
-                        handle = curl::handle_reset(.dl_handle),
+                        handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string),
                         quiet  = FALSE)
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
     did_download <- TRUE

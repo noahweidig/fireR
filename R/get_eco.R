@@ -14,7 +14,7 @@
   if (!fs::file_exists(zip_file)) {
     if (verbose) cli::cli_inform("Downloading {zip_name} \u2026")
     curl::curl_download(url, destfile = zip_file,
-                        handle = curl::handle_reset(.dl_handle),
+                        handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string),
                         quiet  = FALSE)
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
   } else if (verbose) {
