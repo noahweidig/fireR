@@ -40,6 +40,29 @@ skip_if_nifc_unreachable <- function(
   }
 }
 
+
+# Skip helper for downloaded NIFC archives that are reachable but unusable.
+skip_if_invalid_nifc_archive <- function(
+    directory,
+    zip_name = "nifc_perimeters.zip"
+) {
+  zip_file <- file.path(directory, zip_name)
+  zip_contents <- tryCatch(
+    suppressWarnings(utils::unzip(zip_file, list = TRUE)),
+    error = function(e) NULL
+  )
+
+  has_data_file <- !is.null(zip_contents) && any(grepl(
+    "\\.gpkg$|\\.shp$|\\.gdb(/|$)",
+    zip_contents$Name,
+    ignore.case = TRUE
+  ))
+
+  if (!has_data_file) {
+    skip("NIFC figshare download does not contain a readable spatial data file.")
+  }
+}
+
 # Skip helper for the USFS FOD endpoint.
 skip_if_fod_unreachable <- function(
     url = "https://www.fs.usda.gov/rds/archive/products/RDS-2013-0009.6/RDS-2013-0009.6_Data_Format3_GPKG.zip"
