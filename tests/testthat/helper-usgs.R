@@ -19,3 +19,48 @@ skip_if_usgs_unreachable <- function(
     skip("USGS MTBS endpoint is not reachable from this environment.")
   }
 }
+
+# Skip helper for the NIFC figshare endpoint.
+skip_if_nifc_unreachable <- function(
+    url = "https://ndownloader.figshare.com/files/38766504"
+) {
+  reachable <- tryCatch({
+    h <- curl::new_handle(
+      range          = "bytes=0-1023",
+      timeout        = 15L,
+      followlocation = TRUE,
+      ssl_verifypeer = 1L
+    )
+    res <- curl::curl_fetch_memory(url, handle = h)
+    res$status_code %in% c(200L, 206L)
+  }, error = function(e) FALSE)
+
+  if (!reachable) {
+    skip("NIFC figshare endpoint is not reachable from this environment.")
+  }
+}
+
+# Skip helper for the USFS FOD endpoint.
+skip_if_fod_unreachable <- function(
+    url = "https://www.fs.usda.gov/rds/archive/products/RDS-2013-0009.6/RDS-2013-0009.6_Data_Format3_GPKG.zip"
+) {
+  reachable <- tryCatch({
+    h <- curl::new_handle(
+      range          = "bytes=0-1023",
+      timeout        = 15L,
+      followlocation = TRUE,
+      ssl_verifypeer = 1L,
+      useragent      = paste0(
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) ",
+        "AppleWebKit/537.36 (KHTML, like Gecko) ",
+        "Chrome/124.0.0.0 Safari/537.36"
+      )
+    )
+    res <- curl::curl_fetch_memory(url, handle = h)
+    res$status_code %in% c(200L, 206L)
+  }, error = function(e) FALSE)
+
+  if (!reachable) {
+    skip("USFS FOD endpoint is not reachable from this environment.")
+  }
+}

@@ -33,7 +33,7 @@ get_nifc <- function(
 
   did_download <- FALSE
   if (!fs::file_exists(zip_file)) {
-    if (verbose) cli::cli_inform("Downloading NIFC wildfire perimeters \u2026")
+    if (verbose) cli::cli_inform("Downloading NIFC wildfire perimeters …")
     curl::curl_download(url, destfile = zip_file,
                         handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string),
                         quiet  = FALSE)
@@ -44,7 +44,7 @@ get_nifc <- function(
   }
 
   if (did_download) {
-    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} \u2026")
+    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} …")
     utils::unzip(zip_file, exdir = directory)
     if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
   }
@@ -89,7 +89,7 @@ get_fod <- function(
 
   did_download <- FALSE
   if (!fs::file_exists(zip_file)) {
-    if (verbose) cli::cli_inform("Downloading USFS Fire Occurrence Database (FOD) \u2026")
+    if (verbose) cli::cli_inform("Downloading USFS Fire Occurrence Database (FOD) …")
     httr2::request(url) |>
       httr2::req_headers(
         "User-Agent" = .ua_string,
@@ -105,10 +105,303 @@ get_fod <- function(
   }
 
   if (did_download) {
-    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} \u2026")
+    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} …")
     utils::unzip(zip_file, exdir = directory)
     if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
   }
 
   invisible(zip_file)
+}
+
+#' Read NIFC wildfire perimeter data
+#'
+#' Reads NIFC wildfire perimeters from a local NIFC ZIP downloaded with
+#' [get_nifc()] and returns either a spatial object or a plain attribute table.
+#'
+#' `read_nifc()` does not download data. Use [get_nifc()] first to obtain the
+#' perimeters ZIP archive.
+#'
+#' The ZIP is expected to contain either a GeoPackage (\code{.gpkg}) or a
+#' shapefile (\code{.shp}).  Year filtering uses the integer \code{FireYear}
+#' column present in the NIFC historical perimeters data.
+#'
+#' @param years \code{integer} vector of years to keep.  Accepts a single
+#'   year (\code{2020}), a contiguous range created with \code{:} notation
+#'   (\code{2010:2020}), or a vector of specific years
+#'   (\code{c(2000, 2010, 2020)}).  Only fires whose \code{FireYear} appears in
+#'   \code{years} are returned.  \code{NULL} (the default) returns all years
+#'   without filtering.
+#' @param geometry \code{logical(1)} When \code{TRUE} (the default) the result
+#'   is a spatial object (\code{sf} or \code{terra::SpatVector} depending on
+#'   \code{output}).  When \code{FALSE} the attributes are returned as a plain
+#'   \code{data.frame}.
+#' @param output \code{character(1)} The class of the returned spatial object.
+#'   Either \code{"vect"} / \code{"terra"} (default) for a
+#'   \code{terra::SpatVector}, or \code{"sf"} for an \code{sf} object.
+#'   Ignored when \code{geometry = FALSE}.
+#' @param cache \code{logical(1)} or \code{character(1)}.  Controls where
+#'   \code{read_nifc()} looks for the downloaded ZIP file.  When \code{FALSE}
+#'   (the default), the current working directory is used.  When \code{TRUE},
+#'   the platform user cache directory
+#'   (\code{tools::R_user_dir("fireR", "cache")}) is used.  Supply a directory
+#'   path as a string to specify a custom location.
+#' @param verbose \code{logical(1)} print progress messages.
+#'
+#' @return
+#' \itemize{
+#'   \item A \code{terra::SpatVector} when \code{output = "vect"} /
+#'     \code{"terra"} and \code{geometry = TRUE}.
+#'   \item An \code{sf} object when \code{output = "sf"} and
+#'     \code{geometry = TRUE}.
+#'   \item A \code{data.frame} when \code{geometry = FALSE}.
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' zip_path <- get_nifc()
+#' perims <- read_nifc(output = "sf")
+#'
+#' # Single year
+#' perims_2020 <- read_nifc(years = 2020, output = "sf")
+#'
+#' # Contiguous range
+#' perims_recent <- read_nifc(years = 2015:2020, output = "sf")
+#'
+#' # Specific years only
+#' perims_sel <- read_nifc(years = c(2010, 2015, 2020), output = "sf")
+#'
+#' # Attribute table only (no geometry)
+#' tbl <- read_nifc(geometry = FALSE)
+#' }
+#' @export
+read_nifc <- function(
+    years    = NULL,
+    geometry = TRUE,
+    output   = c("vect", "sf", "terra"),
+    cache    = FALSE,
+    verbose  = TRUE
+) {
+  output <- rlang::arg_match(output)
+
+  if (!is.logical(geometry) || length(geometry) != 1L || is.na(geometry)) {
+    stop("`geometry` must be TRUE or FALSE")
+  }
+
+  if (!is.null(years)) {
+    years <- as.integer(years)
+    if (length(years) == 0L || any(is.na(years))) {
+      stop("`years` must be a non-empty integer vector with no NA values")
+    }
+    years <- sort(unique(years))
+  }
+
+  cache_dir <- if (isTRUE(cache)) {
+    tools::R_user_dir("fireR", "cache")
+  } else if (isFALSE(cache)) {
+    getwd()
+  } else {
+    as.character(cache)
+  }
+
+  zip_file <- fs::path(cache_dir, "nifc_perimeters.zip")
+  if (!fs::file_exists(zip_file)) {
+    stop(
+      "No NIFC ZIP file found in: ", cache_dir,
+      "\nDownload it first with: get_nifc(directory = \"", cache_dir, "\")"
+    )
+  }
+
+  # Find the data file inside the ZIP — prefer .gpkg, fall back to .shp
+  zip_contents <- utils::unzip(zip_file, list = TRUE)
+  gpkg_idx <- grep("\\.gpkg$", zip_contents$Name, ignore.case = TRUE)
+  shp_idx  <- grep("\\.shp$",  zip_contents$Name, ignore.case = TRUE)
+
+  is_gpkg <- length(gpkg_idx) > 0L
+  if (is_gpkg) {
+    data_in_zip <- zip_contents$Name[[gpkg_idx[[1L]]]]
+  } else if (length(shp_idx) > 0L) {
+    data_in_zip <- zip_contents$Name[[shp_idx[[1L]]]]
+  } else {
+    stop("No .gpkg or .shp file found in the NIFC ZIP")
+  }
+
+  data_path <- sprintf(
+    "/vsizip/%s/%s",
+    normalizePath(zip_file, winslash = "/"),
+    data_in_zip
+  )
+
+  # Determine layer name — required for the SQL query
+  layer <- if (is_gpkg) {
+    sf::st_layers(data_path)$name[[1L]]
+  } else {
+    tools::file_path_sans_ext(basename(data_in_zip))
+  }
+
+  # FireYear is an integer column in NIFC historical perimeter data
+  sql_query <- if (!is.null(years)) {
+    sprintf(
+      'SELECT * FROM "%s" WHERE "FireYear" IN (%s)',
+      layer,
+      paste(years, collapse = ", ")
+    )
+  } else {
+    NULL
+  }
+
+  if (verbose) cli::cli_inform("Reading NIFC wildfire perimeters …")
+  data_sv <- if (is_gpkg) {
+    if (!is.null(sql_query)) {
+      terra::vect(data_path, layer = layer, query = sql_query)
+    } else {
+      terra::vect(data_path, layer = layer)
+    }
+  } else {
+    if (!is.null(sql_query)) {
+      terra::vect(data_path, query = sql_query)
+    } else {
+      terra::vect(data_path)
+    }
+  }
+
+  if (!geometry) return(as.data.frame(terra::values(data_sv)))
+  if (output == "sf") return(sf::st_as_sf(data_sv))
+  data_sv
+}
+
+#' Read USFS Fire Occurrence Database (FOD) data
+#'
+#' Reads the USFS Fire Occurrence Database (FPA-FOD) from a local ZIP
+#' downloaded with [get_fod()] and returns either a spatial object or a plain
+#' attribute table.
+#'
+#' `read_fod()` does not download data.  Use [get_fod()] first to obtain the
+#' GeoPackage ZIP archive.
+#'
+#' The ZIP contains a GeoPackage with a single \code{Fires} layer covering
+#' 1992--2020.  Year filtering uses the integer \code{FIRE_YEAR} column.
+#'
+#' @param years \code{integer} vector of years to keep.  Accepts a single
+#'   year (\code{2015}), a contiguous range created with \code{:} notation
+#'   (\code{2010:2020}), or a vector of specific years
+#'   (\code{c(2000, 2010, 2020)}).  Only fires whose \code{FIRE_YEAR} appears
+#'   in \code{years} are returned.  \code{NULL} (the default) returns all
+#'   years without filtering.
+#' @param geometry \code{logical(1)} When \code{TRUE} (the default) the result
+#'   is a spatial object (\code{sf} or \code{terra::SpatVector} depending on
+#'   \code{output}).  When \code{FALSE} the attributes are returned as a plain
+#'   \code{data.frame}.
+#' @param output \code{character(1)} The class of the returned spatial object.
+#'   Either \code{"vect"} / \code{"terra"} (default) for a
+#'   \code{terra::SpatVector}, or \code{"sf"} for an \code{sf} object.
+#'   Ignored when \code{geometry = FALSE}.
+#' @param cache \code{logical(1)} or \code{character(1)}.  Controls where
+#'   \code{read_fod()} looks for the downloaded ZIP file.  When \code{FALSE}
+#'   (the default), the current working directory is used.  When \code{TRUE},
+#'   the platform user cache directory
+#'   (\code{tools::R_user_dir("fireR", "cache")}) is used.  Supply a directory
+#'   path as a string to specify a custom location.
+#' @param verbose \code{logical(1)} print progress messages.
+#'
+#' @return
+#' \itemize{
+#'   \item A \code{terra::SpatVector} when \code{output = "vect"} /
+#'     \code{"terra"} and \code{geometry = TRUE}.
+#'   \item An \code{sf} object when \code{output = "sf"} and
+#'     \code{geometry = TRUE}.
+#'   \item A \code{data.frame} when \code{geometry = FALSE}.
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' zip_path <- get_fod()
+#' fires <- read_fod(output = "sf")
+#'
+#' # Single year
+#' fires_2015 <- read_fod(years = 2015, output = "sf")
+#'
+#' # Range of years
+#' fires_recent <- read_fod(years = 2015:2020, output = "sf")
+#'
+#' # Specific years only
+#' fires_sel <- read_fod(years = c(2000, 2010, 2020), output = "sf")
+#'
+#' # Attribute table only (no geometry)
+#' tbl <- read_fod(geometry = FALSE)
+#' }
+#' @export
+read_fod <- function(
+    years    = NULL,
+    geometry = TRUE,
+    output   = c("vect", "sf", "terra"),
+    cache    = FALSE,
+    verbose  = TRUE
+) {
+  output <- rlang::arg_match(output)
+
+  if (!is.logical(geometry) || length(geometry) != 1L || is.na(geometry)) {
+    stop("`geometry` must be TRUE or FALSE")
+  }
+
+  if (!is.null(years)) {
+    years <- as.integer(years)
+    if (length(years) == 0L || any(is.na(years))) {
+      stop("`years` must be a non-empty integer vector with no NA values")
+    }
+    years <- sort(unique(years))
+  }
+
+  cache_dir <- if (isTRUE(cache)) {
+    tools::R_user_dir("fireR", "cache")
+  } else if (isFALSE(cache)) {
+    getwd()
+  } else {
+    as.character(cache)
+  }
+
+  zip_name <- "RDS-2013-0009.6_Data_Format3_GPKG.zip"
+  zip_file <- fs::path(cache_dir, zip_name)
+  if (!fs::file_exists(zip_file)) {
+    stop(
+      "No FOD ZIP file found in: ", cache_dir,
+      "\nDownload it first with: get_fod(directory = \"", cache_dir, "\")"
+    )
+  }
+
+  # Find the GeoPackage inside the ZIP
+  zip_contents <- utils::unzip(zip_file, list = TRUE)
+  gpkg_idx <- grep("\\.gpkg$", zip_contents$Name, ignore.case = TRUE)
+  if (length(gpkg_idx) == 0L) stop("No .gpkg file found in the FOD ZIP")
+  gpkg_in_zip <- zip_contents$Name[[gpkg_idx[[1L]]]]
+
+  gpkg_path <- sprintf(
+    "/vsizip/%s/%s",
+    normalizePath(zip_file, winslash = "/"),
+    gpkg_in_zip
+  )
+
+  # The FOD GeoPackage has a single layer named "Fires" with an integer
+  # FIRE_YEAR column covering 1992-2020
+  layer <- "Fires"
+
+  sql_query <- if (!is.null(years)) {
+    sprintf(
+      'SELECT * FROM "%s" WHERE "FIRE_YEAR" IN (%s)',
+      layer,
+      paste(years, collapse = ", ")
+    )
+  } else {
+    NULL
+  }
+
+  if (verbose) cli::cli_inform("Reading FPA-FOD fire occurrence data …")
+  data_sv <- if (!is.null(sql_query)) {
+    terra::vect(gpkg_path, layer = layer, query = sql_query)
+  } else {
+    terra::vect(gpkg_path, layer = layer)
+  }
+
+  if (!geometry) return(as.data.frame(terra::values(data_sv)))
+  if (output == "sf") return(sf::st_as_sf(data_sv))
+  data_sv
 }
