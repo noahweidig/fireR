@@ -12,15 +12,15 @@
 #' `data.frame`.
 #'
 #' @section Main functions:
-#' * [get_mtbs()] — download MTBS fire perimeter ZIP data.
-#' * [read_mtbs()] — read, filter, and return MTBS fire perimeters.
-#' * [get_sefire()] — download SE FireMap Annual Burn Severity Mosaic ZIP(s)
-#'   for one or more years (2000–2022).
-#' * [get_nal1eco()] — download and load North America Level 1 Ecoregions.
-#' * [get_nal2eco()] — download and load North America Level 2 Ecoregions.
-#' * [get_nal3eco()] — download and load North America Level 3 Ecoregions.
-#' * [get_usl3eco()] — download and load US Level 3 Ecoregions.
-#' * [get_usl4eco()] — download and load US Level 4 Ecoregions.
+#' * [get_mtbs()] - download MTBS fire perimeter ZIP data.
+#' * [read_mtbs()] - read, filter, and return MTBS fire perimeters.
+#' * [get_sefire()] - download SE FireMap Annual Burn Severity Mosaic ZIP(s)
+#'   for one or more years (2000-2022).
+#' * [get_nal1eco()] - download and load North America Level 1 Ecoregions.
+#' * [get_nal2eco()] - download and load North America Level 2 Ecoregions.
+#' * [get_nal3eco()] - download and load North America Level 3 Ecoregions.
+#' * [get_usl3eco()] - download and load US Level 3 Ecoregions.
+#' * [get_usl4eco()] - download and load US Level 4 Ecoregions.
 #'
 #' @keywords internal
 "_PACKAGE"
