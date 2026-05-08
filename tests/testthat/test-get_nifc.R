@@ -50,6 +50,7 @@ test_that("read_nifc() returns the right class", {
   skip_if_nifc_unreachable()
   skip_on_cran()
   get_nifc(directory = shared_nifc_cache, verbose = FALSE)
+  skip_if_invalid_nifc_archive(shared_nifc_cache)
 
   result_sf <- read_nifc(years = 2020, output = "sf", cache = shared_nifc_cache, verbose = FALSE)
   expect_s3_class(result_sf, "sf")
@@ -66,6 +67,7 @@ test_that("read_nifc() year filtering keeps correct rows", {
   skip_if_nifc_unreachable()
   skip_on_cran()
   get_nifc(directory = shared_nifc_cache, verbose = FALSE)
+  skip_if_invalid_nifc_archive(shared_nifc_cache)
 
   perims <- read_nifc(years = 2018:2019, output = "sf", cache = shared_nifc_cache, verbose = FALSE)
   expect_true(all(perims[["FireYear"]] %in% 2018:2019, na.rm = TRUE))
@@ -75,6 +77,7 @@ test_that("read_nifc() single year is treated as exact match", {
   skip_if_nifc_unreachable()
   skip_on_cran()
   get_nifc(directory = shared_nifc_cache, verbose = FALSE)
+  skip_if_invalid_nifc_archive(shared_nifc_cache)
 
   perims <- read_nifc(years = 2005, output = "sf", cache = shared_nifc_cache, verbose = FALSE)
   expect_true(all(perims[["FireYear"]] == 2005, na.rm = TRUE))
@@ -84,6 +87,7 @@ test_that("read_nifc() specific year vector filtering keeps correct rows", {
   skip_if_nifc_unreachable()
   skip_on_cran()
   get_nifc(directory = shared_nifc_cache, verbose = FALSE)
+  skip_if_invalid_nifc_archive(shared_nifc_cache)
 
   perims <- read_nifc(years = c(2010, 2015), output = "sf", cache = shared_nifc_cache, verbose = FALSE)
   expect_true(all(perims[["FireYear"]] %in% c(2010, 2015), na.rm = TRUE))
