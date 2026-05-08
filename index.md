@@ -31,11 +31,16 @@ ecoregion boundaries:
   — download and load US EPA ecoregions at Levels 3–4 (with optional
   state boundaries)
 - [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md)
-  — download NIFC (National Interagency Fire Center) wildfire perimeters
-  dataset from figshare
+  /
+  [`read_nifc()`](https://noahweidig.github.io/fireR/reference/read_nifc.md)
+  — download and read NIFC (National Interagency Fire Center) wildfire
+  perimeters from figshare, with optional year filtering
 - [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md)
-  — download the USFS Fire Occurrence Database (FPA-FOD) GeoPackage ZIP
-  from the Forest Service Research Data Archive
+  /
+  [`read_fod()`](https://noahweidig.github.io/fireR/reference/read_fod.md)
+  — download and read the USFS Fire Occurrence Database (FPA-FOD)
+  GeoPackage from the Forest Service Research Data Archive, with
+  optional year filtering
 - [`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md)
   — download the USFS Wildland-Urban Interface (WUI) dataset from the
   USFS public Box archive (**4.65 GB** — slow, run in the background)
@@ -144,31 +149,51 @@ zip_paths <- get_sefire(c(2000, 2010, 2020))
 
 ## NIFC Wildfire Perimeters
 
-Download the NIFC wildfire perimeters dataset from figshare:
+Download and read the NIFC wildfire perimeters dataset from figshare.
+Year filtering uses the integer `FireYear` column.
 
 ``` r
 
 # Download to current directory
 zip_path <- get_nifc()
 
-# Download to a specific directory
-zip_path <- get_nifc(directory = "data/nifc")
+# Read all perimeters as sf
+perims <- read_nifc(output = "sf")
+
+# Filter to a single year
+perims_2020 <- read_nifc(years = 2020, output = "sf")
+
+# Filter to a range of years
+perims_recent <- read_nifc(years = 2015:2020, output = "sf")
+
+# Cache the download for future sessions
+perims <- read_nifc(cache = TRUE)
 ```
 
 ------------------------------------------------------------------------
 
 ## USFS Fire Occurrence Database (FOD)
 
-Download the FPA-FOD GeoPackage ZIP from the Forest Service Research
-Data Archive:
+Download and read the FPA-FOD GeoPackage ZIP from the Forest Service
+Research Data Archive. The dataset covers 1992–2020; year filtering uses
+the integer `FIRE_YEAR` column.
 
 ``` r
 
 # Download to current directory
 zip_path <- get_fod()
 
-# Download to a specific directory
-zip_path <- get_fod(directory = "data/fod")
+# Read all fire occurrence points as sf
+fires <- read_fod(output = "sf")
+
+# Filter to a single year
+fires_2015 <- read_fod(years = 2015, output = "sf")
+
+# Filter to a range of years
+fires_recent <- read_fod(years = 2015:2020, output = "sf")
+
+# Attribute table only (no geometry)
+tbl <- read_fod(geometry = FALSE)
 ```
 
 ------------------------------------------------------------------------

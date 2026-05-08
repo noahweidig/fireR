@@ -14,12 +14,17 @@ spatial objects with optional year and incident-type filtering.
 ## NIFC Wildfire Data
 
 Download NIFC (National Interagency Fire Center) wildfire perimeters and
-Fire Occurrence Database (FOD) datasets from figshare.
+Fire Occurrence Database (FOD) datasets from figshare, and read the
+downloaded archives as spatial objects with optional year filtering.
 
 - [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md)
   : Download and unzip NIFC wildfire data
+- [`read_nifc()`](https://noahweidig.github.io/fireR/reference/read_nifc.md)
+  : Read NIFC wildfire perimeter data
 - [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md)
   : Download and unzip USFS Fire Occurrence Database (FOD)
+- [`read_fod()`](https://noahweidig.github.io/fireR/reference/read_fod.md)
+  : Read USFS Fire Occurrence Database (FOD) data
 
 ## USFS Wildland-Urban Interface (WUI)
 

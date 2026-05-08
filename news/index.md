@@ -1,5 +1,28 @@
 # Changelog
 
+## fireR 1.1.0
+
+### New functions
+
+- [`read_nifc()`](https://noahweidig.github.io/fireR/reference/read_nifc.md):
+  Read and filter NIFC wildfire perimeters from a local ZIP downloaded
+  with
+  [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md).
+  Supports year filtering via the integer `FireYear` column, and returns
+  `sf`,
+  [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html),
+  or `data.frame`.
+- [`read_fod()`](https://noahweidig.github.io/fireR/reference/read_fod.md):
+  Read and filter the USFS Fire Occurrence Database (FPA-FOD) from a
+  local ZIP downloaded with
+  [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md).
+  Supports year filtering via the integer `FIRE_YEAR` column (dataset
+  covers 1992–2020), and returns `sf`,
+  [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html),
+  or `data.frame`.
+
+------------------------------------------------------------------------
+
 ## fireR 1.0.0
 
 ### Initial stable release
