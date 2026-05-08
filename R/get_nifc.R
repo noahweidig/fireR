@@ -33,7 +33,7 @@ get_nifc <- function(
 
   did_download <- FALSE
   if (!fs::file_exists(zip_file)) {
-    if (verbose) cli::cli_inform("Downloading NIFC wildfire perimeters …")
+    if (verbose) cli::cli_inform("Downloading NIFC wildfire perimeters ...")
     curl::curl_download(url, destfile = zip_file,
                         handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string),
                         quiet  = FALSE)
@@ -44,7 +44,7 @@ get_nifc <- function(
   }
 
   if (did_download) {
-    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} …")
+    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} ...")
     utils::unzip(zip_file, exdir = directory)
     if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
   }
@@ -89,15 +89,16 @@ get_fod <- function(
 
   did_download <- FALSE
   if (!fs::file_exists(zip_file)) {
-    if (verbose) cli::cli_inform("Downloading USFS Fire Occurrence Database (FOD) …")
-    httr2::request(url) |>
-      httr2::req_headers(
-        "User-Agent" = .ua_string,
-        "Accept"     = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Referer"    = "https://www.fs.usda.gov/rds/archive/catalog/RDS-2013-0009.6"
-      ) |>
-      httr2::req_timeout(3600) |>
-      httr2::req_perform(path = zip_file)
+    if (verbose) cli::cli_inform("Downloading USFS Fire Occurrence Database (FOD) ...")
+    req <- httr2::request(url)
+    req <- httr2::req_headers(
+      req,
+      "User-Agent" = .ua_string,
+      "Accept"     = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Referer"    = "https://www.fs.usda.gov/rds/archive/catalog/RDS-2013-0009.6"
+    )
+    req <- httr2::req_timeout(req, 3600)
+    httr2::req_perform(req, path = zip_file)
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
     did_download <- TRUE
   } else if (verbose) {
@@ -105,7 +106,7 @@ get_fod <- function(
   }
 
   if (did_download) {
-    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} …")
+    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} ...")
     utils::unzip(zip_file, exdir = directory)
     if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
   }
@@ -188,10 +189,10 @@ read_nifc <- function(
   }
 
   if (!is.null(years)) {
-    years <- as.integer(years)
-    if (length(years) == 0L || any(is.na(years))) {
+    if (!is.numeric(years) || length(years) == 0L || any(is.na(years))) {
       stop("`years` must be a non-empty integer vector with no NA values")
     }
+    years <- as.integer(years)
     years <- sort(unique(years))
   }
 
@@ -211,31 +212,57 @@ read_nifc <- function(
     )
   }
 
-  # Find the data file inside the ZIP — prefer .gpkg, fall back to .shp
+  # Find the data file inside the ZIP - prefer .gpkg, then .shp, then .gdb.
   zip_contents <- utils::unzip(zip_file, list = TRUE)
   gpkg_idx <- grep("\\.gpkg$", zip_contents$Name, ignore.case = TRUE)
   shp_idx  <- grep("\\.shp$",  zip_contents$Name, ignore.case = TRUE)
+  gdb_idx  <- grep("\\.gdb(/|$)", zip_contents$Name, ignore.case = TRUE)
 
+  data_path <- NULL
+  data_in_zip <- NULL
   is_gpkg <- length(gpkg_idx) > 0L
+  is_gdb <- FALSE
+
   if (is_gpkg) {
     data_in_zip <- zip_contents$Name[[gpkg_idx[[1L]]]]
   } else if (length(shp_idx) > 0L) {
     data_in_zip <- zip_contents$Name[[shp_idx[[1L]]]]
-  } else {
-    stop("No .gpkg or .shp file found in the NIFC ZIP")
+  } else if (length(gdb_idx) > 0L) {
+    data_in_zip <- sub("(.*\\.gdb).*", "\\1", zip_contents$Name[[gdb_idx[[1L]]]], ignore.case = TRUE)
+    is_gdb <- TRUE
   }
 
-  data_path <- sprintf(
-    "/vsizip/%s/%s",
-    normalizePath(zip_file, winslash = "/"),
-    data_in_zip
-  )
-
-  # Determine layer name — required for the SQL query
-  layer <- if (is_gpkg) {
-    sf::st_layers(data_path)$name[[1L]]
+  if (!is.null(data_in_zip)) {
+    data_path <- sprintf(
+      "/vsizip/%s/%s",
+      normalizePath(zip_file, winslash = "/"),
+      data_in_zip
+    )
   } else {
+    gpkg_files <- list.files(cache_dir, pattern = "\\.gpkg$", recursive = TRUE, full.names = TRUE, ignore.case = TRUE)
+    shp_files <- list.files(cache_dir, pattern = "\\.shp$", recursive = TRUE, full.names = TRUE, ignore.case = TRUE)
+    gdb_files <- list.files(cache_dir, pattern = "\\.gdb$", recursive = TRUE, full.names = TRUE, ignore.case = TRUE)
+
+    if (length(gpkg_files) > 0L) {
+      data_path <- normalizePath(gpkg_files[[1L]], winslash = "/")
+      is_gpkg <- TRUE
+    } else if (length(shp_files) > 0L) {
+      data_path <- normalizePath(shp_files[[1L]], winslash = "/")
+    } else if (length(gdb_files) > 0L) {
+      data_path <- normalizePath(gdb_files[[1L]], winslash = "/")
+      is_gdb <- TRUE
+    } else {
+      stop("No .gpkg, .shp, or .gdb file found in the NIFC download")
+    }
+  }
+
+  # Determine layer name - required for the SQL query
+  layer <- if (is_gpkg || is_gdb) {
+    sf::st_layers(data_path)$name[[1L]]
+  } else if (!is.null(data_in_zip)) {
     tools::file_path_sans_ext(basename(data_in_zip))
+  } else {
+    tools::file_path_sans_ext(basename(data_path))
   }
 
   # FireYear is an integer column in NIFC historical perimeter data
@@ -249,8 +276,8 @@ read_nifc <- function(
     NULL
   }
 
-  if (verbose) cli::cli_inform("Reading NIFC wildfire perimeters …")
-  data_sv <- if (is_gpkg) {
+  if (verbose) cli::cli_inform("Reading NIFC wildfire perimeters ...")
+  data_sv <- if (is_gpkg || is_gdb) {
     if (!is.null(sql_query)) {
       terra::vect(data_path, layer = layer, query = sql_query)
     } else {
@@ -344,10 +371,10 @@ read_fod <- function(
   }
 
   if (!is.null(years)) {
-    years <- as.integer(years)
-    if (length(years) == 0L || any(is.na(years))) {
+    if (!is.numeric(years) || length(years) == 0L || any(is.na(years))) {
       stop("`years` must be a non-empty integer vector with no NA values")
     }
+    years <- as.integer(years)
     years <- sort(unique(years))
   }
 
@@ -394,7 +421,7 @@ read_fod <- function(
     NULL
   }
 
-  if (verbose) cli::cli_inform("Reading FPA-FOD fire occurrence data …")
+  if (verbose) cli::cli_inform("Reading FPA-FOD fire occurrence data ...")
   data_sv <- if (!is.null(sql_query)) {
     terra::vect(gpkg_path, layer = layer, query = sql_query)
   } else {
