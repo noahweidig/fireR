@@ -30,7 +30,7 @@
 #' @importFrom cli cli_inform cli_warn
 #' @importFrom curl curl_download multi_download new_handle
 #' @importFrom rlang arg_match
-#' @importFrom sf st_as_sf
+#' @importFrom sf st_as_sf st_layers
 #' @importFrom terra vect values
 ## usethis namespace: end
 NULL

@@ -1,3 +1,17 @@
+# fireR 1.1.0
+
+## New functions
+
+* `read_nifc()`: Read and filter NIFC wildfire perimeters from a local ZIP
+  downloaded with `get_nifc()`. Supports year filtering via the integer
+  `FireYear` column, and returns `sf`, `terra::SpatVector`, or `data.frame`.
+* `read_fod()`: Read and filter the USFS Fire Occurrence Database (FPA-FOD)
+  from a local ZIP downloaded with `get_fod()`. Supports year filtering via
+  the integer `FIRE_YEAR` column (dataset covers 1992–2020), and returns `sf`,
+  `terra::SpatVector`, or `data.frame`.
+
+---
+
 # fireR 1.0.0
 
 ## Initial stable release
