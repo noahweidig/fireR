@@ -40,8 +40,9 @@ Ignored when \code{geometry = FALSE}.}
 
 \item{cache}{\code{logical(1)} or \code{character(1)}. Controls where
 \code{read_mtbs()} looks for the downloaded ZIP file. When \code{FALSE}
-(the default) the current working directory is used. When \code{TRUE}
-the platform user cache directory
+(the default), the current working directory is used (it does not mean
+caching is disabled, just that it looks in the local folder). When
+\code{TRUE}, the platform user cache directory
 (\code{tools::R_user_dir("fireR", "cache")}) is used. Supply a
 directory path as a string to specify a custom location.}
 
@@ -57,13 +58,14 @@ directory path as a string to specify a custom location.}
 }
 }
 \description{
-Reads MTBS fire perimeters from a local MTBS ZIP downloaded with
+Reads MTBS fire perimeters from a local MTBS perimeters ZIP downloaded with
 \code{\link[=get_mtbs]{get_mtbs()}} and returns either a spatial object or a plain
 attribute table.
 }
 \details{
 \code{read_mtbs()} does not download data. Use \code{\link[=get_mtbs]{get_mtbs()}} first
-to obtain the ZIP archive.
+to obtain the perimeters ZIP archive.  Note: this function currently only supports reading
+the perimeters dataset, not the occurrence points dataset.
 }
 \examples{
 \dontrun{

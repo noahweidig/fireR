@@ -64,11 +64,12 @@ get_mtbs <- function(
 
 #' Read MTBS fire perimeter data
 #'
-#' Reads MTBS fire perimeters from a local MTBS ZIP downloaded with
+#' Reads MTBS fire perimeters from a local MTBS perimeters ZIP downloaded with
 #' [get_mtbs()] and returns either a spatial object or a plain attribute table.
 #'
 #' `read_mtbs()` does not download data. Use [get_mtbs()] first to obtain the
-#' ZIP archive.
+#' perimeters ZIP archive.  Note: this function currently only supports reading
+#' the perimeters dataset, not the occurrence points dataset.
 #'
 #' @param years \code{integer} vector of years to keep.  Accepts a single
 #'   year (\code{2020}), a contiguous range created with \code{:} notation
@@ -92,8 +93,9 @@ get_mtbs <- function(
 #'   Ignored when \code{geometry = FALSE}.
 #' @param cache \code{logical(1)} or \code{character(1)}. Controls where
 #'   \code{read_mtbs()} looks for the downloaded ZIP file. When \code{FALSE}
-#'   (the default) the current working directory is used. When \code{TRUE}
-#'   the platform user cache directory
+#'   (the default), the current working directory is used (it does not mean
+#'   caching is disabled, just that it looks in the local folder). When
+#'   \code{TRUE}, the platform user cache directory
 #'   (\code{tools::R_user_dir("fireR", "cache")}) is used. Supply a
 #'   directory path as a string to specify a custom location.
 #' @param verbose \code{logical(1)} print progress messages.
