@@ -11,10 +11,12 @@ test_that("read_mtbs() input validation works", {
   expect_error(read_mtbs(type = "BadType"), "Unknown.*type")
 })
 
+shared_cache <- file.path(tempdir(), "mtbs_shared_test_cache")
+
 test_that("read_mtbs() returns the right class", {
   skip_if_usgs_unreachable()
   skip_on_cran()
-  cache_dir <- file.path(tempdir(), "mtbs_cache_classes")
+  cache_dir <- shared_cache
   get_mtbs(directory = cache_dir, verbose = FALSE)
 
   # sf (default)
@@ -34,7 +36,7 @@ test_that("read_mtbs() returns the right class", {
 test_that("year range filtering keeps correct rows", {
   skip_if_usgs_unreachable()
   skip_on_cran()
-  cache_dir <- file.path(tempdir(), "mtbs_cache_year_range")
+  cache_dir <- shared_cache
   get_mtbs(directory = cache_dir, verbose = FALSE)
 
   fires <- read_mtbs(years = 2018:2019, output = "sf", cache = cache_dir, verbose = FALSE)
@@ -47,7 +49,7 @@ test_that("year range filtering keeps correct rows", {
 test_that("specific year vector filtering keeps correct rows", {
   skip_if_usgs_unreachable()
   skip_on_cran()
-  cache_dir <- file.path(tempdir(), "mtbs_cache_specific_years")
+  cache_dir <- shared_cache
   get_mtbs(directory = cache_dir, verbose = FALSE)
 
   fires <- read_mtbs(years = c(2018, 2020), output = "sf", cache = cache_dir, verbose = FALSE)
@@ -60,7 +62,7 @@ test_that("specific year vector filtering keeps correct rows", {
 test_that("single year is treated as exact match", {
   skip_if_usgs_unreachable()
   skip_on_cran()
-  cache_dir <- file.path(tempdir(), "mtbs_cache_single_year")
+  cache_dir <- shared_cache
   get_mtbs(directory = cache_dir, verbose = FALSE)
 
   fires <- read_mtbs(years = 2005, output = "sf", cache = cache_dir, verbose = FALSE)
@@ -72,7 +74,7 @@ test_that("single year is treated as exact match", {
 test_that("type filtering keeps correct rows", {
   skip_if_usgs_unreachable()
   skip_on_cran()
-  cache_dir <- file.path(tempdir(), "mtbs_cache_type")
+  cache_dir <- shared_cache
   get_mtbs(directory = cache_dir, verbose = FALSE)
 
   fires <- read_mtbs(years = 2020, type = "Wildfire", output = "sf", cache = cache_dir, verbose = FALSE)

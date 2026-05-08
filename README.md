@@ -59,6 +59,9 @@ pak::pak("noahweidig/fireR")
 ```r
 library(fireR)
 
+# Download the data first (caches locally)
+get_mtbs()
+
 fires <- read_mtbs(output = "sf")
 plot(fires["BurnBndAc"])
 ```
