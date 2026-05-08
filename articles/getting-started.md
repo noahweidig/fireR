@@ -21,6 +21,7 @@ ecoregion boundaries:
   for US EPA ecoregion boundaries
 
 ``` r
+
 library(fireR)
 ```
 
@@ -36,6 +37,7 @@ returns an **`sf`** object containing every fire perimeter in the MTBS
 composite dataset — all years, all states.
 
 ``` r
+
 fires <- read_mtbs(output = "sf")
 fires
 #> Simple feature collection with 31,386 features and 22 fields
@@ -48,6 +50,7 @@ fires
 Plot the burn area acreage to get a quick sense of the data:
 
 ``` r
+
 plot(fires["BurnBndAc"], main = "MTBS Fire Perimeters — All Years")
 ```
 
@@ -61,6 +64,7 @@ Pass a single integer to keep only fires that started in that calendar
 year:
 
 ``` r
+
 fires_2020 <- read_mtbs(years = 2020, output = "sf")
 nrow(fires_2020)
 #> [1] 246
@@ -72,6 +76,7 @@ Use R’s `:` operator to keep all fires within a contiguous span of
 years:
 
 ``` r
+
 fires_recent <- read_mtbs(years = 2018:2023, output = "sf")
 nrow(fires_recent)
 #> [1] 1328
@@ -80,6 +85,7 @@ nrow(fires_recent)
 Quickly visualise where the major fires of the last decade fell:
 
 ``` r
+
 library(sf)
 
 plot(st_geometry(fires_recent), col = "#E25822AA", border = NA,
@@ -92,6 +98,7 @@ Supply a vector of individual years to return only fires from those
 exact years (non-contiguous):
 
 ``` r
+
 fires_sel <- read_mtbs(years = c(2000, 2010, 2020), output = "sf")
 ```
 
@@ -107,6 +114,7 @@ instead of an `sf` object — handy when the rest of your workflow uses
 **terra**:
 
 ``` r
+
 library(terra)
 
 fires_vect <- read_mtbs(years = 2020:2023, output = "vect")
@@ -124,6 +132,7 @@ Set `geometry = FALSE` to drop geometry and get a plain `data.frame`.
 Useful when you only need the metadata (fire name, year, acreage, etc.):
 
 ``` r
+
 tbl <- read_mtbs(geometry = FALSE)
 head(tbl[, c("Incid_Name", "Ig_Date", "BurnBndAc", "Incid_Type")])
 #>     Incid_Name   Ig_Date BurnBndAc Incid_Type
@@ -150,6 +159,7 @@ to look for the ZIP in `tools::R_user_dir("fireR", "cache")` — a
 platform-appropriate user directory that persists between R sessions:
 
 ``` r
+
 # Download once to the user cache directory
 get_mtbs(directory = tools::R_user_dir("fireR", "cache"))
 
@@ -163,6 +173,7 @@ Supply a directory path to both functions to control where the file is
 stored:
 
 ``` r
+
 get_mtbs(directory = "~/data/mtbs_cache")
 fires <- read_mtbs(cache = "~/data/mtbs_cache")
 ```
@@ -174,6 +185,7 @@ If the USGS releases an updated dataset, use `overwrite = TRUE` on
 to bypass the cache and re-download:
 
 ``` r
+
 get_mtbs(directory = tools::R_user_dir("fireR", "cache"), overwrite = TRUE)
 fires <- read_mtbs(cache = TRUE)
 ```
@@ -186,6 +198,7 @@ Progress messages are printed by default. Suppress them with
 `verbose = FALSE`:
 
 ``` r
+
 fires <- read_mtbs(years = 2022, verbose = FALSE)
 ```
 
@@ -199,16 +212,19 @@ United States (2000–2022). Pass a single year, a range, or a vector of
 specific years:
 
 ``` r
+
 # Single year
 zip_path <- get_sefire(2020)
 ```
 
 ``` r
+
 # Contiguous range
 zip_paths <- get_sefire(2015:2020, directory = "data/sefire")
 ```
 
 ``` r
+
 # Specific years only
 zip_paths <- get_sefire(c(2000, 2010, 2020))
 ```
@@ -223,6 +239,7 @@ The Commission for Environmental Cooperation (CEC) ecoregion framework
 divides North America into hierarchical ecological units.
 
 ``` r
+
 # Level 1 — broadest continental divisions
 na_l1 <- get_nal1eco()
 
@@ -241,6 +258,7 @@ US EPA ecoregions are available at Levels 3 and 4, with an option to
 include state boundaries in the polygons.
 
 ``` r
+
 # Level 3 — without state boundaries (default)
 us_l3 <- get_usl3eco()
 
@@ -257,6 +275,7 @@ All ecoregion functions accept `output = "vect"` for a
 and a `cache` argument to persist downloads across sessions:
 
 ``` r
+
 us_l3 <- get_usl3eco(output = "vect", cache = TRUE)
 ```
 
@@ -281,6 +300,7 @@ available to you.
 ### Example: largest fires since 2000
 
 ``` r
+
 library(dplyr)
 
 fires_2000s <- read_mtbs(years = 2000:2023, output = "sf")
@@ -296,6 +316,7 @@ top10
 ### Example: area burned and fires per year
 
 ``` r
+
 library(dplyr)
 library(ggplot2)
 library(sf)
@@ -304,6 +325,7 @@ fires_all <- read_mtbs(output = "sf")
 ```
 
 ``` r
+
 fires_all |>
   st_drop_geometry() |>
   mutate(year = as.integer(substr(Ig_Date, 1, 4))) |>
@@ -318,6 +340,7 @@ fires_all |>
 ```
 
 ``` r
+
 fires_all |>
   st_drop_geometry() |>
   mutate(year = as.integer(substr(Ig_Date, 1, 4))) |>

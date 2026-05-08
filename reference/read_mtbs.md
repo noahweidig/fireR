@@ -1,6 +1,7 @@
 # Read MTBS fire perimeter data
 
-Reads MTBS fire perimeters from a local MTBS ZIP downloaded with
+Reads MTBS fire perimeters from a local MTBS perimeters ZIP downloaded
+with
 [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
 and returns either a spatial object or a plain attribute table.
 
@@ -52,10 +53,11 @@ read_mtbs(
 - cache:
 
   `logical(1)` or `character(1)`. Controls where `read_mtbs()` looks for
-  the downloaded ZIP file. When `FALSE` (the default) the current
-  working directory is used. When `TRUE` the platform user cache
-  directory (`tools::R_user_dir("fireR", "cache")`) is used. Supply a
-  directory path as a string to specify a custom location.
+  the downloaded ZIP file. When `FALSE` (the default), the current
+  working directory is used (it does not mean caching is disabled, just
+  that it looks in the local folder). When `TRUE`, the platform user
+  cache directory (`tools::R_user_dir("fireR", "cache")`) is used.
+  Supply a directory path as a string to specify a custom location.
 
 - verbose:
 
@@ -75,7 +77,9 @@ read_mtbs(
 
 `read_mtbs()` does not download data. Use
 [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
-first to obtain the ZIP archive.
+first to obtain the perimeters ZIP archive. Note: this function
+currently only supports reading the perimeters dataset, not the
+occurrence points dataset.
 
 ## Examples
 

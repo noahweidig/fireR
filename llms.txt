@@ -53,6 +53,7 @@ Key features:
 ## Installation
 
 ``` r
+
 # Install from GitHub (once published)
 # install.packages("pak")
 pak::pak("noahweidig/fireR")
@@ -65,7 +66,11 @@ pak::pak("noahweidig/fireR")
 ### All fires, return as `sf`
 
 ``` r
+
 library(fireR)
+
+# Download the data first (caches locally)
+get_mtbs()
 
 fires <- read_mtbs(output = "sf")
 plot(fires["BurnBndAc"])
@@ -74,36 +79,42 @@ plot(fires["BurnBndAc"])
 ### Filter to a year range
 
 ``` r
+
 fires_recent <- read_mtbs(years = 2010:2023, output = "sf")
 ```
 
 ### Single year
 
 ``` r
+
 fires_2020 <- read_mtbs(years = 2020, output = "sf")
 ```
 
 ### Specific years only
 
 ``` r
+
 fires_sel <- read_mtbs(years = c(2000, 2010, 2020), output = "sf")
 ```
 
 ### Return as `terra::SpatVector`
 
 ``` r
+
 fires_vect <- read_mtbs(years = 2015:2023, output = "vect")
 ```
 
 ### Attribute table only (no geometry)
 
 ``` r
+
 tbl <- read_mtbs(geometry = FALSE)
 ```
 
 ### Cache the download for future sessions
 
 ``` r
+
 # Cache in the default user directory
 fires <- read_mtbs(cache = TRUE)
 
@@ -118,6 +129,7 @@ fires <- read_mtbs(cache = "~/data/mtbs_cache")
 Download burn severity mosaics for one or more years:
 
 ``` r
+
 # Single year
 zip_path <- get_sefire(2020)
 
@@ -135,6 +147,7 @@ zip_paths <- get_sefire(c(2000, 2010, 2020))
 Download the NIFC wildfire perimeters dataset from figshare:
 
 ``` r
+
 # Download to current directory
 zip_path <- get_nifc()
 
@@ -150,6 +163,7 @@ Download the FPA-FOD GeoPackage ZIP from the Forest Service Research
 Data Archive:
 
 ``` r
+
 # Download to current directory
 zip_path <- get_fod()
 
@@ -168,6 +182,7 @@ zip_path <- get_fod(directory = "data/fod")
 > responsive.
 
 ``` r
+
 # Recommended: run in a background session
 bg <- callr::r_bg(function() fireR::get_wui(directory = "data/wui"))
 bg$wait()
@@ -186,6 +201,7 @@ zip_path <- get_wui(directory = "data/wui")
 ### North America (CEC Levels 1–3)
 
 ``` r
+
 # Level 1 — broadest continental divisions
 na_l1 <- get_nal1eco()
 
@@ -199,6 +215,7 @@ na_l3 <- get_nal3eco(output = "vect")
 ### US EPA (Levels 3–4, with optional state boundaries)
 
 ``` r
+
 # Level 3 — without state boundaries (default)
 us_l3 <- get_usl3eco()
 
@@ -218,19 +235,20 @@ sessions.
 
 ## `read_mtbs()` Arguments
 
-| Argument   | Type                  | Default  | Description                                                                               |
-|------------|-----------------------|----------|-------------------------------------------------------------------------------------------|
-| `years`    | `integer`             | `NULL`   | Single year, range (`2010:2020`), or specific years (`c(2000, 2010)`). `NULL` = no filter |
-| `type`     | `character`           | `NULL`   | Incident type(s). `NULL` = all types                                                      |
-| `geometry` | `logical`             | `TRUE`   | Return a spatial object. `FALSE` → `data.frame`                                           |
-| `output`   | `character`           | `"vect"` | `"sf"` or `"vect"` / `"terra"`                                                            |
-| `cache`    | `logical`/`character` | `FALSE`  | Directory containing the downloaded ZIP                                                   |
-| `verbose`  | `logical`             | `TRUE`   | Print progress messages                                                                   |
+| Argument | Type | Default | Description |
+|----|----|----|----|
+| `years` | `integer` | `NULL` | Single year, range (`2010:2020`), or specific years (`c(2000, 2010)`). `NULL` = no filter |
+| `type` | `character` | `NULL` | Incident type(s). `NULL` = all types |
+| `geometry` | `logical` | `TRUE` | Return a spatial object. `FALSE` → `data.frame` |
+| `output` | `character` | `"vect"` | `"sf"` or `"vect"` / `"terra"` |
+| `cache` | `logical`/`character` | `FALSE` | Directory containing the downloaded ZIP |
+| `verbose` | `logical` | `TRUE` | Print progress messages |
 
 Download data to disk first with
 [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md):
 
 ``` r
+
 mtbs_dir <- get_mtbs()
 ```
 
