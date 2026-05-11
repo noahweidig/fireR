@@ -214,19 +214,19 @@ specific years:
 ``` r
 
 # Single year
-zip_path <- get_sefire(2020)
+zip_path <- get_sefire(years = 2020)
 ```
 
 ``` r
 
 # Contiguous range
-zip_paths <- get_sefire(2015:2020, directory = "data/sefire")
+zip_paths <- get_sefire(years = 2015:2020, directory = "data/sefire")
 ```
 
 ``` r
 
 # Specific years only
-zip_paths <- get_sefire(c(2000, 2010, 2020))
+zip_paths <- get_sefire(years = c(2000, 2010, 2020))
 ```
 
 ------------------------------------------------------------------------
