@@ -4,8 +4,8 @@
 #' dataset from figshare and unzips it to a local directory.  If the ZIP
 #' already exists and \code{overwrite = FALSE}, no network call is made.
 #'
-#' @param directory \code{character(1)} directory where the ZIP file and
-#'   unzipped contents are stored.  Defaults to the current working directory.
+#' @param directory \code{character(1)} directory where the ZIP file is stored.
+#'   Defaults to the current working directory.
 #' @param overwrite \code{logical(1)} re-download when \code{TRUE};
 #'   defaults to \code{FALSE}.
 #' @param verbose \code{logical(1)} print progress messages.

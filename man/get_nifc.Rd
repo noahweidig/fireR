@@ -4,15 +4,11 @@
 \alias{get_nifc}
 \title{Download and unzip NIFC wildfire data}
 \usage{
-get_nifc(
-  directory = getwd(),
-  overwrite = FALSE,
-  verbose = TRUE
-)
+get_nifc(directory = getwd(), overwrite = FALSE, verbose = TRUE)
 }
 \arguments{
-\item{directory}{\code{character(1)} directory where the ZIP file and
-unzipped contents are stored.  Defaults to the current working directory.}
+\item{directory}{\code{character(1)} directory where the ZIP file is stored.
+Defaults to the current working directory.}
 
 \item{overwrite}{\code{logical(1)} re-download when \code{TRUE};
 defaults to \code{FALSE}.}

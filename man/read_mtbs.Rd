@@ -24,8 +24,8 @@ without filtering.}
 \item{type}{\code{character} vector of incident types to keep, matched
 against the \code{Incid_Type} column. Valid values are
 \code{"Wildfire"}, \code{"Prescribed Fire"}, \code{"Unknown"}, and
-\code{"Wildland Fire Use"}. \code{NULL} (the
-default) returns all incident types.}
+\code{"Wildland Fire Use"}. \code{NULL} (the default) returns all
+incident types.}
 
 \item{geometry}{\code{logical(1)} When \code{TRUE} (the default) the
 result is a spatial object (\code{sf} or \code{terra::SpatVector}
@@ -59,12 +59,11 @@ directory path as a string to specify a custom location.}
 }
 \description{
 Reads MTBS fire perimeters from a local MTBS perimeters ZIP downloaded with
-\code{\link[=get_mtbs]{get_mtbs()}} and returns either a spatial object or a plain
-attribute table.
+\code{\link[=get_mtbs]{get_mtbs()}} and returns either a spatial object or a plain attribute table.
 }
 \details{
-\code{read_mtbs()} does not download data. Use \code{\link[=get_mtbs]{get_mtbs()}} first
-to obtain the perimeters ZIP archive.  Note: this function currently only supports reading
+\code{read_mtbs()} does not download data. Use \code{\link[=get_mtbs]{get_mtbs()}} first to obtain the
+perimeters ZIP archive.  Note: this function currently only supports reading
 the perimeters dataset, not the occurrence points dataset.
 }
 \examples{
