@@ -36,7 +36,8 @@ Ecoregion polygons.
 Downloads and loads US EPA Level 4 Ecoregion boundaries as a spatial
 object, optionally including state boundaries.
 }
-\details{
+\section{About US EPA Ecoregions}{
+
 The US EPA ecoregion framework classifies areas of the United States by
 similarity of ecosystems and environmental resources.  Level 4 provides
 the finest sub-divisions in the US ecoregion hierarchy, capturing local
@@ -44,6 +45,7 @@ ecological patterns within Level 3 regions.  These are commonly used for
 site-level assessments and detailed environmental monitoring.
 Data are sourced from the US EPA Office of Research and Development.
 }
+
 \examples{
 \dontrun{
 eco <- get_usl4eco()

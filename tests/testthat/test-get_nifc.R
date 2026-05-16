@@ -35,6 +35,11 @@ test_that("read_nifc() errors when ZIP is missing", {
   )
 })
 
+test_that("read_nifc() rejects invalid cache argument", {
+  expect_error(read_nifc(cache = 123), "logical or character")
+  expect_error(read_nifc(cache = c("a", "b")), "logical or character")
+})
+
 test_that("read_nifc() default arguments are correct", {
   expect_null(formals(read_nifc)$years)
   expect_true(formals(read_nifc)$geometry)
@@ -124,6 +129,11 @@ test_that("read_fod() errors when ZIP is missing", {
     read_fod(cache = cache_dir, verbose = FALSE),
     "No FOD ZIP file found"
   )
+})
+
+test_that("read_fod() rejects invalid cache argument", {
+  expect_error(read_fod(cache = 123), "logical or character")
+  expect_error(read_fod(cache = c("a", "b")), "logical or character")
 })
 
 test_that("read_fod() default arguments are correct", {

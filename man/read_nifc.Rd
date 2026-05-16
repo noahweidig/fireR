@@ -41,21 +41,20 @@ path as a string to specify a custom location.}
 }
 \value{
 \itemize{
-  \item A \code{terra::SpatVector} when \code{output = "vect"} /
-    \code{"terra"} and \code{geometry = TRUE}.
-  \item An \code{sf} object when \code{output = "sf"} and
-    \code{geometry = TRUE}.
-  \item A \code{data.frame} when \code{geometry = FALSE}.
+\item A \code{terra::SpatVector} when \code{output = "vect"} /
+\code{"terra"} and \code{geometry = TRUE}.
+\item An \code{sf} object when \code{output = "sf"} and
+\code{geometry = TRUE}.
+\item A \code{data.frame} when \code{geometry = FALSE}.
 }
 }
 \description{
 Reads NIFC wildfire perimeters from a local NIFC ZIP downloaded with
-\code{\link[=get_nifc]{get_nifc()}} and returns either a spatial object or a plain
-attribute table.
+\code{\link[=get_nifc]{get_nifc()}} and returns either a spatial object or a plain attribute table.
 }
 \details{
-\code{read_nifc()} does not download data. Use \code{\link[=get_nifc]{get_nifc()}} first
-to obtain the perimeters ZIP archive.
+\code{read_nifc()} does not download data. Use \code{\link[=get_nifc]{get_nifc()}} first to obtain the
+perimeters ZIP archive.
 
 The ZIP is expected to contain either a GeoPackage (\code{.gpkg}) or a
 shapefile (\code{.shp}).  Year filtering uses the integer \code{FireYear}

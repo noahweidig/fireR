@@ -20,8 +20,8 @@ Defaults to the current working directory.}
 \code{"perimeters"} (default) to get fire perimeters as polygons, or
 \code{"occurrence"} to get fire centroids as points.}
 
-\item{overwrite}{\code{logical(1)} re-download when \code{TRUE}; defaults to
-\code{FALSE}.}
+\item{overwrite}{\code{logical(1)} re-download when \code{TRUE};
+defaults to \code{FALSE}.}
 
 \item{timeout}{\code{numeric(1)} download timeout in seconds. The MTBS ZIP
 is ~360 MB, so the default is \code{3600} (one hour). Set to a lower

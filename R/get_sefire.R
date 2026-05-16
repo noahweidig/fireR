@@ -86,10 +86,10 @@ get_sefire <- function(
     if (is.null(years)) {
       stop('`years` must be provided when dataset = "Burn Severity"')
     }
-    years <- as.integer(years)
-    if (length(years) == 0L || any(is.na(years))) {
+    if (!is.numeric(years) || length(years) == 0L || any(is.na(years))) {
       stop("`years` must be a non-empty integer vector with no NA values")
     }
+    years <- as.integer(years)
     if (any(years < 2000L) || any(years > 2022L)) {
       stop("`years` must be between 2000 and 2022 (inclusive)")
     }

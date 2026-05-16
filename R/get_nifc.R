@@ -196,6 +196,10 @@ read_nifc <- function(
     years <- sort(unique(years))
   }
 
+  if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
+    stop("`cache` must be a single logical or character value")
+  }
+
   cache_dir <- if (isTRUE(cache)) {
     tools::R_user_dir("fireR", "cache")
   } else if (isFALSE(cache)) {
@@ -376,6 +380,10 @@ read_fod <- function(
     }
     years <- as.integer(years)
     years <- sort(unique(years))
+  }
+
+  if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
+    stop("`cache` must be a single logical or character value")
   }
 
   cache_dir <- if (isTRUE(cache)) {

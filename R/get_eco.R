@@ -1,5 +1,9 @@
 # Internal helper: download a ZIP and read the shapefile inside it.
 .read_eco_zip <- function(url, zip_name, output, cache, verbose) {
+  if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
+    stop("`cache` must be a single logical or character value")
+  }
+
   cache_dir <- if (isTRUE(cache)) {
     tools::R_user_dir("fireR", "cache")
   } else if (isFALSE(cache)) {

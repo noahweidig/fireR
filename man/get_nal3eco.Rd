@@ -4,11 +4,7 @@
 \alias{get_nal3eco}
 \title{Download and load North America Level 3 Ecoregions}
 \usage{
-get_nal3eco(
-  output = c("sf", "vect", "terra"),
-  cache = FALSE,
-  verbose = TRUE
-)
+get_nal3eco(output = c("sf", "vect", "terra"), cache = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{output}{\code{character(1)} class of the returned spatial object.
@@ -31,7 +27,8 @@ Level 3 Ecoregion polygons.
 Downloads and loads the Commission for Environmental Cooperation (CEC)
 North America Level 3 Ecoregion boundaries as a spatial object.
 }
-\details{
+\section{About CEC Ecoregions}{
+
 The Commission for Environmental Cooperation (CEC) North American ecoregion
 framework divides the continent into hierarchical levels based on similarity
 of ecosystems and the type, quality, and quantity of environmental
@@ -39,6 +36,7 @@ resources.  Level 3 provides the finest continental-scale subdivisions,
 corresponding to the US EPA Level III ecoregions.  Data are sourced from
 the US EPA / CEC ecoregion mapping programme.
 }
+
 \examples{
 \dontrun{
 eco <- get_nal3eco()
