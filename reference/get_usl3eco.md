@@ -45,7 +45,7 @@ An `sf` object or
 [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
 of US Level 3 Ecoregion polygons.
 
-## Details
+## About US EPA Ecoregions
 
 The US EPA ecoregion framework classifies areas of the United States by
 similarity of ecosystems and environmental resources. Level 3 provides

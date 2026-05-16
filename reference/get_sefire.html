@@ -94,8 +94,8 @@ saved.  Defaults to the current working directory.</p></dd>
 
 
 <dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
-<dd><p><code>logical(1)</code> re-download when <code>TRUE</code>; defaults to
-<code>FALSE</code>.</p></dd>
+<dd><p><code>logical(1)</code> re-download when <code>TRUE</code>;
+defaults to <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-timeout">timeout<a class="anchor" aria-label="anchor" href="#arg-timeout"></a></dt>
@@ -115,8 +115,10 @@ unique year requested.  For all other datasets: a <code>character(1)</code> path
 to the downloaded ZIP file (returned invisibly).</p>
     </div>
     <div class="section level2">
-    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The southeastern United States experiences frequent wild and prescribed fire
+    <h2 id="about-se-firemap">About SE FireMap<a class="anchor" aria-label="anchor" href="#about-se-firemap"></a></h2>
+
+
+<p>The southeastern United States experiences frequent wild and prescribed fire
 activity.  The USGS developed a gradient-boosted decision tree model trained
 on over 5,000 Composite Burn Inventory (CBI) field plots to predict
 post-fire burn severity as a CBI value (0–3) across the region.  The model
@@ -126,8 +128,8 @@ to the extent of burned area identified by the Landsat Burned Area Product.
 The result is an annual burn severity mosaic covering 78 ARD Landsat tiles
 across the southeastern United States for years 2000–2022.</p>
 <p>The SE FireMap Fall 2024 release additionally provides a Fire History Map
-(1994–2024), Burned Area Polygons (1994–2024), and Burned Area Raster
-grids (1994–2024) as single-file geodatabase ZIPs.  Year selection is not
+(1994–2024), Burned Area Polygons (1994–2024), and Burned Area Raster grids
+(1994–2024) as single-file geodatabase ZIPs.  Year selection is not
 applicable to these three products; the <code>years</code> argument is silently
 ignored when they are requested.</p>
     </div>

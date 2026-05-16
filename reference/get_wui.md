@@ -7,11 +7,7 @@ already exists and `overwrite = FALSE`, no network call is made.
 ## Usage
 
 ``` r
-get_wui(
-  directory = getwd(),
-  overwrite = FALSE,
-  verbose = TRUE
-)
+get_wui(directory = getwd(), overwrite = FALSE, verbose = TRUE)
 ```
 
 ## Arguments

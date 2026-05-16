@@ -9,11 +9,7 @@ exists and `overwrite = FALSE`, no network call is made.
 ## Usage
 
 ``` r
-get_fod(
-  directory = getwd(),
-  overwrite = FALSE,
-  verbose = TRUE
-)
+get_fod(directory = getwd(), overwrite = FALSE, verbose = TRUE)
 ```
 
 ## Arguments

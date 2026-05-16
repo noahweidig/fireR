@@ -7,11 +7,7 @@ the ZIP already exists and `overwrite = FALSE`, no network call is made.
 ## Usage
 
 ``` r
-get_nifc(
-  directory = getwd(),
-  overwrite = FALSE,
-  verbose = TRUE
-)
+get_nifc(directory = getwd(), overwrite = FALSE, verbose = TRUE)
 ```
 
 ## Arguments

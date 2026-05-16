@@ -66,7 +66,7 @@ downloaded ZIP files (returned invisibly), one element per unique year
 requested. For all other datasets: a `character(1)` path to the
 downloaded ZIP file (returned invisibly).
 
-## Details
+## About SE FireMap
 
 The southeastern United States experiences frequent wild and prescribed
 fire activity. The USGS developed a gradient-boosted decision tree model

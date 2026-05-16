@@ -6,11 +6,7 @@ North America Level 3 Ecoregion boundaries as a spatial object.
 ## Usage
 
 ``` r
-get_nal3eco(
-  output = c("sf", "vect", "terra"),
-  cache = FALSE,
-  verbose = TRUE
-)
+get_nal3eco(output = c("sf", "vect", "terra"), cache = FALSE, verbose = TRUE)
 ```
 
 ## Arguments
@@ -39,7 +35,7 @@ An `sf` object or
 [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
 of North America Level 3 Ecoregion polygons.
 
-## Details
+## About CEC Ecoregions
 
 The Commission for Environmental Cooperation (CEC) North American
 ecoregion framework divides the continent into hierarchical levels based

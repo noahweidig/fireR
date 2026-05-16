@@ -23,34 +23,36 @@ or a plain `data.frame`.
 
 ## Main functions
 
-- [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
-  — download MTBS fire perimeter ZIP data.
+- [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md) -
+  download MTBS fire perimeter ZIP data.
 
-- [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
-  — read, filter, and return MTBS fire perimeters.
+- [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md) -
+  read, filter, and return MTBS fire perimeters.
 
-- [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
-  — download SE FireMap Annual Burn Severity Mosaic ZIP(s) for one or
-  more years (2000–2022).
+- [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md) -
+  download SE FireMap Annual Burn Severity Mosaic ZIP(s) for one or more
+  years (2000-2022).
 
-- [`get_nal1eco()`](https://noahweidig.github.io/fireR/reference/get_nal1eco.md)
-  — download and load North America Level 1 Ecoregions.
+- [`get_nal1eco()`](https://noahweidig.github.io/fireR/reference/get_nal1eco.md) -
+  download and load North America Level 1 Ecoregions.
 
-- [`get_nal2eco()`](https://noahweidig.github.io/fireR/reference/get_nal2eco.md)
-  — download and load North America Level 2 Ecoregions.
+- [`get_nal2eco()`](https://noahweidig.github.io/fireR/reference/get_nal2eco.md) -
+  download and load North America Level 2 Ecoregions.
 
-- [`get_nal3eco()`](https://noahweidig.github.io/fireR/reference/get_nal3eco.md)
-  — download and load North America Level 3 Ecoregions.
+- [`get_nal3eco()`](https://noahweidig.github.io/fireR/reference/get_nal3eco.md) -
+  download and load North America Level 3 Ecoregions.
 
-- [`get_usl3eco()`](https://noahweidig.github.io/fireR/reference/get_usl3eco.md)
-  — download and load US Level 3 Ecoregions.
+- [`get_usl3eco()`](https://noahweidig.github.io/fireR/reference/get_usl3eco.md) -
+  download and load US Level 3 Ecoregions.
 
-- [`get_usl4eco()`](https://noahweidig.github.io/fireR/reference/get_usl4eco.md)
-  — download and load US Level 4 Ecoregions.
+- [`get_usl4eco()`](https://noahweidig.github.io/fireR/reference/get_usl4eco.md) -
+  download and load US Level 4 Ecoregions.
 
 ## See also
 
 Useful links:
+
+- <https://noahweidig.github.io/fireR>
 
 - <https://github.com/noahweidig/fireR>
 
@@ -59,3 +61,7 @@ Useful links:
 ## Author
 
 **Maintainer**: Noah Weidig <noah.weidig@ufl.edu>
+
+Authors:
+
+- Noah Weidig <noah.weidig@ufl.edu>
