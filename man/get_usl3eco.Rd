@@ -36,13 +36,15 @@ Ecoregion polygons.
 Downloads and loads US EPA Level 3 Ecoregion boundaries as a spatial
 object, optionally including state boundaries.
 }
-\details{
+\section{About US EPA Ecoregions}{
+
 The US EPA ecoregion framework classifies areas of the United States by
 similarity of ecosystems and environmental resources.  Level 3 provides
 finer subdivisions of the Level 2 regions and is widely used for
 environmental assessment, monitoring, and reporting at regional scales.
 Data are sourced from the US EPA Office of Research and Development.
 }
+
 \examples{
 \dontrun{
 eco <- get_usl3eco()

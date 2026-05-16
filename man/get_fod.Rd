@@ -4,11 +4,7 @@
 \alias{get_fod}
 \title{Download and unzip USFS Fire Occurrence Database (FOD)}
 \usage{
-get_fod(
-  directory = getwd(),
-  overwrite = FALSE,
-  verbose = TRUE
-)
+get_fod(directory = getwd(), overwrite = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{directory}{\code{character(1)} directory where the ZIP file and

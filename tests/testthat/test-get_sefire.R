@@ -18,3 +18,7 @@ test_that("get_sefire() rejects NA in years", {
 test_that("get_sefire() rejects empty years vector", {
   expect_error(get_sefire(years = integer(0)), "non-empty")
 })
+
+test_that("get_sefire() rejects non-numeric years", {
+  expect_error(get_sefire(years = "bad"), "non-empty")
+})

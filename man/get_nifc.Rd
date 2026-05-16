@@ -4,11 +4,7 @@
 \alias{get_nifc}
 \title{Download and unzip NIFC wildfire data}
 \usage{
-get_nifc(
-  directory = getwd(),
-  overwrite = FALSE,
-  verbose = TRUE
-)
+get_nifc(directory = getwd(), overwrite = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{directory}{\code{character(1)} directory where the ZIP file and

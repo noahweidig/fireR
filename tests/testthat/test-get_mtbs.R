@@ -9,6 +9,15 @@ test_that("read_mtbs() input validation works", {
 
   # invalid type
   expect_error(read_mtbs(type = "BadType"), "Unknown.*type")
+
+  # invalid years
+  expect_error(read_mtbs(years = "bad"), "non-empty")
+  expect_error(read_mtbs(years = NA_integer_), "NA")
+  expect_error(read_mtbs(years = integer(0)), "non-empty")
+
+  # invalid cache
+  expect_error(read_mtbs(cache = 123), "logical or character")
+  expect_error(read_mtbs(cache = c("a", "b")), "logical or character")
 })
 
 shared_cache <- file.path(tempdir(), "mtbs_shared_test_cache")

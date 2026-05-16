@@ -41,11 +41,11 @@ path as a string to specify a custom location.}
 }
 \value{
 \itemize{
-  \item A \code{terra::SpatVector} when \code{output = "vect"} /
-    \code{"terra"} and \code{geometry = TRUE}.
-  \item An \code{sf} object when \code{output = "sf"} and
-    \code{geometry = TRUE}.
-  \item A \code{data.frame} when \code{geometry = FALSE}.
+\item A \code{terra::SpatVector} when \code{output = "vect"} /
+\code{"terra"} and \code{geometry = TRUE}.
+\item An \code{sf} object when \code{output = "sf"} and
+\code{geometry = TRUE}.
+\item A \code{data.frame} when \code{geometry = FALSE}.
 }
 }
 \description{

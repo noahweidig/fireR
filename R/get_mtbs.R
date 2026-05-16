@@ -143,10 +143,10 @@ read_mtbs <- function(
 
   # Validate years
   if (!is.null(years)) {
-    years <- as.integer(years)
-    if (length(years) == 0L || any(is.na(years))) {
+    if (!is.numeric(years) || length(years) == 0L || any(is.na(years))) {
       stop("`years` must be a non-empty integer vector with no NA values")
     }
+    years <- as.integer(years)
     years <- sort(unique(years))
   }
 
@@ -155,6 +155,11 @@ read_mtbs <- function(
   if (!is.null(type)) {
     bad <- setdiff(type, valid_types)
     if (length(bad) > 0L) stop("Unknown type: ", paste(bad, collapse = ", "))
+  }
+
+  # Validate cache
+  if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
+    stop("`cache` must be a single logical or character value")
   }
 
   # Resolve ZIP file location
