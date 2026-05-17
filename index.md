@@ -18,7 +18,8 @@ ecoregion boundaries:
   or `data.frame`
 - [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
   downloads SE FireMap Annual Burn Severity Mosaic ZIP(s) for one or
-  more years (2000–2022)
+  more years (2000–2022), as well as Fire History and Burned Area
+  products (1994–2024)
 - [`get_nal1eco()`](https://noahweidig.github.io/fireR/reference/get_nal1eco.md)
   /
   [`get_nal2eco()`](https://noahweidig.github.io/fireR/reference/get_nal2eco.md)
@@ -131,18 +132,28 @@ fires <- read_mtbs(cache = "~/data/mtbs_cache")
 
 ## SE FireMap
 
-Download burn severity mosaics for one or more years:
+Download burn severity mosaics for one or more years, or single-file
+datasets covering 1994-2024:
 
 ``` r
 
-# Single year
+# Burn Severity -- single year
 zip_path <- get_sefire(years = 2020)
 
-# Contiguous range
+# Burn Severity -- contiguous range
 zip_paths <- get_sefire(years = 2015:2020, directory = "data/sefire")
 
-# Specific years
+# Burn Severity -- specific years
 zip_paths <- get_sefire(years = c(2000, 2010, 2020))
+
+# Fire History (1994-2024)
+zip_path <- get_sefire(dataset = "Fire History")
+
+# Burned Area Polygons (1994-2024)
+zip_path <- get_sefire(dataset = "Burned Area Polygons")
+
+# Burned Area Rasters (1994-2024)
+zip_path <- get_sefire(dataset = "Burned Area Rasters")
 ```
 
 ------------------------------------------------------------------------

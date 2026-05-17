@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="favicon.ico">
 <link rel="manifest" href="site.webmanifest">
 <script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="fireR • USGS Fire Data and Ecoregion Boundaries for R">
 <meta name="description" content="Fast, convenient access to USGS MTBS fire data, SE FireMap annual burn severity mosaics, and EPA/CEC ecoregion boundaries.
@@ -82,7 +82,7 @@
 <code><a href="reference/read_mtbs.html">read_mtbs()</a></code> reads, filters, and returns data from that ZIP as <strong><code>sf</code></strong>, <strong><code><a href="https://rspatial.github.io/terra/reference/SpatVector-class.html" class="external-link">terra::SpatVector</a></code></strong>, or <code>data.frame</code>
 </li>
 <li>
-<code><a href="reference/get_sefire.html">get_sefire()</a></code> downloads SE FireMap Annual Burn Severity Mosaic ZIP(s) for one or more years (2000–2022)</li>
+<code><a href="reference/get_sefire.html">get_sefire()</a></code> downloads SE FireMap Annual Burn Severity Mosaic ZIP(s) for one or more years (2000–2022), as well as Fire History and Burned Area products (1994–2024)</li>
 <li>
 <code><a href="reference/get_nal1eco.html">get_nal1eco()</a></code> / <code><a href="reference/get_nal2eco.html">get_nal2eco()</a></code> / <code><a href="reference/get_nal3eco.html">get_nal3eco()</a></code> — download and load CEC North America ecoregions at Levels 1–3</li>
 <li>
@@ -175,16 +175,25 @@
 <div class="section level2">
 <h2 id="se-firemap">SE FireMap<a class="anchor" aria-label="anchor" href="#se-firemap"></a>
 </h2>
-<p>Download burn severity mosaics for one or more years:</p>
+<p>Download burn severity mosaics for one or more years, or single-file datasets covering 1994-2024:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Single year</span></span>
+<code class="sourceCode R"><span><span class="co"># Burn Severity -- single year</span></span>
 <span><span class="va">zip_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_sefire.html">get_sefire</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fl">2020</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Contiguous range</span></span>
+<span><span class="co"># Burn Severity -- contiguous range</span></span>
 <span><span class="va">zip_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_sefire.html">get_sefire</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fl">2015</span><span class="op">:</span><span class="fl">2020</span>, directory <span class="op">=</span> <span class="st">"data/sefire"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Specific years</span></span>
-<span><span class="va">zip_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_sefire.html">get_sefire</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2000</span>, <span class="fl">2010</span>, <span class="fl">2020</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># Burn Severity -- specific years</span></span>
+<span><span class="va">zip_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_sefire.html">get_sefire</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2000</span>, <span class="fl">2010</span>, <span class="fl">2020</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fire History (1994-2024)</span></span>
+<span><span class="va">zip_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_sefire.html">get_sefire</a></span><span class="op">(</span>dataset <span class="op">=</span> <span class="st">"Fire History"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Burned Area Polygons (1994-2024)</span></span>
+<span><span class="va">zip_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_sefire.html">get_sefire</a></span><span class="op">(</span>dataset <span class="op">=</span> <span class="st">"Burned Area Polygons"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Burned Area Rasters (1994-2024)</span></span>
+<span><span class="va">zip_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_sefire.html">get_sefire</a></span><span class="op">(</span>dataset <span class="op">=</span> <span class="st">"Burned Area Rasters"</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">

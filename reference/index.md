@@ -40,8 +40,9 @@ background session.
 ## SE FireMap
 
 Download Southeast FireMap Annual Burn Severity Mosaic ZIP archives for
-one or more years (2000-2022), covering 78 ARD Landsat tiles across the
-southeastern United States.
+one or more years (2000-2022) covering 78 ARD Landsat tiles across the
+southeastern United States, as well as single-file datasets for Fire
+History and Burned Area products (1994-2024).
 
 - [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
   : Download Southeast FireMap Datasets
