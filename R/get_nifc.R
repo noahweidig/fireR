@@ -245,7 +245,8 @@ read_nifc <- function(
   } else {
     gpkg_files <- list.files(cache_dir, pattern = "\\.gpkg$", recursive = TRUE, full.names = TRUE, ignore.case = TRUE)
     shp_files <- list.files(cache_dir, pattern = "\\.shp$", recursive = TRUE, full.names = TRUE, ignore.case = TRUE)
-    gdb_files <- list.files(cache_dir, pattern = "\\.gdb$", recursive = TRUE, full.names = TRUE, ignore.case = TRUE)
+    all_dirs <- list.dirs(cache_dir, recursive = TRUE, full.names = TRUE)
+    gdb_files <- all_dirs[grepl("\\.gdb$", all_dirs, ignore.case = TRUE)]
 
     if (length(gpkg_files) > 0L) {
       data_path <- normalizePath(gpkg_files[[1L]], winslash = "/")
