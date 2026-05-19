@@ -2,9 +2,10 @@
 % Please edit documentation in R/get_mtbs.R
 \name{read_mtbs}
 \alias{read_mtbs}
-\title{Read MTBS fire perimeter data}
+\title{Read MTBS fire perimeter or occurrence data}
 \usage{
 read_mtbs(
+  dataset = c("perimeters", "occurrence"),
   years = NULL,
   type = NULL,
   geometry = TRUE,
@@ -14,6 +15,10 @@ read_mtbs(
 )
 }
 \arguments{
+\item{dataset}{\code{character(1)} which dataset to read. Use
+\code{"perimeters"} (default) to read fire perimeters as polygons, or
+\code{"occurrence"} to read fire centroids as points.}
+
 \item{years}{\code{integer} vector of years to keep.  Accepts a single
 year (\code{2020}), a contiguous range created with \code{:} notation
 (\code{2010:2020}), or a vector of specific years
@@ -58,13 +63,12 @@ directory path as a string to specify a custom location.}
 }
 }
 \description{
-Reads MTBS fire perimeters from a local MTBS perimeters ZIP downloaded with
+Reads MTBS fire data from a local MTBS ZIP downloaded with
 \code{\link[=get_mtbs]{get_mtbs()}} and returns either a spatial object or a plain attribute table.
 }
 \details{
 \code{read_mtbs()} does not download data. Use \code{\link[=get_mtbs]{get_mtbs()}} first to obtain the
-perimeters ZIP archive.  Note: this function currently only supports reading
-the perimeters dataset, not the occurrence points dataset.
+data ZIP archive.
 }
 \examples{
 \dontrun{

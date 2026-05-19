@@ -44,10 +44,5 @@ Useful links:
 \author{
 \strong{Maintainer}: Noah Weidig \email{noah.weidig@ufl.edu}
 
-Authors:
-\itemize{
-  \item Noah Weidig \email{noah.weidig@ufl.edu}
-}
-
 }
 \keyword{internal}

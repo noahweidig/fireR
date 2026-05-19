@@ -62,15 +62,17 @@ get_mtbs <- function(
   invisible(zip_file)
 }
 
-#' Read MTBS fire perimeter data
+#' Read MTBS fire perimeter or occurrence data
 #'
-#' Reads MTBS fire perimeters from a local MTBS perimeters ZIP downloaded with
+#' Reads MTBS fire data from a local MTBS ZIP downloaded with
 #' [get_mtbs()] and returns either a spatial object or a plain attribute table.
 #'
 #' `read_mtbs()` does not download data. Use [get_mtbs()] first to obtain the
-#' perimeters ZIP archive.  Note: this function currently only supports reading
-#' the perimeters dataset, not the occurrence points dataset.
+#' data ZIP archive.
 #'
+#' @param dataset \code{character(1)} which dataset to read. Use
+#'   \code{"perimeters"} (default) to read fire perimeters as polygons, or
+#'   \code{"occurrence"} to read fire centroids as points.
 #' @param years \code{integer} vector of years to keep.  Accepts a single
 #'   year (\code{2020}), a contiguous range created with \code{:} notation
 #'   (\code{2010:2020}), or a vector of specific years
@@ -127,6 +129,7 @@ get_mtbs <- function(
 #' }
 #' @export
 read_mtbs <- function(
+    dataset  = c("perimeters", "occurrence"),
     years    = NULL,
     type     = NULL,
     geometry = TRUE,
@@ -134,7 +137,8 @@ read_mtbs <- function(
     cache    = FALSE,
     verbose  = TRUE
 ) {
-  output <- rlang::arg_match(output)
+  dataset <- rlang::arg_match(dataset)
+  output  <- rlang::arg_match(output)
 
   # Validate geometry
   if (!is.logical(geometry) || length(geometry) != 1L || is.na(geometry)) {
@@ -171,11 +175,17 @@ read_mtbs <- function(
     as.character(cache)
   }
 
-  zip_file <- fs::path(cache_dir, "mtbs_perimeter_data.zip")
+  if (dataset == "occurrence") {
+    zip_name <- "mtbs_fod_pts_data.zip"
+  } else {
+    zip_name <- "mtbs_perimeter_data.zip"
+  }
+
+  zip_file <- fs::path(cache_dir, zip_name)
   if (!fs::file_exists(zip_file)) {
     stop(
       "No MTBS ZIP file found in: ", cache_dir,
-      "\nDownload it first with: get_mtbs(directory = \"", cache_dir, "\")"
+      "\nDownload it first with: get_mtbs(dataset = \"", dataset, "\", directory = \"", cache_dir, "\")"
     )
   }
 

@@ -90,6 +90,21 @@ test_that("type filtering keeps correct rows", {
   expect_true(all(fires[["Incid_Type"]] == "Wildfire", na.rm = TRUE))
 })
 
+test_that("read_mtbs() can read occurrence data", {
+  skip_if_usgs_unreachable()
+  skip_on_cran()
+  cache_dir <- shared_cache
+  get_mtbs(dataset = "occurrence", directory = cache_dir, verbose = FALSE)
+
+  # Check that it returns a spatial object
+  result_sf <- read_mtbs(dataset = "occurrence", years = 2020, output = "sf", cache = cache_dir, verbose = FALSE)
+  expect_s3_class(result_sf, "sf")
+
+  # Type filtering for occurrence
+  fires_wildfire <- read_mtbs(dataset = "occurrence", years = 2020, type = "Wildfire", output = "sf", cache = cache_dir, verbose = FALSE)
+  expect_true(all(fires_wildfire[["Incid_Type"]] == "Wildfire", na.rm = TRUE))
+})
+
 test_that("get_mtbs() downloads and returns ZIP path", {
   skip_if_usgs_unreachable()
   skip_on_cran()
