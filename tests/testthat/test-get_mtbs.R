@@ -18,6 +18,9 @@ test_that("read_mtbs() input validation works", {
   # invalid cache
   expect_error(read_mtbs(cache = 123), "logical or character")
   expect_error(read_mtbs(cache = c("a", "b")), "logical or character")
+
+  # invalid output
+  expect_error(read_mtbs(output = "bad"), "bad")
 })
 
 shared_cache <- file.path(tempdir(), "mtbs_shared_test_cache")
