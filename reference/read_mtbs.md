@@ -1,7 +1,6 @@
-# Read MTBS fire perimeter data
+# Read MTBS fire perimeter or occurrence data
 
-Reads MTBS fire perimeters from a local MTBS perimeters ZIP downloaded
-with
+Reads MTBS fire data from a local MTBS ZIP downloaded with
 [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
 and returns either a spatial object or a plain attribute table.
 
@@ -9,6 +8,7 @@ and returns either a spatial object or a plain attribute table.
 
 ``` r
 read_mtbs(
+  dataset = c("perimeters", "occurrence"),
   years = NULL,
   type = NULL,
   geometry = TRUE,
@@ -19,6 +19,12 @@ read_mtbs(
 ```
 
 ## Arguments
+
+- dataset:
+
+  `character(1)` which dataset to read. Use `"perimeters"` (default) to
+  read fire perimeters as polygons, or `"occurrence"` to read fire
+  centroids as points.
 
 - years:
 
@@ -77,9 +83,7 @@ read_mtbs(
 
 `read_mtbs()` does not download data. Use
 [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
-first to obtain the perimeters ZIP archive. Note: this function
-currently only supports reading the perimeters dataset, not the
-occurrence points dataset.
+first to obtain the data ZIP archive.
 
 ## Examples
 

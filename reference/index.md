@@ -9,7 +9,7 @@ spatial objects with optional year and incident-type filtering.
 - [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
   : Download MTBS perimeter or occurrence data
 - [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
-  : Read MTBS fire perimeter data
+  : Read MTBS fire perimeter or occurrence data
 
 ## NIFC Wildfire Data
 

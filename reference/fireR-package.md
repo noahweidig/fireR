@@ -61,7 +61,3 @@ Useful links:
 ## Author
 
 **Maintainer**: Noah Weidig <noah.weidig@ufl.edu>
-
-Authors:
-
-- Noah Weidig <noah.weidig@ufl.edu>
