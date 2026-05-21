@@ -32,6 +32,18 @@ get_mtbs <- function(
     verbose   = TRUE
 ) {
   dataset <- rlang::arg_match(dataset)
+  if (!is.character(directory) || length(directory) != 1L || is.na(directory)) {
+    stop("`directory` must be a single character string")
+  }
+  if (!is.logical(overwrite) || length(overwrite) != 1L || is.na(overwrite)) {
+    stop("`overwrite` must be a single logical value")
+  }
+  if (!is.numeric(timeout) || length(timeout) != 1L || is.na(timeout) || timeout <= 0) {
+    stop("`timeout` must be a single positive numeric value")
+  }
+  if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
+    stop("`verbose` must be a single logical value")
+  }
 
   if (dataset == "occurrence") {
     url      <- "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/fod_pt_shapefile/mtbs_fod_pts_data.zip"

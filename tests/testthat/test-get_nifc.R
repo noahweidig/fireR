@@ -13,6 +13,18 @@ test_that("get_fod() has expected default arguments", {
   expect_equal(formals(get_fod)$verbose, TRUE)
 })
 
+test_that("get_nifc() input validation works", {
+  expect_error(get_nifc(directory = 123), "single character string")
+  expect_error(get_nifc(overwrite = "yes"), "single logical value")
+  expect_error(get_nifc(verbose = "no"), "single logical value")
+})
+
+test_that("get_fod() input validation works", {
+  expect_error(get_fod(directory = 123), "single character string")
+  expect_error(get_fod(overwrite = "yes"), "single logical value")
+  expect_error(get_fod(verbose = "no"), "single logical value")
+})
+
 # ── read_nifc() input validation (no download required) ──────────────────────
 
 test_that("read_nifc() rejects invalid geometry argument", {

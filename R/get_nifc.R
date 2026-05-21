@@ -23,6 +23,16 @@ get_nifc <- function(
     overwrite = FALSE,
     verbose   = TRUE
 ) {
+  if (!is.character(directory) || length(directory) != 1L || is.na(directory)) {
+    stop("`directory` must be a single character string")
+  }
+  if (!is.logical(overwrite) || length(overwrite) != 1L || is.na(overwrite)) {
+    stop("`overwrite` must be a single logical value")
+  }
+  if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
+    stop("`verbose` must be a single logical value")
+  }
+
   url      <- "https://ndownloader.figshare.com/files/38766504"
   zip_name <- "nifc_perimeters.zip"
   zip_file <- fs::path(directory, zip_name)
@@ -79,6 +89,16 @@ get_fod <- function(
     overwrite = FALSE,
     verbose   = TRUE
 ) {
+  if (!is.character(directory) || length(directory) != 1L || is.na(directory)) {
+    stop("`directory` must be a single character string")
+  }
+  if (!is.logical(overwrite) || length(overwrite) != 1L || is.na(overwrite)) {
+    stop("`overwrite` must be a single logical value")
+  }
+  if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
+    stop("`verbose` must be a single logical value")
+  }
+
   url      <- "https://www.fs.usda.gov/rds/archive/products/RDS-2013-0009.6/RDS-2013-0009.6_Data_Format3_GPKG.zip"
   zip_name <- "RDS-2013-0009.6_Data_Format3_GPKG.zip"
   zip_file <- fs::path(directory, zip_name)

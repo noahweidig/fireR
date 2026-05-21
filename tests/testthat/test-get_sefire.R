@@ -2,6 +2,14 @@ test_that("get_sefire() rejects invalid dataset argument", {
   expect_error(get_sefire(dataset = "bad"), "bad")
 })
 
+test_that("get_sefire() input validation works", {
+  expect_error(get_sefire(directory = 123, years = 2020), "single character string")
+  expect_error(get_sefire(overwrite = "yes", years = 2020), "single logical value")
+  expect_error(get_sefire(timeout = "3600", years = 2020), "single positive numeric value")
+  expect_error(get_sefire(timeout = -1, years = 2020), "single positive numeric value")
+  expect_error(get_sefire(verbose = "no", years = 2020), "single logical value")
+})
+
 test_that("get_sefire() requires years when dataset is Burn Severity", {
   expect_error(get_sefire(dataset = "Burn Severity", years = NULL), "`years` must be provided")
 })

@@ -3,6 +3,9 @@
   if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
     stop("`cache` must be a single logical or character value")
   }
+  if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
+    stop("`verbose` must be a single logical value")
+  }
 
   cache_dir <- if (isTRUE(cache)) {
     tools::R_user_dir("fireR", "cache")
@@ -224,6 +227,10 @@ get_usl3eco <- function(
     verbose = TRUE
 ) {
   output <- rlang::arg_match(output)
+  if (!is.logical(state) || length(state) != 1L || is.na(state)) {
+    stop("`state` must be a single logical value")
+  }
+
   if (state) {
     url      <- "https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/us/us_eco_l3_state_boundaries.zip"
     zip_name <- "us_eco_l3_state_boundaries.zip"
@@ -283,6 +290,10 @@ get_usl4eco <- function(
     verbose = TRUE
 ) {
   output <- rlang::arg_match(output)
+  if (!is.logical(state) || length(state) != 1L || is.na(state)) {
+    stop("`state` must be a single logical value")
+  }
+
   if (state) {
     url      <- "https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/us/us_eco_l4_state_boundaries.zip"
     zip_name <- "us_eco_l4_state_boundaries.zip"

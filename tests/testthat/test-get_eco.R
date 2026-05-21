@@ -25,3 +25,16 @@ test_that("get_eco functions reject invalid cache argument", {
   expect_error(get_usl3eco(cache = NULL), "logical or character")
   expect_error(get_usl4eco(cache = list()), "logical or character")
 })
+
+test_that("get_eco functions reject invalid verbose argument", {
+  expect_error(get_nal1eco(verbose = "yes"), "single logical value")
+  expect_error(get_nal2eco(verbose = 1), "single logical value")
+  expect_error(get_nal3eco(verbose = NA), "single logical value")
+  expect_error(get_usl3eco(verbose = c(TRUE, FALSE)), "single logical value")
+  expect_error(get_usl4eco(verbose = NULL), "single logical value")
+})
+
+test_that("get_us eco functions reject invalid state argument", {
+  expect_error(get_usl3eco(state = "yes"), "single logical value")
+  expect_error(get_usl4eco(state = 1), "single logical value")
+})

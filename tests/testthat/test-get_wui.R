@@ -17,3 +17,9 @@ test_that("get_wui() has expected default arguments", {
   expect_equal(formals(get_wui)$overwrite, FALSE)
   expect_equal(formals(get_wui)$verbose, TRUE)
 })
+
+test_that("get_wui() input validation works", {
+  expect_error(get_wui(directory = 123), "single character string")
+  expect_error(get_wui(overwrite = "yes"), "single logical value")
+  expect_error(get_wui(verbose = "no"), "single logical value")
+})
