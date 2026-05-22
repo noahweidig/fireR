@@ -1,16 +1,27 @@
-test_that("get_nifc() errors on non-existent directory path gracefully", {
-  # Providing a valid temp dir should not error at the argument level
-  tmp <- file.path(tempdir(), "nifc_arg_test")
-  # We can't download, but we can confirm the function at least sets up the dir
-  # without erroring on argument validation (no argument validation to test here,
-  # but we confirm the function signature is accessible)
-  expect_type(formals(get_nifc)$overwrite, "logical")
-  expect_type(formals(get_nifc)$verbose, "logical")
+test_that("get_nifc() rejects invalid arguments", {
+  expect_error(get_nifc(directory = 123), "character string")
+  expect_error(get_nifc(directory = c("a", "b")), "character string")
+  expect_error(get_nifc(directory = NA_character_), "character string")
+
+  expect_error(get_nifc(overwrite = "yes"), "TRUE.*FALSE")
+  expect_error(get_nifc(overwrite = c(TRUE, FALSE)), "TRUE.*FALSE")
+  expect_error(get_nifc(overwrite = NA), "TRUE.*FALSE")
+
+  expect_error(get_nifc(verbose = "yes"), "TRUE.*FALSE")
+  expect_error(get_nifc(verbose = NA), "TRUE.*FALSE")
 })
 
-test_that("get_fod() has expected default arguments", {
-  expect_equal(formals(get_fod)$overwrite, FALSE)
-  expect_equal(formals(get_fod)$verbose, TRUE)
+test_that("get_fod() rejects invalid arguments", {
+  expect_error(get_fod(directory = 123), "character string")
+  expect_error(get_fod(directory = c("a", "b")), "character string")
+  expect_error(get_fod(directory = NA_character_), "character string")
+
+  expect_error(get_fod(overwrite = "yes"), "TRUE.*FALSE")
+  expect_error(get_fod(overwrite = c(TRUE, FALSE)), "TRUE.*FALSE")
+  expect_error(get_fod(overwrite = NA), "TRUE.*FALSE")
+
+  expect_error(get_fod(verbose = "yes"), "TRUE.*FALSE")
+  expect_error(get_fod(verbose = NA), "TRUE.*FALSE")
 })
 
 # ── read_nifc() input validation (no download required) ──────────────────────
@@ -42,6 +53,11 @@ test_that("read_nifc() rejects invalid cache argument", {
 
 test_that("read_nifc() rejects invalid output argument", {
   expect_error(read_nifc(output = "bad"), "bad")
+})
+
+test_that("read_nifc() rejects invalid verbose argument", {
+  expect_error(read_nifc(verbose = "yes"), "TRUE.*FALSE")
+  expect_error(read_nifc(verbose = NA), "TRUE.*FALSE")
 })
 
 test_that("read_nifc() default arguments are correct", {
@@ -142,6 +158,11 @@ test_that("read_fod() rejects invalid cache argument", {
 
 test_that("read_fod() rejects invalid output argument", {
   expect_error(read_fod(output = "bad"), "bad")
+})
+
+test_that("read_fod() rejects invalid verbose argument", {
+  expect_error(read_fod(verbose = "yes"), "TRUE.*FALSE")
+  expect_error(read_fod(verbose = NA), "TRUE.*FALSE")
 })
 
 test_that("read_fod() default arguments are correct", {

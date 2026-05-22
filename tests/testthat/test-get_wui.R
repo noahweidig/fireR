@@ -1,3 +1,16 @@
+test_that("get_wui() rejects invalid arguments", {
+  expect_error(get_wui(directory = 123), "character string")
+  expect_error(get_wui(directory = c("a", "b")), "character string")
+  expect_error(get_wui(directory = NA_character_), "character string")
+
+  expect_error(get_wui(overwrite = "yes"), "TRUE.*FALSE")
+  expect_error(get_wui(overwrite = c(TRUE, FALSE)), "TRUE.*FALSE")
+  expect_error(get_wui(overwrite = NA), "TRUE.*FALSE")
+
+  expect_error(get_wui(verbose = "yes"), "TRUE.*FALSE")
+  expect_error(get_wui(verbose = NA), "TRUE.*FALSE")
+})
+
 test_that("get_wui() does not warn when ZIP already exists", {
   tmp <- file.path(tempdir(), "wui_warn_test")
   dir.create(tmp, showWarnings = FALSE, recursive = TRUE)

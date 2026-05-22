@@ -1,3 +1,14 @@
+test_that("get_eco functions reject invalid state and verbose arguments", {
+  # Test verbose via one of the nal*eco functions
+  expect_error(get_nal1eco(verbose = "yes"), "TRUE.*FALSE")
+  expect_error(get_nal1eco(verbose = NA), "TRUE.*FALSE")
+
+  # Test state and verbose via usl3eco
+  expect_error(get_usl3eco(state = "yes"), "TRUE.*FALSE")
+  expect_error(get_usl3eco(state = NA), "TRUE.*FALSE")
+  expect_error(get_usl3eco(verbose = "yes"), "TRUE.*FALSE")
+})
+
 test_that("get_nal1eco() rejects invalid output argument", {
   expect_error(get_nal1eco(output = "bad"), "bad")
 })

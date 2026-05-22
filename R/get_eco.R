@@ -1,5 +1,8 @@
 # Internal helper: download a ZIP and read the shapefile inside it.
 .read_eco_zip <- function(url, zip_name, output, cache, verbose) {
+  if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
+    stop("`verbose` must be TRUE or FALSE")
+  }
   if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
     stop("`cache` must be a single logical or character value")
   }
@@ -80,6 +83,9 @@ get_nal1eco <- function(
     verbose = TRUE
 ) {
   output <- rlang::arg_match(output)
+  if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
+    stop("`verbose` must be TRUE or FALSE")
+  }
   .read_eco_zip(
     url      = "https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/cec_na/na_cec_eco_l1.zip",
     zip_name = "na_cec_eco_l1.zip",
@@ -126,6 +132,9 @@ get_nal2eco <- function(
     verbose = TRUE
 ) {
   output <- rlang::arg_match(output)
+  if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
+    stop("`verbose` must be TRUE or FALSE")
+  }
   .read_eco_zip(
     url      = "https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/cec_na/na_cec_eco_l2.zip",
     zip_name = "na_cec_eco_l2.zip",
@@ -173,6 +182,9 @@ get_nal3eco <- function(
     verbose = TRUE
 ) {
   output <- rlang::arg_match(output)
+  if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
+    stop("`verbose` must be TRUE or FALSE")
+  }
   .read_eco_zip(
     url      = "https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/cec_na/NA_CEC_Eco_Level3.zip",
     zip_name = "NA_CEC_Eco_Level3.zip",
@@ -224,6 +236,12 @@ get_usl3eco <- function(
     verbose = TRUE
 ) {
   output <- rlang::arg_match(output)
+  if (!is.logical(state) || length(state) != 1L || is.na(state)) {
+    stop("`state` must be TRUE or FALSE")
+  }
+  if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
+    stop("`verbose` must be TRUE or FALSE")
+  }
   if (state) {
     url      <- "https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/us/us_eco_l3_state_boundaries.zip"
     zip_name <- "us_eco_l3_state_boundaries.zip"
@@ -283,6 +301,12 @@ get_usl4eco <- function(
     verbose = TRUE
 ) {
   output <- rlang::arg_match(output)
+  if (!is.logical(state) || length(state) != 1L || is.na(state)) {
+    stop("`state` must be TRUE or FALSE")
+  }
+  if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
+    stop("`verbose` must be TRUE or FALSE")
+  }
   if (state) {
     url      <- "https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/us/us_eco_l4_state_boundaries.zip"
     zip_name <- "us_eco_l4_state_boundaries.zip"

@@ -33,6 +33,19 @@ get_mtbs <- function(
 ) {
   dataset <- rlang::arg_match(dataset)
 
+  if (!is.character(directory) || length(directory) != 1L || is.na(directory)) {
+    stop("`directory` must be a single character string")
+  }
+  if (!is.logical(overwrite) || length(overwrite) != 1L || is.na(overwrite)) {
+    stop("`overwrite` must be TRUE or FALSE")
+  }
+  if (!is.numeric(timeout) || length(timeout) != 1L || is.na(timeout) || timeout <= 0) {
+    stop("`timeout` must be a single positive number")
+  }
+  if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
+    stop("`verbose` must be TRUE or FALSE")
+  }
+
   if (dataset == "occurrence") {
     url      <- "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/fod_pt_shapefile/mtbs_fod_pts_data.zip"
     zip_name <- "mtbs_fod_pts_data.zip"
@@ -139,6 +152,10 @@ read_mtbs <- function(
 ) {
   dataset <- rlang::arg_match(dataset)
   output  <- rlang::arg_match(output)
+
+  if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
+    stop("`verbose` must be TRUE or FALSE")
+  }
 
   # Validate geometry
   if (!is.logical(geometry) || length(geometry) != 1L || is.na(geometry)) {
