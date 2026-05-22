@@ -1,5 +1,21 @@
-test_that("get_mtbs() rejects invalid dataset argument", {
+test_that("get_mtbs() rejects invalid arguments", {
   expect_error(get_mtbs(dataset = "bad"), "bad")
+
+  expect_error(get_mtbs(directory = 123), "character string")
+  expect_error(get_mtbs(directory = c("a", "b")), "character string")
+  expect_error(get_mtbs(directory = NA_character_), "character string")
+
+  expect_error(get_mtbs(overwrite = "yes"), "TRUE.*FALSE")
+  expect_error(get_mtbs(overwrite = c(TRUE, FALSE)), "TRUE.*FALSE")
+  expect_error(get_mtbs(overwrite = NA), "TRUE.*FALSE")
+
+  expect_error(get_mtbs(timeout = "3600"), "positive number")
+  expect_error(get_mtbs(timeout = -1), "positive number")
+  expect_error(get_mtbs(timeout = NA_real_), "positive number")
+  expect_error(get_mtbs(timeout = c(10, 20)), "positive number")
+
+  expect_error(get_mtbs(verbose = "yes"), "TRUE.*FALSE")
+  expect_error(get_mtbs(verbose = NA), "TRUE.*FALSE")
 })
 
 test_that("read_mtbs() input validation works", {
@@ -21,6 +37,10 @@ test_that("read_mtbs() input validation works", {
 
   # invalid output
   expect_error(read_mtbs(output = "bad"), "bad")
+
+  # invalid verbose
+  expect_error(read_mtbs(verbose = "yes"), "TRUE.*FALSE")
+  expect_error(read_mtbs(verbose = NA), "TRUE.*FALSE")
 })
 
 shared_cache <- file.path(tempdir(), "mtbs_shared_test_cache")
