@@ -1,19 +1,17 @@
 # fireR Package Audit Report
 
 ## 1. Must fix
-- Explicit input validation is missing for common arguments (`directory`, `overwrite`, `timeout`, `verbose`, `state`) across all `get_*` and `read_*` exported functions. The memory instructions specifically require strict, explicit input validation for all parameters to fail fast with clear errors.
+- No critical "must fix" bugs remain. (Prior issues regarding missing explicit input validation for `directory`, `overwrite`, `timeout`, `verbose`, and `state` across `get_*` and `read_*` functions were addressed in a recent commit).
 
 ## 2. Safe improvements
-- Add strict, explicit validation (`is.character`, `length() == 1L`, `!is.na()`, etc.) for `directory`, `overwrite`, `timeout`, and `verbose` in `get_mtbs()`, `get_sefire()`, `get_wui()`, `get_nifc()`, and `get_fod()`.
-- Add strict explicit validation for `verbose` in `read_mtbs()`, `read_nifc()`, and `read_fod()`.
-- Add explicit validation for `verbose` in `get_nal1eco()`, `get_nal2eco()`, and `get_nal3eco()`.
-- Add explicit validation for `state` and `verbose` in `get_usl3eco()` and `get_usl4eco()`.
-- Add test coverage (`testthat`) asserting that invalid inputs for these arguments are appropriately caught and rejected.
+- **README Documentation**: The `dataset` parameter is missing from the "`read_mtbs()` Arguments" table in the README. It needs to be documented so users know they can select between `"perimeters"` and `"occurrence"`.
+- **Test Coverage**: The test suite validates `dataset` for `get_mtbs()`, but it misses a test for invalid `dataset` arguments inside `read_mtbs()`. An assertion should be added to `tests/testthat/test-get_mtbs.R`.
 
 ## 3. Possible features, but defer unless needed
 - Dry-run capability to list available datasets without downloading.
 - Progress bar reporting instead of discrete messages.
 - Exposing retry counts for HTTP requests.
+- Additional explicit `is.character` and `!any(is.na())` checks for `type` filtering in `read_mtbs()`.
 
 ## 4. Do not touch
 - The overall architecture of downloading to `cache_dir` and returning `sf`/`terra` objects.

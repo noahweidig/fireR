@@ -20,6 +20,9 @@ test_that("get_mtbs() rejects invalid arguments", {
 
 test_that("read_mtbs() input validation works", {
 
+  # invalid dataset
+  expect_error(read_mtbs(dataset = "bad"), "bad")
+
   # geometry must be logical
   expect_error(read_mtbs(geometry = "yes"), "TRUE.*FALSE")
 
