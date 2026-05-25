@@ -7,6 +7,11 @@ test_that("get_nifc() rejects invalid arguments", {
   expect_error(get_nifc(overwrite = c(TRUE, FALSE)), "TRUE.*FALSE")
   expect_error(get_nifc(overwrite = NA), "TRUE.*FALSE")
 
+  expect_error(get_nifc(timeout = "3600"), "positive number")
+  expect_error(get_nifc(timeout = -1), "positive number")
+  expect_error(get_nifc(timeout = NA_real_), "positive number")
+  expect_error(get_nifc(timeout = c(10, 20)), "positive number")
+
   expect_error(get_nifc(verbose = "yes"), "TRUE.*FALSE")
   expect_error(get_nifc(verbose = NA), "TRUE.*FALSE")
 })
@@ -19,6 +24,11 @@ test_that("get_fod() rejects invalid arguments", {
   expect_error(get_fod(overwrite = "yes"), "TRUE.*FALSE")
   expect_error(get_fod(overwrite = c(TRUE, FALSE)), "TRUE.*FALSE")
   expect_error(get_fod(overwrite = NA), "TRUE.*FALSE")
+
+  expect_error(get_fod(timeout = "3600"), "positive number")
+  expect_error(get_fod(timeout = -1), "positive number")
+  expect_error(get_fod(timeout = NA_real_), "positive number")
+  expect_error(get_fod(timeout = c(10, 20)), "positive number")
 
   expect_error(get_fod(verbose = "yes"), "TRUE.*FALSE")
   expect_error(get_fod(verbose = NA), "TRUE.*FALSE")
