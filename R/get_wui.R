@@ -21,6 +21,8 @@
 #'   unzipped contents are stored.  Defaults to the current working directory.
 #' @param overwrite \code{logical(1)} re-download when \code{TRUE};
 #'   defaults to \code{FALSE}.
+#' @param timeout \code{numeric(1)} download timeout in seconds.
+#'   Defaults to \code{3600} (one hour).
 #' @param verbose \code{logical(1)} print progress messages.
 #'
 #' @return \code{character(1)} path to the downloaded ZIP file (invisibly).
@@ -41,6 +43,7 @@
 get_wui <- function(
     directory = getwd(),
     overwrite = FALSE,
+    timeout   = 3600,
     verbose   = TRUE
 ) {
   if (!is.character(directory) || length(directory) != 1L || is.na(directory)) {
@@ -48,6 +51,9 @@ get_wui <- function(
   }
   if (!is.logical(overwrite) || length(overwrite) != 1L || is.na(overwrite)) {
     stop("`overwrite` must be TRUE or FALSE")
+  }
+  if (!is.numeric(timeout) || length(timeout) != 1L || is.na(timeout) || timeout <= 0) {
+    stop("`timeout` must be a single positive number")
   }
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
@@ -70,7 +76,7 @@ get_wui <- function(
     ))
     if (verbose) cli::cli_inform("Downloading USFS Wildland-Urban Interface (WUI) data \u2026")
     curl::curl_download(url, destfile = zip_file,
-                        handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string),
+                        handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string, timeout = as.integer(timeout)),
                         quiet  = FALSE)
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
     did_download <- TRUE
