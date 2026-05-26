@@ -1,6 +1,17 @@
 # fireR Package Audit Report
 
 ## 1. Must fix
+- No critical "must fix" bugs remain. (Prior issues regarding missing explicit input validation for `directory`, `overwrite`, `timeout`, `verbose`, and `state` across `get_*` and `read_*` functions were addressed in a recent commit).
+
+## 2. Safe improvements
+- **README Documentation**: The `dataset` parameter is missing from the "`read_mtbs()` Arguments" table in the README. It needs to be documented so users know they can select between `"perimeters"` and `"occurrence"`.
+- **Test Coverage**: The test suite validates `dataset` for `get_mtbs()`, but it misses a test for invalid `dataset` arguments inside `read_mtbs()`. An assertion should be added to `tests/testthat/test-get_mtbs.R`.
+
+## 3. Possible features, but defer unless needed
+- Dry-run capability to list available datasets without downloading.
+- Progress bar reporting instead of discrete messages.
+- Exposing retry counts for HTTP requests.
+- Additional explicit `is.character` and `!any(is.na())` checks for `type` filtering in `read_mtbs()`.
 - No critical "must fix" issues exist in the current architecture. Explicit validation (`is.character`, `length() == 1L`, `!is.na()`, etc.) for `directory`, `overwrite`, `verbose`, and `state` are already correctly implemented across all exported functions, ensuring they fail fast with clear errors.
 
 ## 2. Safe improvements

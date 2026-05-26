@@ -243,6 +243,7 @@ and a `cache` argument to persist downloads between sessions.
 
 | Argument | Type | Default | Description |
 |---|---|---|---|
+| `dataset` | `character` | `"perimeters"` | `"perimeters"` or `"occurrence"`. Which dataset to read |
 | `years` | `integer` | `NULL` | Single year, range (`2010:2020`), or specific years (`c(2000, 2010)`). `NULL` = no filter |
 | `type` | `character` | `NULL` | Incident type(s). `NULL` = all types |
 | `geometry` | `logical` | `TRUE` | Return a spatial object. `FALSE` → `data.frame` |
