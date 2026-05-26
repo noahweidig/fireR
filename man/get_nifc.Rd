@@ -4,7 +4,12 @@
 \alias{get_nifc}
 \title{Download and unzip NIFC wildfire data}
 \usage{
-get_nifc(directory = getwd(), overwrite = FALSE, verbose = TRUE)
+get_nifc(
+  directory = getwd(),
+  overwrite = FALSE,
+  timeout = 3600,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{directory}{\code{character(1)} directory where the ZIP file and
@@ -12,6 +17,9 @@ unzipped contents are stored.  Defaults to the current working directory.}
 
 \item{overwrite}{\code{logical(1)} re-download when \code{TRUE};
 defaults to \code{FALSE}.}
+
+\item{timeout}{\code{numeric(1)} download timeout in seconds.
+Defaults to \code{3600} (one hour).}
 
 \item{verbose}{\code{logical(1)} print progress messages.}
 }

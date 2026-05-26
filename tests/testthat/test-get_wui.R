@@ -7,6 +7,11 @@ test_that("get_wui() rejects invalid arguments", {
   expect_error(get_wui(overwrite = c(TRUE, FALSE)), "TRUE.*FALSE")
   expect_error(get_wui(overwrite = NA), "TRUE.*FALSE")
 
+  expect_error(get_wui(timeout = "3600"), "positive number")
+  expect_error(get_wui(timeout = -1), "positive number")
+  expect_error(get_wui(timeout = NA_real_), "positive number")
+  expect_error(get_wui(timeout = c(10, 20)), "positive number")
+
   expect_error(get_wui(verbose = "yes"), "TRUE.*FALSE")
   expect_error(get_wui(verbose = NA), "TRUE.*FALSE")
 })
