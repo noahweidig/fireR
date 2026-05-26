@@ -7,7 +7,7 @@ already exists and `overwrite = FALSE`, no network call is made.
 ## Usage
 
 ``` r
-get_wui(directory = getwd(), overwrite = FALSE, verbose = TRUE)
+get_wui(directory = getwd(), overwrite = FALSE, timeout = 3600, verbose = TRUE)
 ```
 
 ## Arguments
@@ -20,6 +20,11 @@ get_wui(directory = getwd(), overwrite = FALSE, verbose = TRUE)
 - overwrite:
 
   `logical(1)` re-download when `TRUE`; defaults to `FALSE`.
+
+- timeout:
+
+  `numeric(1)` download timeout in seconds. Defaults to `3600` (one
+  hour).
 
 - verbose:
 

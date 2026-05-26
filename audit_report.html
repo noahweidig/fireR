@@ -40,31 +40,45 @@
 
 <div class="section level2">
 <h2 id="id_1-must-fix">1. Must fix<a class="anchor" aria-label="anchor" href="#id_1-must-fix"></a></h2>
-<ul><li>Explicit input validation is missing for common arguments (<code>directory</code>, <code>overwrite</code>, <code>timeout</code>, <code>verbose</code>, <code>state</code>) across all <code>get_*</code> and <code>read_*</code> exported functions. The memory instructions specifically require strict, explicit input validation for all parameters to fail fast with clear errors.</li>
+<ul><li>No critical “must fix” bugs remain. (Prior issues regarding missing explicit input validation for <code>directory</code>, <code>overwrite</code>, <code>timeout</code>, <code>verbose</code>, and <code>state</code> across <code>get_*</code> and <code>read_*</code> functions were addressed in a recent commit).</li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_2-safe-improvements">2. Safe improvements<a class="anchor" aria-label="anchor" href="#id_2-safe-improvements"></a></h2>
-<ul><li>Add strict, explicit validation (<code>is.character</code>, <code>length() == 1L</code>, <code>!is.na()</code>, etc.) for <code>directory</code>, <code>overwrite</code>, <code>timeout</code>, and <code>verbose</code> in <code><a href="reference/get_mtbs.html">get_mtbs()</a></code>, <code><a href="reference/get_sefire.html">get_sefire()</a></code>, <code><a href="reference/get_wui.html">get_wui()</a></code>, <code><a href="reference/get_nifc.html">get_nifc()</a></code>, and <code><a href="reference/get_fod.html">get_fod()</a></code>.</li>
-<li>Add strict explicit validation for <code>verbose</code> in <code><a href="reference/read_mtbs.html">read_mtbs()</a></code>, <code><a href="reference/read_nifc.html">read_nifc()</a></code>, and <code><a href="reference/read_fod.html">read_fod()</a></code>.</li>
-<li>Add explicit validation for <code>verbose</code> in <code><a href="reference/get_nal1eco.html">get_nal1eco()</a></code>, <code><a href="reference/get_nal2eco.html">get_nal2eco()</a></code>, and <code><a href="reference/get_nal3eco.html">get_nal3eco()</a></code>.</li>
-<li>Add explicit validation for <code>state</code> and <code>verbose</code> in <code><a href="reference/get_usl3eco.html">get_usl3eco()</a></code> and <code><a href="reference/get_usl4eco.html">get_usl4eco()</a></code>.</li>
-<li>Add test coverage (<code>testthat</code>) asserting that invalid inputs for these arguments are appropriately caught and rejected.</li>
+<ul><li>
+<strong>README Documentation</strong>: The <code>dataset</code> parameter is missing from the “<code><a href="reference/read_mtbs.html">read_mtbs()</a></code> Arguments” table in the README. It needs to be documented so users know they can select between <code>"perimeters"</code> and <code>"occurrence"</code>.</li>
+<li>
+<strong>Test Coverage</strong>: The test suite validates <code>dataset</code> for <code><a href="reference/get_mtbs.html">get_mtbs()</a></code>, but it misses a test for invalid <code>dataset</code> arguments inside <code><a href="reference/read_mtbs.html">read_mtbs()</a></code>. An assertion should be added to <code>tests/testthat/test-get_mtbs.R</code>.</li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_3-possible-features-but-defer-unless-needed">3. Possible features, but defer unless needed<a class="anchor" aria-label="anchor" href="#id_3-possible-features-but-defer-unless-needed"></a></h2>
 <ul><li>Dry-run capability to list available datasets without downloading.</li>
 <li>Progress bar reporting instead of discrete messages.</li>
 <li>Exposing retry counts for HTTP requests.</li>
+<li>Additional explicit <code>is.character</code> and <code>!any(is.na())</code> checks for <code>type</code> filtering in <code><a href="reference/read_mtbs.html">read_mtbs()</a></code>.</li>
+<li>No critical “must fix” issues exist in the current architecture. Explicit validation (<code>is.character</code>, <code>length() == 1L</code>, <code>!is.na()</code>, etc.) for <code>directory</code>, <code>overwrite</code>, <code>verbose</code>, and <code>state</code> are already correctly implemented across all exported functions, ensuring they fail fast with clear errors.</li>
+</ul></div>
+<div class="section level2">
+<h2 id="id_2-safe-improvements-1">2. Safe improvements<a class="anchor" aria-label="anchor" href="#id_2-safe-improvements-1"></a></h2>
+<ul><li>Explicitly add the <code>timeout</code> parameter to <code><a href="reference/get_nifc.html">get_nifc()</a></code>, <code><a href="reference/get_fod.html">get_fod()</a></code>, and <code><a href="reference/get_wui.html">get_wui()</a></code> to maintain parity with <code><a href="reference/get_mtbs.html">get_mtbs()</a></code> and <code><a href="reference/get_sefire.html">get_sefire()</a></code>.</li>
+<li>Implement strict, explicit input validation for the newly added <code>timeout</code> parameter (<code>is.numeric</code>, <code>length() == 1L</code>, <code>!is.na()</code>, <code>timeout &gt; 0</code>) in these three functions.</li>
+<li>Update <code>tests/testthat/test-get_nifc.R</code> and <code>tests/testthat/test-get_wui.R</code> with <code>expect_error()</code> checks asserting that invalid inputs for <code>timeout</code> are appropriately caught and rejected.</li>
+<li>Document the <code>timeout</code> parameter in the roxygen comments for <code><a href="reference/get_nifc.html">get_nifc()</a></code>, <code><a href="reference/get_fod.html">get_fod()</a></code>, and <code><a href="reference/get_wui.html">get_wui()</a></code>.</li>
+</ul></div>
+<div class="section level2">
+<h2 id="id_3-possible-features-but-defer-unless-needed-1">3. Possible features, but defer unless needed<a class="anchor" aria-label="anchor" href="#id_3-possible-features-but-defer-unless-needed-1"></a></h2>
+<ul><li>Dry-run capability or a <code>list-available-years</code> helper to check available datasets without downloading.</li>
+<li>Progress bar reporting instead of discrete console messages.</li>
+<li>Exposing explicit retry counts and options for HTTP requests.</li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_4-do-not-touch">4. Do not touch<a class="anchor" aria-label="anchor" href="#id_4-do-not-touch"></a></h2>
 <ul><li>The overall architecture of downloading to <code>cache_dir</code> and returning <code>sf</code>/<code>terra</code> objects.</li>
-<li>Roxygen tags and generated Rd files (aside from updating them automatically via <code><a href="https://devtools.r-lib.org/reference/document.html" class="external-link">devtools::document()</a></code>).</li>
+<li>Roxygen tags and generated <code>.Rd</code> files (aside from updating them automatically via <code><a href="https://devtools.r-lib.org/reference/document.html" class="external-link">devtools::document()</a></code>).</li>
 <li>
-<code>pkgdown</code> YAML structure, bootstrap 5 theme, navbars.</li>
+<code>pkgdown</code> YAML structure (<code>_pkgdown.yml</code>), bootstrap 5 theme, navbars.</li>
 <li>Existing network-heavy downloads inside tests (they are correctly conditionally skipped via helper functions).</li>
 <li>
-<code>purl = FALSE</code> / <code>eval = FALSE</code> in <code>vignettes/getting-started.Rmd</code> (except the setup chunk, which is correctly excluded from this behavior).</li>
+<code>purl = FALSE</code> / <code>eval = FALSE</code> in <code>vignettes/getting-started.Rmd</code> chunks (except the setup chunk, which is correctly excluded from this behavior to preserve the package load during <code>R CMD check</code>).</li>
 </ul></div>
 </div>
 
