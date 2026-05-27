@@ -2,66 +2,33 @@
 
 ## 1. Must fix
 
-- No critical “must fix” bugs remain. (Prior issues regarding missing
-  explicit input validation for `directory`, `overwrite`, `timeout`,
-  `verbose`, and `state` across `get_*` and `read_*` functions were
-  addressed in a recent commit).
-
-## 2. Safe improvements
-
-- **README Documentation**: The `dataset` parameter is missing from the
-  “[`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
-  Arguments” table in the README. It needs to be documented so users
-  know they can select between `"perimeters"` and `"occurrence"`.
-- **Test Coverage**: The test suite validates `dataset` for
-  [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md),
-  but it misses a test for invalid `dataset` arguments inside
-  [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md).
-  An assertion should be added to `tests/testthat/test-get_mtbs.R`.
-
-## 3. Possible features, but defer unless needed
-
-- Dry-run capability to list available datasets without downloading.
-- Progress bar reporting instead of discrete messages.
-- Exposing retry counts for HTTP requests.
-- Additional explicit `is.character` and `!any(is.na())` checks for
-  `type` filtering in
-  [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md).
-- No critical “must fix” issues exist in the current architecture.
-  Explicit validation (`is.character`, `length() == 1L`, `!is.na()`,
-  etc.) for `directory`, `overwrite`, `verbose`, and `state` are already
+- No critical “must fix” bugs remain. Explicit validation
+  (`is.character`, `length() == 1L`, `!is.na()`, etc.) for parameters
+  (`directory`, `overwrite`, `verbose`, `state`, `timeout`) are
   correctly implemented across all exported functions, ensuring they
-  fail fast with clear errors.
+  fail fast with clear errors. Test coverage and continuous integration
+  checks already provide strong assurance of stability.
 
 ## 2. Safe improvements
 
-- Explicitly add the `timeout` parameter to
-  [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md),
-  [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md),
-  and
-  [`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md)
-  to maintain parity with
-  [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
-  and
-  [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md).
-- Implement strict, explicit input validation for the newly added
-  `timeout` parameter (`is.numeric`, `length() == 1L`, `!is.na()`,
-  `timeout > 0`) in these three functions.
-- Update `tests/testthat/test-get_nifc.R` and
-  `tests/testthat/test-get_wui.R` with `expect_error()` checks asserting
-  that invalid inputs for `timeout` are appropriately caught and
-  rejected.
-- Document the `timeout` parameter in the roxygen comments for
-  [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md),
-  [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md),
-  and
-  [`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md).
+- **Argument validation**: Add stricter validation for the `type`
+  argument in
+  [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
+  (ensure it is `is.character`, has length \> 0, and
+  `!any(is.na(type))`) before validating against valid types
+  (`"Wildfire"`, `"Prescribed Fire"`, `"Unknown"`,
+  `"Wildland Fire Use"`).
+- **Test coverage**: Add `testthat` coverage for the strict `type`
+  validation in
+  [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
+  to match the stricter argument validation.
 
 ## 3. Possible features, but defer unless needed
 
 - Dry-run capability or a `list-available-years` helper to check
   available datasets without downloading.
-- Progress bar reporting instead of discrete console messages.
+- Progress bar reporting instead of discrete console messages for
+  long-running downloads (e.g. via the `cli` package).
 - Exposing explicit retry counts and options for HTTP requests.
 
 ## 4. Do not touch
