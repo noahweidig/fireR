@@ -174,6 +174,9 @@ read_mtbs <- function(
   # Validate types
   valid_types <- c("Wildfire", "Prescribed Fire", "Unknown", "Wildland Fire Use")
   if (!is.null(type)) {
+    if (!is.character(type) || length(type) == 0L || any(is.na(type))) {
+      stop("`type` must be a non-empty character vector with no NA values")
+    }
     bad <- setdiff(type, valid_types)
     if (length(bad) > 0L) stop("Unknown type: ", paste(bad, collapse = ", "))
   }

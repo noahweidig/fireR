@@ -28,6 +28,10 @@ test_that("read_mtbs() input validation works", {
 
   # invalid type
   expect_error(read_mtbs(type = "BadType"), "Unknown.*type")
+  expect_error(read_mtbs(type = 123), "non-empty character")
+  expect_error(read_mtbs(type = NA_character_), "NA")
+  expect_error(read_mtbs(type = character(0)), "non-empty character")
+  expect_error(read_mtbs(type = list("Wildfire")), "non-empty character")
 
   # invalid years
   expect_error(read_mtbs(years = "bad"), "non-empty")
