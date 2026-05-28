@@ -24,6 +24,11 @@ ecoregion boundaries.  Spatial results can be returned as an
 \item \code{\link[=read_mtbs]{read_mtbs()}} - read, filter, and return MTBS fire perimeters.
 \item \code{\link[=get_sefire]{get_sefire()}} - download SE FireMap Annual Burn Severity Mosaic ZIP(s)
 for one or more years (2000-2022).
+\item \code{\link[=get_nifc]{get_nifc()}} - download NIFC wildfire perimeters data.
+\item \code{\link[=read_nifc]{read_nifc()}} - read, filter, and return NIFC wildfire perimeters.
+\item \code{\link[=get_fod]{get_fod()}} - download USFS Fire Occurrence Database (FOD) data.
+\item \code{\link[=read_fod]{read_fod()}} - read, filter, and return FOD fire occurrences.
+\item \code{\link[=get_wui]{get_wui()}} - download the USFS Wildland-Urban Interface (WUI) dataset.
 \item \code{\link[=get_nal1eco]{get_nal1eco()}} - download and load North America Level 1 Ecoregions.
 \item \code{\link[=get_nal2eco]{get_nal2eco()}} - download and load North America Level 2 Ecoregions.
 \item \code{\link[=get_nal3eco]{get_nal3eco()}} - download and load North America Level 3 Ecoregions.
@@ -43,11 +48,6 @@ Useful links:
 }
 \author{
 \strong{Maintainer}: Noah Weidig \email{noah.weidig@ufl.edu}
-
-Authors:
-\itemize{
-  \item Noah Weidig \email{noah.weidig@ufl.edu}
-}
 
 }
 \keyword{internal}
