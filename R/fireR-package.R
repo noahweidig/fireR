@@ -16,6 +16,11 @@
 #' * [read_mtbs()] - read, filter, and return MTBS fire perimeters.
 #' * [get_sefire()] - download SE FireMap Annual Burn Severity Mosaic ZIP(s)
 #'   for one or more years (2000-2022).
+#' * [get_nifc()] - download NIFC wildfire perimeters data.
+#' * [read_nifc()] - read, filter, and return NIFC wildfire perimeters.
+#' * [get_fod()] - download USFS Fire Occurrence Database (FOD) data.
+#' * [read_fod()] - read, filter, and return FOD fire occurrences.
+#' * [get_wui()] - download the USFS Wildland-Urban Interface (WUI) dataset.
 #' * [get_nal1eco()] - download and load North America Level 1 Ecoregions.
 #' * [get_nal2eco()] - download and load North America Level 2 Ecoregions.
 #' * [get_nal3eco()] - download and load North America Level 3 Ecoregions.
