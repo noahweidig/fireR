@@ -33,6 +33,21 @@ or a plain `data.frame`.
   download SE FireMap Annual Burn Severity Mosaic ZIP(s) for one or more
   years (2000-2022).
 
+- [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md) -
+  download NIFC wildfire perimeters data.
+
+- [`read_nifc()`](https://noahweidig.github.io/fireR/reference/read_nifc.md) -
+  read, filter, and return NIFC wildfire perimeters.
+
+- [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md) -
+  download USFS Fire Occurrence Database (FOD) data.
+
+- [`read_fod()`](https://noahweidig.github.io/fireR/reference/read_fod.md) -
+  read, filter, and return FOD fire occurrences.
+
+- [`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md) -
+  download the USFS Wildland-Urban Interface (WUI) dataset.
+
 - [`get_nal1eco()`](https://noahweidig.github.io/fireR/reference/get_nal1eco.md) -
   download and load North America Level 1 Ecoregions.
 
@@ -61,7 +76,3 @@ Useful links:
 ## Author
 
 **Maintainer**: Noah Weidig <noah.weidig@ufl.edu>
-
-Authors:
-
-- Noah Weidig <noah.weidig@ufl.edu>
