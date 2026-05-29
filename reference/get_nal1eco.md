@@ -6,7 +6,12 @@ North America Level 1 Ecoregion boundaries as a spatial object.
 ## Usage
 
 ``` r
-get_nal1eco(output = c("sf", "vect", "terra"), cache = FALSE, verbose = TRUE)
+get_nal1eco(
+  output = c("sf", "vect", "terra"),
+  cache = FALSE,
+  timeout = 3600,
+  verbose = TRUE
+)
 ```
 
 ## Arguments
@@ -24,6 +29,10 @@ get_nal1eco(output = c("sf", "vect", "terra"), cache = FALSE, verbose = TRUE)
   when the R session ends. `TRUE` uses the platform user cache directory
   (`tools::R_user_dir("fireR", "cache")`). Supply a directory path as a
   string to specify a custom location.
+
+- timeout:
+
+  `numeric(1)` download timeout in seconds. Default is `3600`.
 
 - verbose:
 

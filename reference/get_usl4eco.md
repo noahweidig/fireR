@@ -10,6 +10,7 @@ get_usl4eco(
   state = FALSE,
   output = c("sf", "vect", "terra"),
   cache = FALSE,
+  timeout = 3600,
   verbose = TRUE
 )
 ```
@@ -34,6 +35,10 @@ get_usl4eco(
   when the R session ends. `TRUE` uses the platform user cache directory
   (`tools::R_user_dir("fireR", "cache")`). Supply a directory path as a
   string to specify a custom location.
+
+- timeout:
+
+  `numeric(1)` download timeout in seconds. Default is `3600`.
 
 - verbose:
 
