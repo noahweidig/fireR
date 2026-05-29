@@ -8,6 +8,7 @@ get_usl4eco(
   state = FALSE,
   output = c("sf", "vect", "terra"),
   cache = FALSE,
+  timeout = 3600,
   verbose = TRUE
 )
 }
@@ -25,6 +26,8 @@ ZIP is cached.  \code{FALSE} (the default) uses a temporary directory that
 is cleaned up when the R session ends.  \code{TRUE} uses the platform user
 cache directory (\code{tools::R_user_dir("fireR", "cache")}).  Supply a
 directory path as a string to specify a custom location.}
+
+\item{timeout}{\code{numeric(1)} download timeout in seconds. Default is \code{3600}.}
 
 \item{verbose}{\code{logical(1)} print progress messages.}
 }

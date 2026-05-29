@@ -36,3 +36,11 @@ test_that("get_eco functions reject invalid cache argument", {
   expect_error(get_usl3eco(cache = NULL), "logical or character")
   expect_error(get_usl4eco(cache = list()), "logical or character")
 })
+
+test_that("get_eco functions reject invalid timeout argument", {
+  expect_error(get_nal1eco(timeout = "3600"), "positive number")
+  expect_error(get_nal2eco(timeout = -1), "positive number")
+  expect_error(get_nal3eco(timeout = NA_real_), "positive number")
+  expect_error(get_usl3eco(timeout = c(10, 20)), "positive number")
+  expect_error(get_usl4eco(timeout = list()), "positive number")
+})
