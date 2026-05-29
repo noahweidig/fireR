@@ -1,10 +1,13 @@
 # Internal helper: download a ZIP and read the shapefile inside it.
-.read_eco_zip <- function(url, zip_name, output, cache, verbose) {
+.read_eco_zip <- function(url, zip_name, output, cache, timeout, verbose) {
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
   }
   if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
     stop("`cache` must be a single logical or character value")
+  }
+  if (!is.numeric(timeout) || length(timeout) != 1L || is.na(timeout) || timeout <= 0) {
+    stop("`timeout` must be a single positive number")
   }
 
   cache_dir <- if (isTRUE(cache)) {
@@ -21,7 +24,7 @@
   if (!fs::file_exists(zip_file)) {
     if (verbose) cli::cli_inform("Downloading {zip_name} \u2026")
     curl::curl_download(url, destfile = zip_file,
-                        handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string),
+                        handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string, timeout = as.integer(timeout)),
                         quiet  = FALSE)
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
   } else if (verbose) {
@@ -66,6 +69,7 @@
 #'   is cleaned up when the R session ends.  \code{TRUE} uses the platform user
 #'   cache directory (\code{tools::R_user_dir("fireR", "cache")}).  Supply a
 #'   directory path as a string to specify a custom location.
+#' @param timeout \code{numeric(1)} download timeout in seconds. Default is \code{3600}.
 #' @param verbose \code{logical(1)} print progress messages.
 #'
 #' @return An \code{sf} object or \code{terra::SpatVector} of North America
@@ -80,6 +84,7 @@
 get_nal1eco <- function(
     output  = c("sf", "vect", "terra"),
     cache   = FALSE,
+    timeout = 3600,
     verbose = TRUE
 ) {
   output <- rlang::arg_match(output)
@@ -91,6 +96,7 @@ get_nal1eco <- function(
     zip_name = "na_cec_eco_l1.zip",
     output   = output,
     cache    = cache,
+    timeout  = timeout,
     verbose  = verbose
   )
 }
@@ -115,6 +121,7 @@ get_nal1eco <- function(
 #'   is cleaned up when the R session ends.  \code{TRUE} uses the platform user
 #'   cache directory (\code{tools::R_user_dir("fireR", "cache")}).  Supply a
 #'   directory path as a string to specify a custom location.
+#' @param timeout \code{numeric(1)} download timeout in seconds. Default is \code{3600}.
 #' @param verbose \code{logical(1)} print progress messages.
 #'
 #' @return An \code{sf} object or \code{terra::SpatVector} of North America
@@ -129,6 +136,7 @@ get_nal1eco <- function(
 get_nal2eco <- function(
     output  = c("sf", "vect", "terra"),
     cache   = FALSE,
+    timeout = 3600,
     verbose = TRUE
 ) {
   output <- rlang::arg_match(output)
@@ -140,6 +148,7 @@ get_nal2eco <- function(
     zip_name = "na_cec_eco_l2.zip",
     output   = output,
     cache    = cache,
+    timeout  = timeout,
     verbose  = verbose
   )
 }
@@ -165,6 +174,7 @@ get_nal2eco <- function(
 #'   is cleaned up when the R session ends.  \code{TRUE} uses the platform user
 #'   cache directory (\code{tools::R_user_dir("fireR", "cache")}).  Supply a
 #'   directory path as a string to specify a custom location.
+#' @param timeout \code{numeric(1)} download timeout in seconds. Default is \code{3600}.
 #' @param verbose \code{logical(1)} print progress messages.
 #'
 #' @return An \code{sf} object or \code{terra::SpatVector} of North America
@@ -179,6 +189,7 @@ get_nal2eco <- function(
 get_nal3eco <- function(
     output  = c("sf", "vect", "terra"),
     cache   = FALSE,
+    timeout = 3600,
     verbose = TRUE
 ) {
   output <- rlang::arg_match(output)
@@ -190,6 +201,7 @@ get_nal3eco <- function(
     zip_name = "NA_CEC_Eco_Level3.zip",
     output   = output,
     cache    = cache,
+    timeout  = timeout,
     verbose  = verbose
   )
 }
@@ -217,6 +229,7 @@ get_nal3eco <- function(
 #'   is cleaned up when the R session ends.  \code{TRUE} uses the platform user
 #'   cache directory (\code{tools::R_user_dir("fireR", "cache")}).  Supply a
 #'   directory path as a string to specify a custom location.
+#' @param timeout \code{numeric(1)} download timeout in seconds. Default is \code{3600}.
 #' @param verbose \code{logical(1)} print progress messages.
 #'
 #' @return An \code{sf} object or \code{terra::SpatVector} of US Level 3
@@ -233,6 +246,7 @@ get_usl3eco <- function(
     state   = FALSE,
     output  = c("sf", "vect", "terra"),
     cache   = FALSE,
+    timeout = 3600,
     verbose = TRUE
 ) {
   output <- rlang::arg_match(output)
@@ -254,6 +268,7 @@ get_usl3eco <- function(
     zip_name = zip_name,
     output   = output,
     cache    = cache,
+    timeout  = timeout,
     verbose  = verbose
   )
 }
@@ -282,6 +297,7 @@ get_usl3eco <- function(
 #'   is cleaned up when the R session ends.  \code{TRUE} uses the platform user
 #'   cache directory (\code{tools::R_user_dir("fireR", "cache")}).  Supply a
 #'   directory path as a string to specify a custom location.
+#' @param timeout \code{numeric(1)} download timeout in seconds. Default is \code{3600}.
 #' @param verbose \code{logical(1)} print progress messages.
 #'
 #' @return An \code{sf} object or \code{terra::SpatVector} of US Level 4
@@ -298,6 +314,7 @@ get_usl4eco <- function(
     state   = FALSE,
     output  = c("sf", "vect", "terra"),
     cache   = FALSE,
+    timeout = 3600,
     verbose = TRUE
 ) {
   output <- rlang::arg_match(output)
@@ -319,6 +336,7 @@ get_usl4eco <- function(
     zip_name = zip_name,
     output   = output,
     cache    = cache,
+    timeout  = timeout,
     verbose  = verbose
   )
 }

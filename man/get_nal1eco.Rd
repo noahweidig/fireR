@@ -4,7 +4,12 @@
 \alias{get_nal1eco}
 \title{Download and load North America Level 1 Ecoregions}
 \usage{
-get_nal1eco(output = c("sf", "vect", "terra"), cache = FALSE, verbose = TRUE)
+get_nal1eco(
+  output = c("sf", "vect", "terra"),
+  cache = FALSE,
+  timeout = 3600,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{output}{\code{character(1)} class of the returned spatial object.
@@ -16,6 +21,8 @@ ZIP is cached.  \code{FALSE} (the default) uses a temporary directory that
 is cleaned up when the R session ends.  \code{TRUE} uses the platform user
 cache directory (\code{tools::R_user_dir("fireR", "cache")}).  Supply a
 directory path as a string to specify a custom location.}
+
+\item{timeout}{\code{numeric(1)} download timeout in seconds. Default is \code{3600}.}
 
 \item{verbose}{\code{logical(1)} print progress messages.}
 }
