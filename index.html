@@ -164,10 +164,12 @@
 <h3 id="cache-the-download-for-future-sessions">Cache the download for future sessions<a class="anchor" aria-label="anchor" href="#cache-the-download-for-future-sessions"></a>
 </h3>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Cache in the default user directory</span></span>
+<code class="sourceCode R"><span><span class="co"># Download to the default user directory</span></span>
+<span><span class="fu"><a href="reference/get_mtbs.html">get_mtbs</a></span><span class="op">(</span>directory <span class="op">=</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/userdir.html" class="external-link">R_user_dir</a></span><span class="op">(</span><span class="st">"fireR"</span>, <span class="st">"cache"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">fires</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Or supply your own cache path</span></span>
+<span><span class="fu"><a href="reference/get_mtbs.html">get_mtbs</a></span><span class="op">(</span>directory <span class="op">=</span> <span class="st">"~/data/mtbs_cache"</span><span class="op">)</span></span>
 <span><span class="va">fires</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_mtbs.html">read_mtbs</a></span><span class="op">(</span>cache <span class="op">=</span> <span class="st">"~/data/mtbs_cache"</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
@@ -214,6 +216,7 @@
 <span><span class="va">perims_recent</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_nifc.html">read_nifc</a></span><span class="op">(</span>years <span class="op">=</span> <span class="fl">2015</span><span class="op">:</span><span class="fl">2020</span>, output <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Cache the download for future sessions</span></span>
+<span><span class="fu"><a href="reference/get_nifc.html">get_nifc</a></span><span class="op">(</span>directory <span class="op">=</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/userdir.html" class="external-link">R_user_dir</a></span><span class="op">(</span><span class="st">"fireR"</span>, <span class="st">"cache"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">perims</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_nifc.html">read_nifc</a></span><span class="op">(</span>cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>

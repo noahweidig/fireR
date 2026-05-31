@@ -121,10 +121,12 @@ tbl <- read_mtbs(geometry = FALSE)
 
 ``` r
 
-# Cache in the default user directory
+# Download to the default user directory
+get_mtbs(directory = tools::R_user_dir("fireR", "cache"))
 fires <- read_mtbs(cache = TRUE)
 
 # Or supply your own cache path
+get_mtbs(directory = "~/data/mtbs_cache")
 fires <- read_mtbs(cache = "~/data/mtbs_cache")
 ```
 
@@ -178,6 +180,7 @@ perims_2020 <- read_nifc(years = 2020, output = "sf")
 perims_recent <- read_nifc(years = 2015:2020, output = "sf")
 
 # Cache the download for future sessions
+get_nifc(directory = tools::R_user_dir("fireR", "cache"))
 perims <- read_nifc(cache = TRUE)
 ```
 
