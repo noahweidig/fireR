@@ -4,8 +4,8 @@
 - No critical "must fix" bugs remain. Explicit validation (`is.character`, `length() == 1L`, `!is.na()`, etc.) for parameters (`directory`, `overwrite`, `verbose`, `state`, `timeout`) are correctly implemented across all exported functions, ensuring they fail fast with clear errors. Test coverage and continuous integration checks already provide strong assurance of stability.
 
 ## 2. Safe improvements
-- **Argument validation**: Add stricter validation for the `type` argument in `read_mtbs()` (ensure it is `is.character`, has length > 0, and `!any(is.na(type))`) before validating against valid types (`"Wildfire"`, `"Prescribed Fire"`, `"Unknown"`, `"Wildland Fire Use"`).
-- **Test coverage**: Add `testthat` coverage for the strict `type` validation in `read_mtbs()` to match the stricter argument validation.
+- **Argument validation**: The strict type validation for the `type` argument in `read_mtbs()` (ensuring it is `is.character`, has length > 0, and `!any(is.na(type))`) is actually already present in the codebase.
+- **Documentation clarifications**: Update `README.md` to properly document the `cache` arguments. The original examples for `read_mtbs(cache = TRUE)` and `read_nifc(cache = TRUE)` misleadingly implied that these functions handled the initial download. The updated documentation correctly demonstrates running `get_mtbs(directory = tools::R_user_dir("fireR", "cache"))` before attempting to load data from that cache.
 
 ## 3. Possible features, but defer unless needed
 - Dry-run capability or a `list-available-years` helper to check available datasets without downloading.
