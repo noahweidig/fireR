@@ -164,7 +164,7 @@ read_mtbs <- function(
 
   # Validate years
   if (!is.null(years)) {
-    if (!is.numeric(years) || length(years) == 0L || any(is.na(years))) {
+    if (!is.numeric(years) || length(years) == 0L || any(is.na(years)) || any(years %% 1 != 0)) {
       stop("`years` must be a non-empty integer vector with no NA values")
     }
     years <- as.integer(years)
