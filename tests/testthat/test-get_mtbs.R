@@ -37,6 +37,7 @@ test_that("read_mtbs() input validation works", {
   expect_error(read_mtbs(years = "bad"), "non-empty")
   expect_error(read_mtbs(years = NA_integer_), "NA")
   expect_error(read_mtbs(years = integer(0)), "non-empty")
+  expect_error(read_mtbs(years = 2020.5), "non-empty integer")
 
   # invalid cache
   expect_error(read_mtbs(cache = 123), "logical or character")
