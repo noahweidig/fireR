@@ -49,7 +49,7 @@ get_nifc <- function(
 
   did_download <- FALSE
   if (!fs::file_exists(zip_file)) {
-    if (verbose) cli::cli_inform("Downloading NIFC wildfire perimeters ...")
+    if (verbose) cli::cli_inform("Downloading NIFC wildfire perimeters \u2026")
     curl::curl_download(url, destfile = zip_file,
                         handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string, timeout = as.integer(timeout)),
                         quiet  = FALSE)
@@ -60,7 +60,7 @@ get_nifc <- function(
   }
 
   if (did_download) {
-    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} ...")
+    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} \u2026")
     utils::unzip(zip_file, exdir = directory)
     if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
   }
@@ -121,7 +121,7 @@ get_fod <- function(
 
   did_download <- FALSE
   if (!fs::file_exists(zip_file)) {
-    if (verbose) cli::cli_inform("Downloading USFS Fire Occurrence Database (FOD) ...")
+    if (verbose) cli::cli_inform("Downloading USFS Fire Occurrence Database (FOD) \u2026")
     req <- httr2::request(url)
     req <- httr2::req_headers(
       req,
@@ -138,7 +138,7 @@ get_fod <- function(
   }
 
   if (did_download) {
-    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} ...")
+    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} \u2026")
     utils::unzip(zip_file, exdir = directory)
     if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
   }
@@ -317,7 +317,7 @@ read_nifc <- function(
     NULL
   }
 
-  if (verbose) cli::cli_inform("Reading NIFC wildfire perimeters ...")
+  if (verbose) cli::cli_inform("Reading NIFC wildfire perimeters \u2026")
   data_sv <- if (is_gpkg || is_gdb) {
     if (!is.null(sql_query)) {
       terra::vect(data_path, layer = layer, query = sql_query)
@@ -470,7 +470,7 @@ read_fod <- function(
     NULL
   }
 
-  if (verbose) cli::cli_inform("Reading FPA-FOD fire occurrence data ...")
+  if (verbose) cli::cli_inform("Reading FPA-FOD fire occurrence data \u2026")
   data_sv <- if (!is.null(sql_query)) {
     terra::vect(gpkg_path, layer = layer, query = sql_query)
   } else {

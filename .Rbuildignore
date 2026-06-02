@@ -7,4 +7,4 @@
 ^pkgdown$
 ^LICENSE\.md$
 ^docs$
-^audit_report\\.md$
+^audit_report\.md$
