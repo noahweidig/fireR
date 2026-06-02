@@ -45,7 +45,7 @@
 <div class="section level2">
 <h2 id="id_2-safe-improvements">2. Safe improvements<a class="anchor" aria-label="anchor" href="#id_2-safe-improvements"></a></h2>
 <ul><li>
-<strong>Strict Integer Validation</strong>: While years arguments (in <code>read_mtbs</code>, <code>read_nifc</code>, <code>read_fod</code>, <code>get_sefire</code>) use <code>is.numeric</code>, they accept numeric inputs with decimals (e.g., <code>2020.5</code>) which are truncated by <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer()</a></code>. Adding explicit modulus checks (<code>years %% 1 != 0</code>) will enforce strict integer behavior and fail fast for invalid numbers.</li>
+<strong>Strict Integer Validation Tests</strong>: While the years arguments (in <code>read_mtbs</code>, <code>read_nifc</code>, <code>read_fod</code>, <code>get_sefire</code>) use <code>is.numeric</code> and correctly check <code>years %% 1 != 0</code> to fail fast on non-integer numeric vectors, there are currently no test blocks verifying this behavior. Adding explicit <code>expect_error</code> checks for decimal numeric inputs (e.g., <code>2020.5</code>) will fully cover this safe parameter validation.</li>
 <li>
 <strong>Documentation clarifications</strong>: The examples in the README adequately explain the caching behavior, avoiding implicit download assumptions. No major changes are required here.</li>
 </ul></div>
