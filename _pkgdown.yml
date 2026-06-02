@@ -2,8 +2,12 @@ url: https://noahweidig.github.io/fireR/
 
 template:
   bootstrap: 5
-  bootswatch: darkly
   light-switch: true
+  bslib:
+    primary: "#0054AD"
+    border-radius: 0.5rem
+    btn-border-radius: 0.25rem
+    danger: "#A6081A"
 
 home:
   title: "fireR • USGS Fire Data and Ecoregion Boundaries for R"
