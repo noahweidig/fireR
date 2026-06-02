@@ -4,7 +4,7 @@
 - No critical "must fix" bugs remain. The package correctly implements basic type checking (`is.character`, `length() == 1L`, `!is.na()`) across the exported functions. Test coverage and `R CMD check` execution confirm the stable state of the repository.
 
 ## 2. Safe improvements
-- **Strict Integer Validation**: While years arguments (in `read_mtbs`, `read_nifc`, `read_fod`, `get_sefire`) use `is.numeric`, they accept numeric inputs with decimals (e.g., `2020.5`) which are truncated by `as.integer()`. Adding explicit modulus checks (`years %% 1 != 0`) will enforce strict integer behavior and fail fast for invalid numbers.
+- **Strict Integer Validation Tests**: While the years arguments (in `read_mtbs`, `read_nifc`, `read_fod`, `get_sefire`) use `is.numeric` and correctly check `years %% 1 != 0` to fail fast on non-integer numeric vectors, there are currently no test blocks verifying this behavior. Adding explicit `expect_error` checks for decimal numeric inputs (e.g., `2020.5`) will fully cover this safe parameter validation.
 - **Documentation clarifications**: The examples in the README adequately explain the caching behavior, avoiding implicit download assumptions. No major changes are required here.
 
 ## 3. Possible features, but defer unless needed

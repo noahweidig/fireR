@@ -46,6 +46,7 @@ test_that("read_nifc() rejects invalid years argument", {
   expect_error(read_nifc(years = "bad"),       "integer")
   expect_error(read_nifc(years = NA_integer_), "NA")
   expect_error(read_nifc(years = integer(0)),  "non-empty")
+  expect_error(read_nifc(years = 2020.5),      "non-empty integer")
 })
 
 test_that("read_nifc() errors when ZIP is missing", {
@@ -151,6 +152,7 @@ test_that("read_fod() rejects invalid years argument", {
   expect_error(read_fod(years = "bad"),       "integer")
   expect_error(read_fod(years = NA_integer_), "NA")
   expect_error(read_fod(years = integer(0)),  "non-empty")
+  expect_error(read_fod(years = 2020.5),      "non-empty integer")
 })
 
 test_that("read_fod() errors when ZIP is missing", {
