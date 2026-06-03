@@ -66,7 +66,7 @@ get_mtbs <- function(
       useragent      = .ua_string,
       timeout        = as.integer(timeout)
     )
-    curl::curl_download(url, destfile = zip_file, handle = handle, quiet = FALSE)
+    curl::curl_download(url, destfile = zip_file, handle = handle, quiet = !verbose)
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
   } else if (verbose) {
     cli::cli_inform("MTBS ZIP already exists: {.path {zip_file}}")

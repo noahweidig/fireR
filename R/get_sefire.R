@@ -134,7 +134,7 @@ get_sefire <- function(
       curl::multi_download(
         urls[to_download],
         zip_files[to_download],
-        progress  = FALSE,
+        progress  = verbose,
         useragent = .ua_string,
         timeout   = as.integer(timeout)
       )
@@ -183,7 +183,7 @@ get_sefire <- function(
     )
     curl::curl_download(ds_info$url, destfile = zip_file,
                         handle = handle,
-                        quiet  = FALSE)
+                        quiet  = !verbose)
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
   } else if (verbose) {
     cli::cli_inform("SE FireMap ZIP already exists: {.path {zip_file}}")
