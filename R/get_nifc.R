@@ -52,7 +52,7 @@ get_nifc <- function(
     if (verbose) cli::cli_inform("Downloading NIFC wildfire perimeters \u2026")
     curl::curl_download(url, destfile = zip_file,
                         handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string, timeout = as.integer(timeout)),
-                        quiet  = FALSE)
+                        quiet  = !verbose)
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
     did_download <- TRUE
   } else if (verbose) {

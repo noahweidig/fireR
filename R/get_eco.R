@@ -25,7 +25,7 @@
     if (verbose) cli::cli_inform("Downloading {zip_name} \u2026")
     curl::curl_download(url, destfile = zip_file,
                         handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string, timeout = as.integer(timeout)),
-                        quiet  = FALSE)
+                        quiet  = !verbose)
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
   } else if (verbose) {
     cli::cli_inform("Using cached file: {.path {zip_file}}")
