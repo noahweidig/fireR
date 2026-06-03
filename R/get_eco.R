@@ -88,6 +88,12 @@ get_nal1eco <- function(
     verbose = TRUE
 ) {
   output <- rlang::arg_match(output)
+  if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
+    stop("`cache` must be a single logical or character value")
+  }
+  if (!is.numeric(timeout) || length(timeout) != 1L || is.na(timeout) || timeout <= 0) {
+    stop("`timeout` must be a single positive number")
+  }
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
   }
@@ -140,6 +146,12 @@ get_nal2eco <- function(
     verbose = TRUE
 ) {
   output <- rlang::arg_match(output)
+  if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
+    stop("`cache` must be a single logical or character value")
+  }
+  if (!is.numeric(timeout) || length(timeout) != 1L || is.na(timeout) || timeout <= 0) {
+    stop("`timeout` must be a single positive number")
+  }
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
   }
@@ -193,6 +205,12 @@ get_nal3eco <- function(
     verbose = TRUE
 ) {
   output <- rlang::arg_match(output)
+  if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
+    stop("`cache` must be a single logical or character value")
+  }
+  if (!is.numeric(timeout) || length(timeout) != 1L || is.na(timeout) || timeout <= 0) {
+    stop("`timeout` must be a single positive number")
+  }
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
   }
@@ -252,6 +270,12 @@ get_usl3eco <- function(
   output <- rlang::arg_match(output)
   if (!is.logical(state) || length(state) != 1L || is.na(state)) {
     stop("`state` must be TRUE or FALSE")
+  }
+  if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
+    stop("`cache` must be a single logical or character value")
+  }
+  if (!is.numeric(timeout) || length(timeout) != 1L || is.na(timeout) || timeout <= 0) {
+    stop("`timeout` must be a single positive number")
   }
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
@@ -320,6 +344,12 @@ get_usl4eco <- function(
   output <- rlang::arg_match(output)
   if (!is.logical(state) || length(state) != 1L || is.na(state)) {
     stop("`state` must be TRUE or FALSE")
+  }
+  if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
+    stop("`cache` must be a single logical or character value")
+  }
+  if (!is.numeric(timeout) || length(timeout) != 1L || is.na(timeout) || timeout <= 0) {
+    stop("`timeout` must be a single positive number")
   }
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
