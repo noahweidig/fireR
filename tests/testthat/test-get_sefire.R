@@ -41,6 +41,10 @@ test_that("get_sefire() rejects non-numeric years", {
   expect_error(get_sefire(years = "bad"), "non-empty")
 })
 
+test_that("get_sefire() rejects logical NA for years", {
+  expect_error(get_sefire(years = NA), "non-empty integer")
+})
+
 test_that("get_sefire() rejects non-integer numeric years", {
   expect_error(get_sefire(years = 2020.5), "non-empty integer")
 })
