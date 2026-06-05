@@ -31,11 +31,15 @@ test_that("get_usl4eco() rejects invalid output argument", {
 
 test_that("get_eco functions reject invalid cache argument", {
   expect_error(get_nal1eco(cache = 123), "logical or character")
+  expect_error(get_nal1eco(cache = NA), "logical or character")
   expect_error(get_nal2eco(cache = c("a", "b")), "logical or character")
+  expect_error(get_nal2eco(cache = NA_character_), "logical or character")
   expect_error(get_nal3eco(cache = NA), "logical or character")
   expect_error(get_nal3eco(cache = NA_character_), "logical or character")
   expect_error(get_usl3eco(cache = NULL), "logical or character")
+  expect_error(get_usl3eco(cache = NA), "logical or character")
   expect_error(get_usl4eco(cache = list()), "logical or character")
+  expect_error(get_usl4eco(cache = NA_character_), "logical or character")
 })
 
 test_that("get_eco functions reject invalid timeout argument", {
