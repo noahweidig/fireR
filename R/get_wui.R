@@ -24,6 +24,7 @@
 #' @param timeout \code{numeric(1)} download timeout in seconds.
 #'   Defaults to \code{3600} (one hour).
 #' @param verbose \code{logical(1)} print progress messages.
+#' @param dry_run \code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.
 #'
 #' @return \code{character(1)} path to the downloaded ZIP file (invisibly).
 #' @export
@@ -44,7 +45,8 @@ get_wui <- function(
     directory = getwd(),
     overwrite = FALSE,
     timeout   = 3600,
-    verbose   = TRUE
+    verbose   = TRUE,
+    dry_run   = FALSE
 ) {
   if (!is.character(directory) || length(directory) != 1L || is.na(directory)) {
     stop("`directory` must be a single character string")
@@ -58,10 +60,18 @@ get_wui <- function(
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
   }
+  if (!is.logical(dry_run) || length(dry_run) != 1L || is.na(dry_run)) {
+    stop("`dry_run` must be TRUE or FALSE")
+  }
 
   url      <- "https://usfs-public.box.com/shared/static/bjupat9dkwln7yanslfls0zb4n949qv2.zip"
   zip_name <- "usfs_wui.zip"
   zip_file <- fs::path(directory, zip_name)
+
+  if (dry_run) {
+    if (verbose) cli::cli_inform("Dry run: Would download USFS Wildland-Urban Interface (WUI) data to {.path {zip_file}}")
+    return(invisible(zip_file))
+  }
 
   fs::dir_create(directory, recurse = TRUE)
 
