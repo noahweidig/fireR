@@ -7,7 +7,13 @@ already exists and `overwrite = FALSE`, no network call is made.
 ## Usage
 
 ``` r
-get_wui(directory = getwd(), overwrite = FALSE, timeout = 3600, verbose = TRUE)
+get_wui(
+  directory = getwd(),
+  overwrite = FALSE,
+  timeout = 3600,
+  verbose = TRUE,
+  dry_run = FALSE
+)
 ```
 
 ## Arguments
@@ -29,6 +35,11 @@ get_wui(directory = getwd(), overwrite = FALSE, timeout = 3600, verbose = TRUE)
 - verbose:
 
   `logical(1)` print progress messages.
+
+- dry_run:
+
+  `logical(1)` if `TRUE`, do not download the file but instead return
+  the path where it would be saved. Defaults to `FALSE`.
 
 ## Value
 

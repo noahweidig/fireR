@@ -11,7 +11,8 @@ get_nifc(
   directory = getwd(),
   overwrite = FALSE,
   timeout = 3600,
-  verbose = TRUE
+  verbose = TRUE,
+  dry_run = FALSE
 )
 ```
 
@@ -34,6 +35,11 @@ get_nifc(
 - verbose:
 
   `logical(1)` print progress messages.
+
+- dry_run:
+
+  `logical(1)` if `TRUE`, do not download the file but instead return
+  the path where it would be saved. Defaults to `FALSE`.
 
 ## Value
 

@@ -9,6 +9,10 @@
 
 ## 2. Safe improvements
 
+- **Dry-run capability**: A `dry_run` logical capability helper
+  parameter is recommended for `get_mtbs`, `get_nifc`, `get_wui`, and
+  `get_fod` to help users safely check available paths or cache settings
+  without triggering heavy multi-GB downloads.
 - **Strict Integer Validation Tests**: The years arguments (in
   `read_mtbs`, `read_nifc`, `read_fod`, `get_sefire`) use `is.numeric`
   and correctly check `years %% 1 != 0` to fail fast on non-integer
@@ -16,18 +20,14 @@
   numeric inputs (e.g., `2020.5`) are already implemented in the test
   suite. No new tests are needed for this behavior.
 - **Cache Parameter NA Validation Tests**: The internal `cache`
-  validation across the eco downloading tests (`test-get_eco.R`) could
-  have explicit tests added for `cache = NA` to be completely
-  comprehensive.
+  validation across the eco downloading tests (`test-get_eco.R`) already
+  includes explicit tests for `cache = NA`.
 - **Documentation clarifications**: The examples in the README
   adequately explain the caching behavior, avoiding implicit download
   assumptions. No major changes are required here.
 
 ## 3. Possible features, but defer unless needed
 
-- **Dry-run capability**: A `dry_run` capability or
-  `list-available-years` helper could be added to check available
-  datasets without triggering heavy downloads.
 - **Progress bar reporting**: Using the `cli` package for progress bars
   instead of discrete console messages for long-running downloads could
   improve user experience.
@@ -43,5 +43,5 @@
   [`devtools::document()`](https://devtools.r-lib.org/reference/document.html)).
 - The existing condition skips in tests ensuring `R CMD check` passes
   locally and on CRAN.
-- Exiting vignette configuration (`purl = FALSE` / `eval = FALSE`)
+- Existing vignette configuration (`purl = FALSE` / `eval = FALSE`)
   excluding the setup chunk.
