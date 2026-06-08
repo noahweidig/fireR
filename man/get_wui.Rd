@@ -4,7 +4,13 @@
 \alias{get_wui}
 \title{Download and unzip USFS Wildland-Urban Interface (WUI) data}
 \usage{
-get_wui(directory = getwd(), overwrite = FALSE, timeout = 3600, verbose = TRUE)
+get_wui(
+  directory = getwd(),
+  overwrite = FALSE,
+  timeout = 3600,
+  verbose = TRUE,
+  dry_run = FALSE
+)
 }
 \arguments{
 \item{directory}{\code{character(1)} directory where the ZIP file and
@@ -17,6 +23,8 @@ defaults to \code{FALSE}.}
 Defaults to \code{3600} (one hour).}
 
 \item{verbose}{\code{logical(1)} print progress messages.}
+
+\item{dry_run}{\code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.}
 }
 \value{
 \code{character(1)} path to the downloaded ZIP file (invisibly).

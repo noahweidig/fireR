@@ -8,7 +8,8 @@ get_nifc(
   directory = getwd(),
   overwrite = FALSE,
   timeout = 3600,
-  verbose = TRUE
+  verbose = TRUE,
+  dry_run = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ defaults to \code{FALSE}.}
 Defaults to \code{3600} (one hour).}
 
 \item{verbose}{\code{logical(1)} print progress messages.}
+
+\item{dry_run}{\code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.}
 }
 \value{
 \code{character(1)} path to the downloaded ZIP file (invisibly).

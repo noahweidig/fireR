@@ -15,6 +15,7 @@
 #'   is ~360 MB, so the default is \code{3600} (one hour). Set to a lower
 #'   value if you want a stricter limit.
 #' @param verbose \code{logical(1)} print progress messages.
+#' @param dry_run \code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.
 #'
 #' @return \code{character(1)} path to the downloaded ZIP file (invisibly).
 #' @export
@@ -29,7 +30,8 @@ get_mtbs <- function(
     dataset   = c("perimeters", "occurrence"),
     overwrite = FALSE,
     timeout   = 3600,
-    verbose   = TRUE
+    verbose   = TRUE,
+    dry_run   = FALSE
 ) {
   dataset <- rlang::arg_match(dataset)
 
@@ -45,6 +47,9 @@ get_mtbs <- function(
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
   }
+  if (!is.logical(dry_run) || length(dry_run) != 1L || is.na(dry_run)) {
+    stop("`dry_run` must be TRUE or FALSE")
+  }
 
   if (dataset == "occurrence") {
     url      <- "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/fod_pt_shapefile/mtbs_fod_pts_data.zip"
@@ -55,6 +60,12 @@ get_mtbs <- function(
   }
 
   zip_file <- fs::path(directory, zip_name)
+
+  if (dry_run) {
+    if (verbose) cli::cli_inform("Dry run: Would download MTBS {dataset} data to {.path {zip_file}}")
+    return(invisible(zip_file))
+  }
+
   fs::dir_create(directory, recurse = TRUE)
 
   if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
