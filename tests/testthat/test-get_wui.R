@@ -14,6 +14,9 @@ test_that("get_wui() rejects invalid arguments", {
 
   expect_error(get_wui(verbose = "yes"), "TRUE.*FALSE")
   expect_error(get_wui(verbose = NA), "TRUE.*FALSE")
+
+  expect_error(get_wui(dry_run = "yes"), "TRUE.*FALSE")
+  expect_error(get_wui(dry_run = NA), "TRUE.*FALSE")
 })
 
 test_that("get_wui() does not warn when ZIP already exists", {
@@ -31,7 +34,19 @@ test_that("get_wui() does not warn when ZIP already exists", {
   )
 })
 
+test_that("get_wui() respects dry_run", {
+  tmp <- file.path(tempdir(), "wui_dryrun_test")
+  dir.create(tmp, showWarnings = FALSE, recursive = TRUE)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+
+  res <- get_wui(directory = tmp, dry_run = TRUE, verbose = FALSE)
+  expect_type(res, "character")
+  expect_true(grepl("usfs_wui\\.zip$", res))
+  expect_false(file.exists(res))
+})
+
 test_that("get_wui() has expected default arguments", {
   expect_equal(formals(get_wui)$overwrite, FALSE)
   expect_equal(formals(get_wui)$verbose, TRUE)
+  expect_equal(formals(get_wui)$dry_run, FALSE)
 })

@@ -18,6 +18,25 @@ test_that("get_sefire() rejects invalid common arguments", {
 
   expect_error(get_sefire(dataset = "Fire History", verbose = "yes"), "TRUE.*FALSE")
   expect_error(get_sefire(dataset = "Fire History", verbose = NA), "TRUE.*FALSE")
+
+  expect_error(get_sefire(dataset = "Fire History", dry_run = "yes"), "TRUE.*FALSE")
+  expect_error(get_sefire(dataset = "Fire History", dry_run = NA), "TRUE.*FALSE")
+})
+
+test_that("get_sefire() respects dry_run", {
+  tmp <- file.path(tempdir(), "sefire_dryrun_test")
+  dir.create(tmp, showWarnings = FALSE, recursive = TRUE)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+
+  res <- get_sefire(dataset = "Fire History", directory = tmp, dry_run = TRUE, verbose = FALSE)
+  expect_type(res, "character")
+  expect_true(grepl("SEFM_L_FHM_1994_2024\\.gdb\\.zip$", res))
+  expect_false(file.exists(res))
+
+  res_bs <- get_sefire(dataset = "Burn Severity", years = 2020:2021, directory = tmp, dry_run = TRUE, verbose = FALSE)
+  expect_type(res_bs, "character")
+  expect_length(res_bs, 2)
+  expect_true(any(grepl("cbi_mosaic_2020\\.zip$", res_bs)))
 })
 
 test_that("get_sefire() requires years when dataset is Burn Severity", {

@@ -14,6 +14,20 @@ test_that("get_nifc() rejects invalid arguments", {
 
   expect_error(get_nifc(verbose = "yes"), "TRUE.*FALSE")
   expect_error(get_nifc(verbose = NA), "TRUE.*FALSE")
+
+  expect_error(get_nifc(dry_run = "yes"), "TRUE.*FALSE")
+  expect_error(get_nifc(dry_run = NA), "TRUE.*FALSE")
+})
+
+test_that("get_nifc() respects dry_run", {
+  tmp <- file.path(tempdir(), "nifc_dryrun_test")
+  dir.create(tmp, showWarnings = FALSE, recursive = TRUE)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+
+  res <- get_nifc(directory = tmp, dry_run = TRUE, verbose = FALSE)
+  expect_type(res, "character")
+  expect_true(grepl("nifc_perimeters\\.zip$", res))
+  expect_false(file.exists(res))
 })
 
 test_that("get_fod() rejects invalid arguments", {
@@ -32,6 +46,20 @@ test_that("get_fod() rejects invalid arguments", {
 
   expect_error(get_fod(verbose = "yes"), "TRUE.*FALSE")
   expect_error(get_fod(verbose = NA), "TRUE.*FALSE")
+
+  expect_error(get_fod(dry_run = "yes"), "TRUE.*FALSE")
+  expect_error(get_fod(dry_run = NA), "TRUE.*FALSE")
+})
+
+test_that("get_fod() respects dry_run", {
+  tmp <- file.path(tempdir(), "fod_dryrun_test")
+  dir.create(tmp, showWarnings = FALSE, recursive = TRUE)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+
+  res <- get_fod(directory = tmp, dry_run = TRUE, verbose = FALSE)
+  expect_type(res, "character")
+  expect_true(grepl("RDS-2013-0009\\.6_Data_Format3_GPKG\\.zip$", res))
+  expect_false(file.exists(res))
 })
 
 # ── read_nifc() input validation (no download required) ──────────────────────

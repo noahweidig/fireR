@@ -15,6 +15,8 @@
 #'   is ~360 MB, so the default is \code{3600} (one hour). Set to a lower
 #'   value if you want a stricter limit.
 #' @param verbose \code{logical(1)} print progress messages.
+#' @param dry_run \code{logical(1)} when \code{TRUE}, safely checks target
+#'   paths without triggering the download. Defaults to \code{FALSE}.
 #'
 #' @return \code{character(1)} path to the downloaded ZIP file (invisibly).
 #' @export
@@ -29,10 +31,14 @@ get_mtbs <- function(
     dataset   = c("perimeters", "occurrence"),
     overwrite = FALSE,
     timeout   = 3600,
-    verbose   = TRUE
+    verbose   = TRUE,
+    dry_run   = FALSE
 ) {
   dataset <- rlang::arg_match(dataset)
 
+  if (!is.logical(dry_run) || length(dry_run) != 1L || is.na(dry_run)) {
+    stop("`dry_run` must be TRUE or FALSE")
+  }
   if (!is.character(directory) || length(directory) != 1L || is.na(directory)) {
     stop("`directory` must be a single character string")
   }
@@ -56,6 +62,11 @@ get_mtbs <- function(
 
   zip_file <- fs::path(directory, zip_name)
   fs::dir_create(directory, recurse = TRUE)
+
+  if (dry_run) {
+    if (verbose) cli::cli_inform("Dry run: Target path is {.path {zip_file}}")
+    return(invisible(zip_file))
+  }
 
   if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
 

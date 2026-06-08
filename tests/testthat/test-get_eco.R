@@ -7,6 +7,21 @@ test_that("get_eco functions reject invalid state and verbose arguments", {
   expect_error(get_usl3eco(state = "yes"), "TRUE.*FALSE")
   expect_error(get_usl3eco(state = NA), "TRUE.*FALSE")
   expect_error(get_usl3eco(verbose = "yes"), "TRUE.*FALSE")
+
+  # Test dry_run via usl3eco
+  expect_error(get_usl3eco(dry_run = "yes"), "TRUE.*FALSE")
+  expect_error(get_usl3eco(dry_run = NA), "TRUE.*FALSE")
+})
+
+test_that("get_eco functions respect dry_run", {
+  tmp <- file.path(tempdir(), "eco_dryrun_test")
+  dir.create(tmp, showWarnings = FALSE, recursive = TRUE)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+
+  res <- get_nal1eco(cache = tmp, dry_run = TRUE, verbose = FALSE)
+  expect_type(res, "character")
+  expect_true(grepl("na_cec_eco_l1\\.zip$", res))
+  expect_false(file.exists(res))
 })
 
 test_that("get_nal1eco() rejects invalid output argument", {

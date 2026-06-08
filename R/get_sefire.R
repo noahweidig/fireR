@@ -42,6 +42,8 @@
 #' @param timeout \code{numeric(1)} download timeout in seconds.
 #'   Defaults to \code{3600} (one hour).
 #' @param verbose \code{logical(1)} print progress messages.
+#' @param dry_run \code{logical(1)} when \code{TRUE}, safely checks target
+#'   paths without triggering the download. Defaults to \code{FALSE}.
 #'
 #' @return For \code{dataset = "Burn Severity"}: a \code{character} vector of
 #'   paths to the downloaded ZIP files (returned invisibly), one element per
@@ -75,10 +77,14 @@ get_sefire <- function(
     directory = getwd(),
     overwrite = FALSE,
     timeout   = 3600,
-    verbose   = TRUE
+    verbose   = TRUE,
+    dry_run   = FALSE
 ) {
   dataset <- rlang::arg_match(dataset)
 
+  if (!is.logical(dry_run) || length(dry_run) != 1L || is.na(dry_run)) {
+    stop("`dry_run` must be TRUE or FALSE")
+  }
   if (!is.character(directory) || length(directory) != 1L || is.na(directory)) {
     stop("`directory` must be a single character string")
   }
@@ -114,6 +120,14 @@ get_sefire <- function(
     )
     zip_names <- paste0("cbi_mosaic_", years, ".zip")
     zip_files <- fs::path(directory, zip_names)
+
+    if (dry_run) {
+      if (verbose) {
+        cli::cli_inform("Dry run: Target paths are:")
+        cli::cli_bullets(stats::setNames(zip_files, rep("*", length(zip_files))))
+      }
+      return(invisible(zip_files))
+    }
 
     # Handle overwrite: delete any existing files that should be re-downloaded
     if (overwrite) {
@@ -171,6 +185,11 @@ get_sefire <- function(
   )
 
   zip_file <- fs::path(directory, ds_info$zip_name)
+
+  if (dry_run) {
+    if (verbose) cli::cli_inform("Dry run: Target path is {.path {zip_file}}")
+    return(invisible(zip_file))
+  }
 
   if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
 

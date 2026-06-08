@@ -16,6 +16,20 @@ test_that("get_mtbs() rejects invalid arguments", {
 
   expect_error(get_mtbs(verbose = "yes"), "TRUE.*FALSE")
   expect_error(get_mtbs(verbose = NA), "TRUE.*FALSE")
+
+  expect_error(get_mtbs(dry_run = "yes"), "TRUE.*FALSE")
+  expect_error(get_mtbs(dry_run = NA), "TRUE.*FALSE")
+})
+
+test_that("get_mtbs() respects dry_run", {
+  tmp <- file.path(tempdir(), "mtbs_dryrun_test")
+  dir.create(tmp, showWarnings = FALSE, recursive = TRUE)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+
+  res <- get_mtbs(directory = tmp, dry_run = TRUE, verbose = FALSE)
+  expect_type(res, "character")
+  expect_true(grepl("mtbs_perimeter_data\\.zip$", res))
+  expect_false(file.exists(res))
 })
 
 test_that("read_mtbs() input validation works", {

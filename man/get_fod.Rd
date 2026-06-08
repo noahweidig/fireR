@@ -4,7 +4,13 @@
 \alias{get_fod}
 \title{Download and unzip USFS Fire Occurrence Database (FOD)}
 \usage{
-get_fod(directory = getwd(), overwrite = FALSE, timeout = 3600, verbose = TRUE)
+get_fod(
+  directory = getwd(),
+  overwrite = FALSE,
+  timeout = 3600,
+  verbose = TRUE,
+  dry_run = FALSE
+)
 }
 \arguments{
 \item{directory}{\code{character(1)} directory where the ZIP file and
@@ -17,6 +23,9 @@ defaults to \code{FALSE}.}
 Defaults to \code{3600} (one hour).}
 
 \item{verbose}{\code{logical(1)} print progress messages.}
+
+\item{dry_run}{\code{logical(1)} when \code{TRUE}, safely checks target
+paths without triggering the download. Defaults to \code{FALSE}.}
 }
 \value{
 \code{character(1)} path to the downloaded ZIP file (invisibly).

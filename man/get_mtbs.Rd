@@ -9,7 +9,8 @@ get_mtbs(
   dataset = c("perimeters", "occurrence"),
   overwrite = FALSE,
   timeout = 3600,
-  verbose = TRUE
+  verbose = TRUE,
+  dry_run = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,9 @@ is ~360 MB, so the default is \code{3600} (one hour). Set to a lower
 value if you want a stricter limit.}
 
 \item{verbose}{\code{logical(1)} print progress messages.}
+
+\item{dry_run}{\code{logical(1)} when \code{TRUE}, safely checks target
+paths without triggering the download. Defaults to \code{FALSE}.}
 }
 \value{
 \code{character(1)} path to the downloaded ZIP file (invisibly).
