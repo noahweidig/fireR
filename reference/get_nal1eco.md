@@ -10,7 +10,8 @@ get_nal1eco(
   output = c("sf", "vect", "terra"),
   cache = FALSE,
   timeout = 3600,
-  verbose = TRUE
+  verbose = TRUE,
+  dry_run = FALSE
 )
 ```
 
@@ -38,11 +39,17 @@ get_nal1eco(
 
   `logical(1)` print progress messages.
 
+- dry_run:
+
+  `logical(1)` if `TRUE`, do not download the file but instead return
+  the path where it would be saved. Defaults to `FALSE`.
+
 ## Value
 
 An `sf` object or
 [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
-of North America Level 1 Ecoregion polygons.
+of North America Level 1 Ecoregion polygons. (Or the file path invisibly
+if `dry_run = TRUE`).
 
 ## About CEC Ecoregions
 

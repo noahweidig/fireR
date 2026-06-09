@@ -68,7 +68,8 @@ already exists and <code>overwrite = FALSE</code>, no network call is made.</p>
 <span>  directory <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  timeout <span class="op">=</span> <span class="fl">3600</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  dry_run <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -111,6 +112,10 @@ Defaults to <code>3600</code> (one hour).</p></dd>
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p><code>logical(1)</code> print progress messages.</p></dd>
+
+
+<dt id="arg-dry-run">dry_run<a class="anchor" aria-label="anchor" href="#arg-dry-run"></a></dt>
+<dd><p><code>logical(1)</code> if <code>TRUE</code>, do not download the file but instead return the path where it would be saved. Defaults to <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
