@@ -58,7 +58,7 @@ test_that("get_sefire() dry_run returns invisible paths without downloading", {
     "Dry run: Would download"
   )
   expect_invisible(get_sefire(dataset = "Burn Severity", years = 2020, directory = tmp, dry_run = TRUE))
-  expect_equal(as.character(res1), file.path(tmp, "cbi_mosaic_2020.zip"))
+  expect_equal(as.character(res1), as.character(fs::path(tmp, "cbi_mosaic_2020.zip")))
   expect_false(file.exists(res1))
 
   # Fire History
@@ -66,6 +66,6 @@ test_that("get_sefire() dry_run returns invisible paths without downloading", {
     res2 <- get_sefire(dataset = "Fire History", directory = tmp, dry_run = TRUE),
     "Dry run: Would download"
   )
-  expect_equal(as.character(res2), file.path(tmp, "SEFM_L_FHM_1994_2024.gdb.zip"))
+  expect_equal(as.character(res2), as.character(fs::path(tmp, "SEFM_L_FHM_1994_2024.gdb.zip")))
   expect_false(file.exists(res2))
 })
