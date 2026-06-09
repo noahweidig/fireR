@@ -57,3 +57,22 @@ test_that("get_eco functions reject invalid timeout argument", {
   expect_error(get_usl3eco(timeout = c(10, 20)), "positive number")
   expect_error(get_usl4eco(timeout = list()), "positive number")
 })
+
+test_that("get_eco functions dry_run returns invisible paths without downloading", {
+  tmp <- tempdir()
+
+  expect_message(
+    res1 <- get_nal1eco(cache = tmp, dry_run = TRUE),
+    "Dry run: Would download"
+  )
+  expect_invisible(get_nal1eco(cache = tmp, dry_run = TRUE))
+  expect_equal(as.character(res1), file.path(tmp, "na_cec_eco_l1.zip"))
+  expect_false(file.exists(res1))
+
+  expect_message(
+    res2 <- get_usl3eco(cache = tmp, dry_run = TRUE),
+    "Dry run: Would download"
+  )
+  expect_equal(as.character(res2), file.path(tmp, "us_eco_l3.zip"))
+  expect_false(file.exists(res2))
+})

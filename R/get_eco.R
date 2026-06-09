@@ -1,5 +1,5 @@
 # Internal helper: download a ZIP and read the shapefile inside it.
-.read_eco_zip <- function(url, zip_name, output, cache, timeout, verbose) {
+.read_eco_zip <- function(url, zip_name, output, cache, timeout, verbose, dry_run = FALSE) {
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
   }
@@ -8,6 +8,9 @@
   }
   if (!is.numeric(timeout) || length(timeout) != 1L || is.na(timeout) || timeout <= 0) {
     stop("`timeout` must be a single positive number")
+  }
+  if (!is.logical(dry_run) || length(dry_run) != 1L || is.na(dry_run)) {
+    stop("`dry_run` must be TRUE or FALSE")
   }
 
   cache_dir <- if (isTRUE(cache)) {
@@ -19,6 +22,12 @@
   }
 
   zip_file <- fs::path(cache_dir, zip_name)
+
+  if (dry_run) {
+    if (verbose) cli::cli_inform("Dry run: Would download {zip_name} to {.path {zip_file}}")
+    return(invisible(zip_file))
+  }
+
   fs::dir_create(cache_dir, recurse = TRUE)
 
   if (!fs::file_exists(zip_file)) {
@@ -71,9 +80,10 @@
 #'   directory path as a string to specify a custom location.
 #' @param timeout \code{numeric(1)} download timeout in seconds. Default is \code{3600}.
 #' @param verbose \code{logical(1)} print progress messages.
+#' @param dry_run \code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.
 #'
 #' @return An \code{sf} object or \code{terra::SpatVector} of North America
-#'   Level 1 Ecoregion polygons.
+#'   Level 1 Ecoregion polygons. (Or the file path invisibly if \code{dry_run = TRUE}).
 #' @export
 #'
 #' @examples
@@ -85,7 +95,8 @@ get_nal1eco <- function(
     output  = c("sf", "vect", "terra"),
     cache   = FALSE,
     timeout = 3600,
-    verbose = TRUE
+    verbose = TRUE,
+    dry_run = FALSE
 ) {
   output <- rlang::arg_match(output)
   if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
@@ -103,7 +114,8 @@ get_nal1eco <- function(
     output   = output,
     cache    = cache,
     timeout  = timeout,
-    verbose  = verbose
+    verbose  = verbose,
+    dry_run  = dry_run
   )
 }
 
@@ -129,9 +141,10 @@ get_nal1eco <- function(
 #'   directory path as a string to specify a custom location.
 #' @param timeout \code{numeric(1)} download timeout in seconds. Default is \code{3600}.
 #' @param verbose \code{logical(1)} print progress messages.
+#' @param dry_run \code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.
 #'
 #' @return An \code{sf} object or \code{terra::SpatVector} of North America
-#'   Level 2 Ecoregion polygons.
+#'   Level 2 Ecoregion polygons. (Or the file path invisibly if \code{dry_run = TRUE}).
 #' @export
 #'
 #' @examples
@@ -143,7 +156,8 @@ get_nal2eco <- function(
     output  = c("sf", "vect", "terra"),
     cache   = FALSE,
     timeout = 3600,
-    verbose = TRUE
+    verbose = TRUE,
+    dry_run = FALSE
 ) {
   output <- rlang::arg_match(output)
   if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
@@ -161,7 +175,8 @@ get_nal2eco <- function(
     output   = output,
     cache    = cache,
     timeout  = timeout,
-    verbose  = verbose
+    verbose  = verbose,
+    dry_run  = dry_run
   )
 }
 
@@ -188,9 +203,10 @@ get_nal2eco <- function(
 #'   directory path as a string to specify a custom location.
 #' @param timeout \code{numeric(1)} download timeout in seconds. Default is \code{3600}.
 #' @param verbose \code{logical(1)} print progress messages.
+#' @param dry_run \code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.
 #'
 #' @return An \code{sf} object or \code{terra::SpatVector} of North America
-#'   Level 3 Ecoregion polygons.
+#'   Level 3 Ecoregion polygons. (Or the file path invisibly if \code{dry_run = TRUE}).
 #' @export
 #'
 #' @examples
@@ -202,7 +218,8 @@ get_nal3eco <- function(
     output  = c("sf", "vect", "terra"),
     cache   = FALSE,
     timeout = 3600,
-    verbose = TRUE
+    verbose = TRUE,
+    dry_run = FALSE
 ) {
   output <- rlang::arg_match(output)
   if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
@@ -220,7 +237,8 @@ get_nal3eco <- function(
     output   = output,
     cache    = cache,
     timeout  = timeout,
-    verbose  = verbose
+    verbose  = verbose,
+    dry_run  = dry_run
   )
 }
 
@@ -249,9 +267,10 @@ get_nal3eco <- function(
 #'   directory path as a string to specify a custom location.
 #' @param timeout \code{numeric(1)} download timeout in seconds. Default is \code{3600}.
 #' @param verbose \code{logical(1)} print progress messages.
+#' @param dry_run \code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.
 #'
 #' @return An \code{sf} object or \code{terra::SpatVector} of US Level 3
-#'   Ecoregion polygons.
+#'   Ecoregion polygons. (Or the file path invisibly if \code{dry_run = TRUE}).
 #' @export
 #'
 #' @examples
@@ -265,7 +284,8 @@ get_usl3eco <- function(
     output  = c("sf", "vect", "terra"),
     cache   = FALSE,
     timeout = 3600,
-    verbose = TRUE
+    verbose = TRUE,
+    dry_run = FALSE
 ) {
   output <- rlang::arg_match(output)
   if (!is.logical(state) || length(state) != 1L || is.na(state)) {
@@ -293,7 +313,8 @@ get_usl3eco <- function(
     output   = output,
     cache    = cache,
     timeout  = timeout,
-    verbose  = verbose
+    verbose  = verbose,
+    dry_run  = dry_run
   )
 }
 
@@ -323,9 +344,10 @@ get_usl3eco <- function(
 #'   directory path as a string to specify a custom location.
 #' @param timeout \code{numeric(1)} download timeout in seconds. Default is \code{3600}.
 #' @param verbose \code{logical(1)} print progress messages.
+#' @param dry_run \code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.
 #'
 #' @return An \code{sf} object or \code{terra::SpatVector} of US Level 4
-#'   Ecoregion polygons.
+#'   Ecoregion polygons. (Or the file path invisibly if \code{dry_run = TRUE}).
 #' @export
 #'
 #' @examples
@@ -339,7 +361,8 @@ get_usl4eco <- function(
     output  = c("sf", "vect", "terra"),
     cache   = FALSE,
     timeout = 3600,
-    verbose = TRUE
+    verbose = TRUE,
+    dry_run = FALSE
 ) {
   output <- rlang::arg_match(output)
   if (!is.logical(state) || length(state) != 1L || is.na(state)) {
@@ -367,6 +390,7 @@ get_usl4eco <- function(
     output   = output,
     cache    = cache,
     timeout  = timeout,
-    verbose  = verbose
+    verbose  = verbose,
+    dry_run  = dry_run
   )
 }

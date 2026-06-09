@@ -9,7 +9,8 @@ get_usl4eco(
   output = c("sf", "vect", "terra"),
   cache = FALSE,
   timeout = 3600,
-  verbose = TRUE
+  verbose = TRUE,
+  dry_run = FALSE
 )
 }
 \arguments{
@@ -30,10 +31,12 @@ directory path as a string to specify a custom location.}
 \item{timeout}{\code{numeric(1)} download timeout in seconds. Default is \code{3600}.}
 
 \item{verbose}{\code{logical(1)} print progress messages.}
+
+\item{dry_run}{\code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.}
 }
 \value{
 An \code{sf} object or \code{terra::SpatVector} of US Level 4
-Ecoregion polygons.
+Ecoregion polygons. (Or the file path invisibly if \code{dry_run = TRUE}).
 }
 \description{
 Downloads and loads US EPA Level 4 Ecoregion boundaries as a spatial
