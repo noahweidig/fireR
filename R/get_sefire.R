@@ -42,6 +42,7 @@
 #' @param timeout \code{numeric(1)} download timeout in seconds.
 #'   Defaults to \code{3600} (one hour).
 #' @param verbose \code{logical(1)} print progress messages.
+#' @param dry_run \code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.
 #'
 #' @return For \code{dataset = "Burn Severity"}: a \code{character} vector of
 #'   paths to the downloaded ZIP files (returned invisibly), one element per
@@ -75,7 +76,8 @@ get_sefire <- function(
     directory = getwd(),
     overwrite = FALSE,
     timeout   = 3600,
-    verbose   = TRUE
+    verbose   = TRUE,
+    dry_run   = FALSE
 ) {
   dataset <- rlang::arg_match(dataset)
 
@@ -91,8 +93,13 @@ get_sefire <- function(
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
   }
+  if (!is.logical(dry_run) || length(dry_run) != 1L || is.na(dry_run)) {
+    stop("`dry_run` must be TRUE or FALSE")
+  }
 
-  fs::dir_create(directory, recurse = TRUE)
+  if (!dry_run) {
+    fs::dir_create(directory, recurse = TRUE)
+  }
 
   ## ── Burn Severity (year-based, USGS, parallel downloads) ─────────────────
   if (dataset == "Burn Severity") {
@@ -114,6 +121,11 @@ get_sefire <- function(
     )
     zip_names <- paste0("cbi_mosaic_", years, ".zip")
     zip_files <- fs::path(directory, zip_names)
+
+    if (dry_run) {
+      if (verbose) cli::cli_inform("Dry run: Would download {length(zip_files)} SE FireMap Burn Severity mosaic{?s} to {.path {directory}}")
+      return(invisible(zip_files))
+    }
 
     # Handle overwrite: delete any existing files that should be re-downloaded
     if (overwrite) {
@@ -171,6 +183,11 @@ get_sefire <- function(
   )
 
   zip_file <- fs::path(directory, ds_info$zip_name)
+
+  if (dry_run) {
+    if (verbose) cli::cli_inform("Dry run: Would download {ds_info$label} to {.path {zip_file}}")
+    return(invisible(zip_file))
+  }
 
   if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
 
