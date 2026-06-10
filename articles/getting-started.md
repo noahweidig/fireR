@@ -27,6 +27,52 @@ library(fireR)
 
 ------------------------------------------------------------------------
 
+## A quick look
+
+Most fireR functions pull large archives straight from the source, so
+the examples below are not run when this site is built. The maps in this
+section, however, are produced live from a single, modest download — the
+CEC North America Level 1 ecoregion boundaries — to show what the
+returned spatial objects look like with both base R
+[`plot()`](https://rspatial.github.io/terra/reference/plot.html) and
+**ggplot2**.
+
+``` r
+
+library(ggplot2)
+
+# A single, reliably-hosted download (~tens of MB)
+na_l1 <- get_nal1eco(verbose = FALSE)
+```
+
+Base R [`plot()`](https://rspatial.github.io/terra/reference/plot.html)
+of an `sf` object, coloured by ecoregion name:
+
+``` r
+
+plot(na_l1["NA_L1NAME"], main = "North America Level 1 Ecoregions", border = NA)
+```
+
+![Map of North America Level 1 ecoregions coloured by ecoregion
+name.](getting-started_files/figure-html/gallery-plot-1.png)
+
+The same data rendered with **ggplot2** via
+[`geom_sf()`](https://ggplot2.tidyverse.org/reference/ggsf.html):
+
+``` r
+
+ggplot(na_l1) +
+  geom_sf(aes(fill = NA_L1NAME), color = NA) +
+  guides(fill = "none") +
+  labs(title = "North America Level 1 Ecoregions") +
+  theme_minimal()
+```
+
+![ggplot2 map of North America Level 1 ecoregions filled by ecoregion
+name.](getting-started_files/figure-html/gallery-ggplot-1.png)
+
+------------------------------------------------------------------------
+
 ## MTBS fire perimeters
 
 ### All fires
