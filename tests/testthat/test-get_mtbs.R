@@ -157,3 +157,15 @@ test_that("read_mtbs() does not download and errors when ZIP is missing", {
     "No MTBS ZIP file found"
   )
 })
+
+test_that("get_mtbs() dry_run returns invisible path without downloading", {
+  tmp <- tempdir()
+
+  expect_message(
+    res1 <- get_mtbs(directory = tmp, dry_run = TRUE),
+    "Dry run: Would download"
+  )
+  expect_invisible(get_mtbs(directory = tmp, dry_run = TRUE))
+  expect_equal(as.character(res1), as.character(fs::path(tmp, "mtbs_perimeter_data.zip")))
+  expect_false(file.exists(res1))
+})
