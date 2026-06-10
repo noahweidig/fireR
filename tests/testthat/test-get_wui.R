@@ -35,3 +35,15 @@ test_that("get_wui() has expected default arguments", {
   expect_equal(formals(get_wui)$overwrite, FALSE)
   expect_equal(formals(get_wui)$verbose, TRUE)
 })
+
+test_that("get_wui() dry_run returns invisible paths without downloading", {
+  tmp <- file.path(tempdir(), "wui_dry_run_test")
+
+  expect_message(
+    res1 <- get_wui(directory = tmp, dry_run = TRUE),
+    "Dry run: Would download"
+  )
+  expect_invisible(get_wui(directory = tmp, dry_run = TRUE))
+  expect_equal(as.character(res1), as.character(fs::path(tmp, "usfs_wui.zip")))
+  expect_false(file.exists(res1))
+})

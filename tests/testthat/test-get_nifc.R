@@ -245,3 +245,27 @@ test_that("get_fod() downloads and returns ZIP path", {
   expect_true(file.exists(zip_path))
   expect_true(grepl("RDS-2013-0009\\.6_Data_Format3_GPKG\\.zip$", zip_path))
 })
+
+test_that("get_nifc() dry_run returns invisible paths without downloading", {
+  tmp <- file.path(tempdir(), "nifc_dry_run_test")
+
+  expect_message(
+    res1 <- get_nifc(directory = tmp, dry_run = TRUE),
+    "Dry run: Would download"
+  )
+  expect_invisible(get_nifc(directory = tmp, dry_run = TRUE))
+  expect_equal(as.character(res1), as.character(fs::path(tmp, "nifc_perimeters.zip")))
+  expect_false(file.exists(res1))
+})
+
+test_that("get_fod() dry_run returns invisible paths without downloading", {
+  tmp <- file.path(tempdir(), "fod_dry_run_test")
+
+  expect_message(
+    res1 <- get_fod(directory = tmp, dry_run = TRUE),
+    "Dry run: Would download"
+  )
+  expect_invisible(get_fod(directory = tmp, dry_run = TRUE))
+  expect_equal(as.character(res1), as.character(fs::path(tmp, "RDS-2013-0009.6_Data_Format3_GPKG.zip")))
+  expect_false(file.exists(res1))
+})
