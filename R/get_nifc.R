@@ -150,6 +150,8 @@ get_fod <- function(
       "Referer"    = "https://www.fs.usda.gov/rds/archive/catalog/RDS-2013-0009.6"
     )
     req <- httr2::req_timeout(req, as.integer(timeout))
+    req <- httr2::req_retry(req, max_tries = 3, max_seconds = 60)
+    if (verbose) req <- httr2::req_progress(req)
     httr2::req_perform(req, path = zip_file)
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
     did_download <- TRUE
