@@ -4,7 +4,8 @@
 - No critical "must fix" bugs remain. The package correctly implements basic type checking (`is.character`, `length() == 1L`, `!is.na()`) across the exported functions. Test coverage and `R CMD check` execution confirm the stable state of the repository.
 
 ## 2. Safe improvements
-- **Dry-run capability**: A `dry_run` logical capability helper parameter is recommended for `get_mtbs`, `get_nifc`, `get_wui`, and `get_fod` to help users safely check available paths or cache settings without triggering heavy multi-GB downloads.
+- **Dry-run capability**: A `dry_run` logical capability helper parameter is recommended for `get_mtbs`, `get_nifc`, `get_wui`, and `get_fod` to help users safely check available paths or cache settings without triggering heavy multi-GB downloads. (Already fully implemented).
+- **Network Resilience and Progress**: Adding `httr2::req_retry(max_tries = 3)` and conditionally tracking download progress `httr2::req_progress(req)` during `get_fod` download ensures robustness against transient network errors.
 - **Strict Integer Validation Tests**: The years arguments (in `read_mtbs`, `read_nifc`, `read_fod`, `get_sefire`) use `is.numeric` and correctly check `years %% 1 != 0` to fail fast on non-integer numeric vectors, and explicit `expect_error` checks for decimal numeric inputs (e.g., `2020.5`) are already implemented in the test suite. No new tests are needed for this behavior.
 - **Cache Parameter NA Validation Tests**: The internal `cache` validation across the eco downloading tests (`test-get_eco.R`) already includes explicit tests for `cache = NA`.
 - **Documentation clarifications**: The examples in the README adequately explain the caching behavior, avoiding implicit download assumptions. No major changes are required here.
