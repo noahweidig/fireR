@@ -1,21 +1,16 @@
-# fireR Package Audit Report
+# Audit Report for fireR
 
-## 1. Must fix
-- No critical "must fix" bugs remain. The package correctly implements basic type checking (`is.character`, `length() == 1L`, `!is.na()`) across the exported functions. Test coverage and `R CMD check` execution confirm the stable state of the repository.
+## Must fix
+- `get_fod` uses `httr2::req_perform(req, path = zip_file)` but misses progress bar mapping for verbose output and retry logic for transient errors.
+- Network-heavy code chunks in vignettes that are not meant to be evaluated during checks may be inappropriately missing `eval = FALSE, purl = FALSE`, although some smaller datasets may be evaluated. In `vignettes/getting-started.Rmd`, chunks like `all-fires` already use this properly. The `gallery-` chunks download ~10MB, which is safe, so they do not need this fix.
 
-## 2. Safe improvements
-- **Dry-run capability**: A `dry_run` logical capability helper parameter is recommended for `get_mtbs`, `get_nifc`, `get_wui`, and `get_fod` to help users safely check available paths or cache settings without triggering heavy multi-GB downloads.
-- **Strict Integer Validation Tests**: The years arguments (in `read_mtbs`, `read_nifc`, `read_fod`, `get_sefire`) use `is.numeric` and correctly check `years %% 1 != 0` to fail fast on non-integer numeric vectors, and explicit `expect_error` checks for decimal numeric inputs (e.g., `2020.5`) are already implemented in the test suite. No new tests are needed for this behavior.
-- **Cache Parameter NA Validation Tests**: The internal `cache` validation across the eco downloading tests (`test-get_eco.R`) already includes explicit tests for `cache = NA`.
-- **Documentation clarifications**: The examples in the README adequately explain the caching behavior, avoiding implicit download assumptions. No major changes are required here.
+## Safe improvements
+- Adding `req_progress` and `req_retry` to the `httr2` request chain in `get_fod()`.
 
-## 3. Possible features, but defer unless needed
-- **Progress bar reporting**: Using the `cli` package for progress bars instead of discrete console messages for long-running downloads could improve user experience.
-- **Retry Options**: Exposing explicit retry counts and options for HTTP requests.
+## Possible features, but defer unless needed
+- Add caching configuration options.
+- Add dry-run/list-available-years helper.
 
-## 4. Do not touch
-- The overall architecture of downloading to `cache_dir` and returning `sf`/`terra` objects.
-- `_pkgdown.yml` configuration (bootstrap 5 theme, navbars).
-- Roxygen tags and generated `.Rd` files (other than auto-generation via `devtools::document()`).
-- The existing condition skips in tests ensuring `R CMD check` passes locally and on CRAN.
-- Existing vignette configuration (`purl = FALSE` / `eval = FALSE`) excluding the setup chunk.
+## Do not touch
+- `_pkgdown.yml`, structure, logo, theme.
+- Exported function names, defaults.
