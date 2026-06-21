@@ -59,6 +59,7 @@ get_nifc <- function(
 
   did_download <- FALSE
   if (!fs::file_exists(zip_file)) {
+    cli::cli_warn(c("!" = "This is a large download (hundreds of megabytes)."))
     if (verbose) cli::cli_inform("Downloading NIFC wildfire perimeters \u2026")
     curl::curl_download(url, destfile = zip_file,
                         handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string, timeout = as.integer(timeout)),
@@ -141,6 +142,7 @@ get_fod <- function(
 
   did_download <- FALSE
   if (!fs::file_exists(zip_file)) {
+    cli::cli_warn(c("!" = "This is a large download (hundreds of megabytes)."))
     if (verbose) cli::cli_inform("Downloading USFS Fire Occurrence Database (FOD) \u2026")
     req <- httr2::request(url)
     req <- httr2::req_headers(

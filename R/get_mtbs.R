@@ -71,6 +71,7 @@ get_mtbs <- function(
   if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
 
   if (!fs::file_exists(zip_file)) {
+    cli::cli_warn(c("!" = "This is a large download (hundreds of megabytes)."))
     if (verbose) cli::cli_inform("Downloading MTBS {dataset} data \u2026")
     handle <- curl::new_handle(
       followlocation = TRUE,
