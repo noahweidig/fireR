@@ -2,22 +2,22 @@
 
 ## 1. Must fix
 - No critical "must fix" bugs remain. The package correctly implements basic type checking (`is.character`, `length() == 1L`, `!is.na()`) across the exported functions. Test coverage and `R CMD check` execution confirm the stable state of the repository.
+- There are no mismatches between exported functions, the documentation is well structured via roxygen2, and no examples or tests perform unchecked network-heavy requests (they correctly use condition skips or mocks).
 
 ## 2. Safe improvements
-- **Dry-run capability**: A `dry_run` logical capability helper parameter is recommended for `get_mtbs`, `get_nifc`, `get_wui`, and `get_fod` to help users safely check available paths or cache settings without triggering heavy multi-GB downloads.
-- **Strict Integer Validation Tests**: The years arguments (in `read_mtbs`, `read_nifc`, `read_fod`, `get_sefire`) use `is.numeric` and correctly check `years %% 1 != 0` to fail fast on non-integer numeric vectors, and explicit `expect_error` checks for decimal numeric inputs (e.g., `2020.5`) are already implemented in the test suite. No new tests are needed for this behavior.
-- **Cache Parameter NA Validation Tests**: The internal `cache` validation across the eco downloading tests (`test-get_eco.R`) already includes explicit tests for `cache = NA`.
-- **Documentation clarifications**: The examples in the README adequately explain the caching behavior, avoiding implicit download assumptions. No major changes are required here.
-
-## 3. Possible features, but defer unless needed
-- **Progress bar reporting**: Using the `cli` package for progress bars instead of discrete console messages for long-running downloads could improve user experience.
+- **Dry-run Documentation in README**: The `dry_run` logical parameter is fully implemented for the heavy downloader functions (`get_mtbs`, `get_nifc`, `get_wui`, `get_fod`, `get_sefire`) allowing users safely check available paths or cache settings without triggering multi-GB downloads. However, it is not explicitly showcased in the README. We will add a bullet to the "Key features" section and a specific demonstration in the USFS Wildland-Urban Interface (WUI) section.
+- **Progress bar reporting**: Using the `cli` package for progress bars instead of discrete console messages for long-running downloads could improve user experience, but existing output logs are clear enough.
 - **Retry Options**: Exposing explicit retry counts and options for HTTP requests.
 
+## 3. Possible features, but defer unless needed
+- Exposing the `httr2` internal retry config limits and backoff options in the `get_sefire` API. (The internal downloaders for ZIPs use `curl` handles which are generally stable, but `get_sefire` uses `httr2` inside its API call).
+- Adding sf geometry validity checks (`sf::st_make_valid`) implicitly, but this could be too heavy of a silent behavior change. Let users handle invalid polygons.
+
 ## 4. Do not touch
-- The overall architecture of downloading to `cache_dir` and returning `sf`/`terra` objects.
+- The overall architecture of downloading to user cache directory (`tools::R_user_dir`) and returning `sf`/`terra` objects.
 - `_pkgdown.yml` configuration (bootstrap 5 theme, navbars).
 - Roxygen tags and generated `.Rd` files (other than auto-generation via `devtools::document()`).
-- The existing condition skips in tests ensuring `R CMD check` passes locally and on CRAN.
+- The existing condition skips (`skip_on_cran()`) in tests ensuring `R CMD check` passes locally and on CRAN.
 - Existing vignette configuration (`purl = FALSE` / `eval = FALSE`) excluding the setup chunk.
 
 ## Validation results
