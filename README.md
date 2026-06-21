@@ -251,7 +251,7 @@ and a `cache` argument to persist downloads between sessions.
 | `type` | `character` | `NULL` | Incident type(s). `NULL` = all types |
 | `geometry` | `logical` | `TRUE` | Return a spatial object. `FALSE` → `data.frame` |
 | `output` | `character` | `"vect"` | `"sf"` or `"vect"` / `"terra"` |
-| `cache` | `logical`/`character` | `FALSE` | Directory containing the downloaded ZIP |
+| `cache` | `logical`/`character` | `FALSE` | Whether to use the user cache directory (`TRUE`), local directory (`FALSE`), or a specific directory |
 | `verbose` | `logical` | `TRUE` | Print progress messages |
 
 Download data to disk first with `get_mtbs()`:
