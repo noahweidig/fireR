@@ -109,6 +109,7 @@
 <li>🗺️ <strong>Flexible output</strong> — <code>sf</code>, <code>terra</code>, or plain <code>data.frame</code>
 </li>
 <li>💾 <strong>Optional caching</strong> — skip the download on repeat calls</li>
+<li>🛡️ <strong>Safe checks</strong> — optionally preview cache paths via <code>dry_run = TRUE</code> before initiating large downloads</li>
 </ul>
 <hr>
 </div>
@@ -256,7 +257,11 @@
 <p><strong>Warning:</strong> The WUI ZIP is approximately <strong>4.65 GB</strong> and will be slow to download. It is strongly recommended to run <code><a href="reference/get_wui.html">get_wui()</a></code> in a background R session so your interactive session remains responsive.</p>
 </blockquote>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Recommended: run in a background session</span></span>
+<code class="sourceCode R"><span><span class="co"># Check the target cache path safely without triggering a download</span></span>
+<span><span class="fu"><a href="reference/get_wui.html">get_wui</a></span><span class="op">(</span>dry_run <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Dry run: Would download USFS Wildland-Urban Interface (WUI) data to 'usfs_wui.zip'</span></span>
+<span></span>
+<span><span class="co"># Recommended: run in a background session</span></span>
 <span><span class="va">bg</span> <span class="op">&lt;-</span> <span class="fu">callr</span><span class="fu">::</span><span class="fu"><a href="https://callr.r-lib.org/reference/r_bg.html" class="external-link">r_bg</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu">fireR</span><span class="fu">::</span><span class="fu"><a href="reference/get_wui.html">get_wui</a></span><span class="op">(</span>directory <span class="op">=</span> <span class="st">"data/wui"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">bg</span><span class="op">$</span><span class="fu">wait</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>

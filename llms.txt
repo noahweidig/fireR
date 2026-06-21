@@ -53,6 +53,8 @@ Key features:
   (`2010:2020`), or specific years (`c(2000, 2010, 2020)`)
 - 🗺️ **Flexible output** — `sf`, `terra`, or plain `data.frame`
 - 💾 **Optional caching** — skip the download on repeat calls
+- 🛡️ **Safe checks** — optionally preview cache paths via
+  `dry_run = TRUE` before initiating large downloads
 
 ------------------------------------------------------------------------
 
@@ -221,6 +223,10 @@ tbl <- read_fod(geometry = FALSE)
 > responsive.
 
 ``` r
+
+# Check the target cache path safely without triggering a download
+get_wui(dry_run = TRUE)
+#> Dry run: Would download USFS Wildland-Urban Interface (WUI) data to 'usfs_wui.zip'
 
 # Recommended: run in a background session
 bg <- callr::r_bg(function() fireR::get_wui(directory = "data/wui"))
