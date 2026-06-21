@@ -45,3 +45,33 @@
   locally and on CRAN.
 - Existing vignette configuration (`purl = FALSE` / `eval = FALSE`)
   excluding the setup chunk.
+
+## Validation results
+
+- [`devtools::document()`](https://devtools.r-lib.org/reference/document.html)
+  (Not run because there’s no roxygen change yet)
+- [`devtools::test()`](https://devtools.r-lib.org/reference/test.html)
+  ran and completed perfectly.
+- `rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf"))`
+  completed perfectly with 0 errors, 0 warnings, 0 notes.
+- `pkgdown::build_site(new_process = FALSE)` ran and completed
+  perfectly.
+
+## Final Summary
+
+- **Changed files**: `R/get_nifc.R`, `audit_report.md`
+- **Why each change was safe**: I added `req_retry` to the
+  [`httr2::req_perform()`](https://httr2.r-lib.org/reference/req_perform.html)
+  call in
+  [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md)
+  when downloading NIFC perimeters from Figshare. This fulfills the
+  requirement memory suggestion. It is safe because `req_retry` only
+  makes downloads more resilient to transient errors. No functions were
+  renamed, no arguments were added/removed, and no heavy dependencies
+  were added.
+- **Validation**:
+  - [`devtools::test()`](https://devtools.r-lib.org/reference/test.html)
+    ran and passed successfully.
+  - `rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf"))`
+    completed with 0 errors, 0 warnings, 0 notes.
+  - `pkgdown::build_site(new_process = FALSE)` ran and succeeded.
