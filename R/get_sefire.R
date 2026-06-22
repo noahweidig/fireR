@@ -138,6 +138,7 @@ get_sefire <- function(
 
     if (any(to_download)) {
       n <- sum(to_download)
+      cli::cli_warn(c("!" = "This is a large download (hundreds of megabytes)."))
       if (verbose) {
         cli::cli_inform(
           "Downloading {n} SE FireMap Burn Severity mosaic{?s} \u2026"
@@ -192,6 +193,7 @@ get_sefire <- function(
   if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
 
   if (!fs::file_exists(zip_file)) {
+    cli::cli_warn(c("!" = "This is a large download (hundreds of megabytes)."))
     if (verbose) cli::cli_inform("Downloading {ds_info$label} \u2026")
     handle <- curl::new_handle(
       followlocation = TRUE,
