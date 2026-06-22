@@ -224,7 +224,9 @@ tbl <- read_fod(geometry = FALSE)
 
 ``` r
 
-# Check the target cache path safely without triggering a download
+# Check the target cache path safely without triggering a download.
+# The dry_run = TRUE argument safely validates your caching settings
+# without triggering multi-gigabyte downloads across the network.
 get_wui(dry_run = TRUE)
 #> Dry run: Would download USFS Wildland-Urban Interface (WUI) data to 'usfs_wui.zip'
 

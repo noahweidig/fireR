@@ -257,7 +257,9 @@
 <p><strong>Warning:</strong> The WUI ZIP is approximately <strong>4.65 GB</strong> and will be slow to download. It is strongly recommended to run <code><a href="reference/get_wui.html">get_wui()</a></code> in a background R session so your interactive session remains responsive.</p>
 </blockquote>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Check the target cache path safely without triggering a download</span></span>
+<code class="sourceCode R"><span><span class="co"># Check the target cache path safely without triggering a download.</span></span>
+<span><span class="co"># The dry_run = TRUE argument safely validates your caching settings</span></span>
+<span><span class="co"># without triggering multi-gigabyte downloads across the network.</span></span>
 <span><span class="fu"><a href="reference/get_wui.html">get_wui</a></span><span class="op">(</span>dry_run <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dry run: Would download USFS Wildland-Urban Interface (WUI) data to 'usfs_wui.zip'</span></span>
 <span></span>
