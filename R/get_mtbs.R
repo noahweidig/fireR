@@ -100,7 +100,7 @@ get_mtbs <- function(
 #'   \code{"occurrence"} to read fire centroids as points.
 #' @param years \code{integer} vector of years to keep.  Accepts a single
 #'   year (\code{2020}), a contiguous range created with \code{:} notation
-#'   (\code{2010:2020}), or a vector of specific years
+#'   (\code{2010:2023}), or a vector of specific years
 #'   (\code{c(2000, 2010, 2020)}).  Only fires whose ignition year appears in
 #'   \code{years} are returned.  \code{NULL} (the default) returns all years
 #'   without filtering.
@@ -145,7 +145,7 @@ get_mtbs <- function(
 #' fires_2020 <- read_mtbs(years = 2020, type = "Wildfire", output = "sf")
 #'
 #' # Contiguous range
-#' fires_recent <- read_mtbs(years = 2018:2023, output = "sf")
+#' fires_recent <- read_mtbs(years = 2010:2023, output = "sf")
 #'
 #' # Specific years only
 #' fires_sel <- read_mtbs(years = c(2010, 2015, 2020), output = "sf")
