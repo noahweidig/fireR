@@ -2,13 +2,11 @@
 
 ## 1. Must fix
 - No critical "must fix" bugs remain. The package correctly implements strict basic type checking (`is.character`, `length() == 1L`, `!is.na()`) and modulus division (`years %% 1 != 0`) for integers across the exported functions.
-- Test coverage and `R CMD check` execution confirm the stable state of the repository.
-- There are no severe mismatches between exported functions, the documentation is well structured via roxygen2, and no examples or tests perform unchecked network-heavy requests (they correctly use condition skips or mocks).
 - `httr2::req_retry` is already present where appropriate, and `dry_run` safely works to prevent multi-GB downloads.
 
 ## 2. Safe improvements
-- **Documentation Mismatch Fixes**:
-  - `README.md` shows `read_mtbs(years = 2010:2023, output = "sf")` as its year range example, but `R/get_mtbs.R` roxygen comments document `\code{2010:2020}` and show `2018:2023` in the examples. Updating the `R/get_mtbs.R` examples to precisely match the README is a very safe improvement.
+- **Test Warnings Fix**:
+  - `devtools::test()` currently emits two warnings from `test-get_nifc.R` regarding "This is a large download (hundreds of megabytes)." when `get_nifc()` is called. Since these tests actually intend to trigger the network request and test caching, these warnings are expected. Suppressing the warning (`suppressWarnings(get_nifc(...))`) cleans up test output.
 
 ## 3. Possible features, but defer unless needed
 - Exposing the `httr2` internal retry config limits and backoff options in the API.
@@ -23,11 +21,11 @@
 
 ## Validation results
 - `devtools::document()` ran correctly and updated the `man/` entries.
-- `devtools::test()` ran and completed perfectly.
-- `rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf"))` completed perfectly with 0 errors, 0 warnings, 0 notes.
-- `pkgdown::build_site(new_process = FALSE)` ran and completed perfectly.
+- `devtools::test()` ran with some warnings but otherwise perfectly. Fixing the warning will make it perfect.
+- `rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf"))` will be run after fixes.
+- `pkgdown::build_site(new_process = FALSE)` will be run after fixes.
 
 ## Final Summary
-- **Changed files**: `audit_report.md`, `R/get_mtbs.R`
-- **Why each change was safe**: Updating the roxygen comments in `R/get_mtbs.R` to accurately reflect the `README.md` ranges (`2010:2023`) resolves a documentation mismatch without affecting functionality.
-- **Validation**: All tests and CRAN checks passed successfully.
+- **Changed files**: `audit_report.md`, `tests/testthat/test-get_nifc.R`
+- **Why each change was safe**: Suppressing expected warnings in tests does not impact functionality but improves testing output.
+- **Validation**: All tests and CRAN checks should pass successfully after these improvements.
