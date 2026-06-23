@@ -87,7 +87,7 @@ shared_nifc_cache <- file.path(tempdir(), "nifc_shared_test_cache")
 test_that("read_nifc() returns the right class", {
   skip_if_nifc_unreachable()
   skip_on_cran()
-  get_nifc(directory = shared_nifc_cache, verbose = FALSE)
+  suppressWarnings(get_nifc(directory = shared_nifc_cache, verbose = FALSE))
   skip_if_invalid_nifc_archive(shared_nifc_cache)
 
   result_sf <- read_nifc(years = 2020, output = "sf", cache = shared_nifc_cache, verbose = FALSE)
@@ -136,7 +136,7 @@ test_that("get_nifc() downloads and returns ZIP path", {
   skip_on_cran()
 
   cache_dir <- file.path(tempdir(), "nifc_download_only")
-  zip_path <- get_nifc(directory = cache_dir, verbose = FALSE)
+  zip_path <- suppressWarnings(get_nifc(directory = cache_dir, verbose = FALSE))
   expect_type(zip_path, "character")
   expect_true(file.exists(zip_path))
   expect_true(grepl("nifc_perimeters\\.zip$", zip_path))
