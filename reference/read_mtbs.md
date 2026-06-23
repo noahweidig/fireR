@@ -29,7 +29,7 @@ read_mtbs(
 - years:
 
   `integer` vector of years to keep. Accepts a single year (`2020`), a
-  contiguous range created with `:` notation (`2010:2020`), or a vector
+  contiguous range created with `:` notation (`2010:2023`), or a vector
   of specific years (`c(2000, 2010, 2020)`). Only fires whose ignition
   year appears in `years` are returned. `NULL` (the default) returns all
   years without filtering.
@@ -96,7 +96,7 @@ fires <- read_mtbs(output = "sf")
 fires_2020 <- read_mtbs(years = 2020, type = "Wildfire", output = "sf")
 
 # Contiguous range
-fires_recent <- read_mtbs(years = 2018:2023, output = "sf")
+fires_recent <- read_mtbs(years = 2010:2023, output = "sf")
 
 # Specific years only
 fires_sel <- read_mtbs(years = c(2010, 2015, 2020), output = "sf")

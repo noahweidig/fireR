@@ -46,21 +46,23 @@
 
 <div class="section level2">
 <h2 id="id_1-must-fix">1. Must fix<a class="anchor" aria-label="anchor" href="#id_1-must-fix"></a></h2>
-<ul><li>No critical “must fix” bugs remain. The package correctly implements basic type checking (<code>is.character</code>, <code>length() == 1L</code>, <code>!is.na()</code>) across the exported functions. Test coverage and <code>R CMD check</code> execution confirm the stable state of the repository.</li>
-<li>There are no mismatches between exported functions, the documentation is well structured via roxygen2, and no examples or tests perform unchecked network-heavy requests (they correctly use condition skips or mocks).</li>
+<ul><li>No critical “must fix” bugs remain. The package correctly implements strict basic type checking (<code>is.character</code>, <code>length() == 1L</code>, <code>!is.na()</code>) and modulus division (<code>years %% 1 != 0</code>) for integers across the exported functions.</li>
+<li>Test coverage and <code>R CMD check</code> execution confirm the stable state of the repository.</li>
+<li>There are no severe mismatches between exported functions, the documentation is well structured via roxygen2, and no examples or tests perform unchecked network-heavy requests (they correctly use condition skips or mocks).</li>
+<li>
+<code><a href="https://httr2.r-lib.org/reference/req_retry.html" class="external-link">httr2::req_retry</a></code> is already present where appropriate, and <code>dry_run</code> safely works to prevent multi-GB downloads.</li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_2-safe-improvements">2. Safe improvements<a class="anchor" aria-label="anchor" href="#id_2-safe-improvements"></a></h2>
 <ul><li>
-<strong>Dry-run Documentation in README</strong>: The <code>dry_run</code> logical parameter is fully implemented for the heavy downloader functions (<code>get_mtbs</code>, <code>get_nifc</code>, <code>get_wui</code>, <code>get_fod</code>, <code>get_sefire</code>) allowing users safely check available paths or cache settings without triggering multi-GB downloads. However, it is not explicitly showcased in the README. We will add a bullet to the “Key features” section and a specific demonstration in the USFS Wildland-Urban Interface (WUI) section.</li>
-<li>
-<strong>Progress bar reporting</strong>: Using the <code>cli</code> package for progress bars instead of discrete console messages for long-running downloads could improve user experience, but existing output logs are clear enough.</li>
-<li>
-<strong>Retry Options</strong>: Exposing explicit retry counts and options for HTTP requests.</li>
+<strong>Documentation Mismatch Fixes</strong>:
+<ul><li>
+<code>README.md</code> shows <code>read_mtbs(years = 2010:2023, output = "sf")</code> as its year range example, but <code>R/get_mtbs.R</code> roxygen comments document <code>\code{2010:2020}</code> and show <code>2018:2023</code> in the examples. Updating the <code>R/get_mtbs.R</code> examples to precisely match the README is a very safe improvement.</li>
+</ul></li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_3-possible-features-but-defer-unless-needed">3. Possible features, but defer unless needed<a class="anchor" aria-label="anchor" href="#id_3-possible-features-but-defer-unless-needed"></a></h2>
-<ul><li>Exposing the <code>httr2</code> internal retry config limits and backoff options in the <code>get_sefire</code> API. (The internal downloaders for ZIPs use <code>curl</code> handles which are generally stable, but <code>get_sefire</code> uses <code>httr2</code> inside its API call).</li>
+<ul><li>Exposing the <code>httr2</code> internal retry config limits and backoff options in the API.</li>
 <li>Adding sf geometry validity checks (<code><a href="https://r-spatial.github.io/sf/reference/valid.html" class="external-link">sf::st_make_valid</a></code>) implicitly, but this could be too heavy of a silent behavior change. Let users handle invalid polygons.</li>
 </ul></div>
 <div class="section level2">
@@ -75,7 +77,7 @@
 <div class="section level2">
 <h2 id="validation-results">Validation results<a class="anchor" aria-label="anchor" href="#validation-results"></a></h2>
 <ul><li>
-<code><a href="https://devtools.r-lib.org/reference/document.html" class="external-link">devtools::document()</a></code> (Not run because there’s no roxygen change yet)</li>
+<code><a href="https://devtools.r-lib.org/reference/document.html" class="external-link">devtools::document()</a></code> ran correctly and updated the <code>man/</code> entries.</li>
 <li>
 <code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code> ran and completed perfectly.</li>
 <li>
@@ -86,19 +88,12 @@
 <div class="section level2">
 <h2 id="final-summary">Final Summary<a class="anchor" aria-label="anchor" href="#final-summary"></a></h2>
 <ul><li>
-<strong>Changed files</strong>: <code>R/get_nifc.R</code>, <code>audit_report.md</code>
+<strong>Changed files</strong>: <code>audit_report.md</code>, <code>R/get_mtbs.R</code>
 </li>
 <li>
-<strong>Why each change was safe</strong>: I added <code>req_retry</code> to the <code><a href="https://httr2.r-lib.org/reference/req_perform.html" class="external-link">httr2::req_perform()</a></code> call in <code><a href="reference/get_nifc.html">get_nifc()</a></code> when downloading NIFC perimeters from Figshare. This fulfills the requirement memory suggestion. It is safe because <code>req_retry</code> only makes downloads more resilient to transient errors. No functions were renamed, no arguments were added/removed, and no heavy dependencies were added.</li>
+<strong>Why each change was safe</strong>: Updating the roxygen comments in <code>R/get_mtbs.R</code> to accurately reflect the <code>README.md</code> ranges (<code>2010:2023</code>) resolves a documentation mismatch without affecting functionality.</li>
 <li>
-<strong>Validation</strong>:
-<ul><li>
-<code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code> ran and passed successfully.</li>
-<li>
-<code>rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf"))</code> completed with 0 errors, 0 warnings, 0 notes.</li>
-<li>
-<code>pkgdown::build_site(new_process = FALSE)</code> ran and succeeded.</li>
-</ul></li>
+<strong>Validation</strong>: All tests and CRAN checks passed successfully.</li>
 </ul></div>
 </div>
 
