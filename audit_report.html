@@ -47,17 +47,15 @@
 <div class="section level2">
 <h2 id="id_1-must-fix">1. Must fix<a class="anchor" aria-label="anchor" href="#id_1-must-fix"></a></h2>
 <ul><li>No critical “must fix” bugs remain. The package correctly implements strict basic type checking (<code>is.character</code>, <code>length() == 1L</code>, <code>!is.na()</code>) and modulus division (<code>years %% 1 != 0</code>) for integers across the exported functions.</li>
-<li>Test coverage and <code>R CMD check</code> execution confirm the stable state of the repository.</li>
-<li>There are no severe mismatches between exported functions, the documentation is well structured via roxygen2, and no examples or tests perform unchecked network-heavy requests (they correctly use condition skips or mocks).</li>
 <li>
 <code><a href="https://httr2.r-lib.org/reference/req_retry.html" class="external-link">httr2::req_retry</a></code> is already present where appropriate, and <code>dry_run</code> safely works to prevent multi-GB downloads.</li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_2-safe-improvements">2. Safe improvements<a class="anchor" aria-label="anchor" href="#id_2-safe-improvements"></a></h2>
 <ul><li>
-<strong>Documentation Mismatch Fixes</strong>:
+<strong>Test Warnings Fix</strong>:
 <ul><li>
-<code>README.md</code> shows <code>read_mtbs(years = 2010:2023, output = "sf")</code> as its year range example, but <code>R/get_mtbs.R</code> roxygen comments document <code>\code{2010:2020}</code> and show <code>2018:2023</code> in the examples. Updating the <code>R/get_mtbs.R</code> examples to precisely match the README is a very safe improvement.</li>
+<code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code> currently emits two warnings from <code>test-get_nifc.R</code> regarding “This is a large download (hundreds of megabytes).” when <code><a href="reference/get_nifc.html">get_nifc()</a></code> is called. Since these tests actually intend to trigger the network request and test caching, these warnings are expected. Suppressing the warning (<code>suppressWarnings(get_nifc(...))</code>) cleans up test output.</li>
 </ul></li>
 </ul></div>
 <div class="section level2">
@@ -79,21 +77,21 @@
 <ul><li>
 <code><a href="https://devtools.r-lib.org/reference/document.html" class="external-link">devtools::document()</a></code> ran correctly and updated the <code>man/</code> entries.</li>
 <li>
-<code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code> ran and completed perfectly.</li>
+<code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code> ran with some warnings but otherwise perfectly. Fixing the warning will make it perfect.</li>
 <li>
-<code>rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf"))</code> completed perfectly with 0 errors, 0 warnings, 0 notes.</li>
+<code>rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf"))</code> will be run after fixes.</li>
 <li>
-<code>pkgdown::build_site(new_process = FALSE)</code> ran and completed perfectly.</li>
+<code>pkgdown::build_site(new_process = FALSE)</code> will be run after fixes.</li>
 </ul></div>
 <div class="section level2">
 <h2 id="final-summary">Final Summary<a class="anchor" aria-label="anchor" href="#final-summary"></a></h2>
 <ul><li>
-<strong>Changed files</strong>: <code>audit_report.md</code>, <code>R/get_mtbs.R</code>
+<strong>Changed files</strong>: <code>audit_report.md</code>, <code>tests/testthat/test-get_nifc.R</code>
 </li>
 <li>
-<strong>Why each change was safe</strong>: Updating the roxygen comments in <code>R/get_mtbs.R</code> to accurately reflect the <code>README.md</code> ranges (<code>2010:2023</code>) resolves a documentation mismatch without affecting functionality.</li>
+<strong>Why each change was safe</strong>: Suppressing expected warnings in tests does not impact functionality but improves testing output.</li>
 <li>
-<strong>Validation</strong>: All tests and CRAN checks passed successfully.</li>
+<strong>Validation</strong>: All tests and CRAN checks should pass successfully after these improvements.</li>
 </ul></div>
 </div>
 
