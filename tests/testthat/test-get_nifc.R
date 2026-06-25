@@ -104,7 +104,7 @@ test_that("read_nifc() returns the right class", {
 test_that("read_nifc() year filtering keeps correct rows", {
   skip_if_nifc_unreachable()
   skip_on_cran()
-  get_nifc(directory = shared_nifc_cache, verbose = FALSE)
+  suppressWarnings(get_nifc(directory = shared_nifc_cache, verbose = FALSE))
   skip_if_invalid_nifc_archive(shared_nifc_cache)
 
   perims <- read_nifc(years = 2018:2019, output = "sf", cache = shared_nifc_cache, verbose = FALSE)
@@ -114,7 +114,7 @@ test_that("read_nifc() year filtering keeps correct rows", {
 test_that("read_nifc() single year is treated as exact match", {
   skip_if_nifc_unreachable()
   skip_on_cran()
-  get_nifc(directory = shared_nifc_cache, verbose = FALSE)
+  suppressWarnings(get_nifc(directory = shared_nifc_cache, verbose = FALSE))
   skip_if_invalid_nifc_archive(shared_nifc_cache)
 
   perims <- read_nifc(years = 2005, output = "sf", cache = shared_nifc_cache, verbose = FALSE)
@@ -124,7 +124,7 @@ test_that("read_nifc() single year is treated as exact match", {
 test_that("read_nifc() specific year vector filtering keeps correct rows", {
   skip_if_nifc_unreachable()
   skip_on_cran()
-  get_nifc(directory = shared_nifc_cache, verbose = FALSE)
+  suppressWarnings(get_nifc(directory = shared_nifc_cache, verbose = FALSE))
   skip_if_invalid_nifc_archive(shared_nifc_cache)
 
   perims <- read_nifc(years = c(2010, 2015), output = "sf", cache = shared_nifc_cache, verbose = FALSE)
@@ -195,7 +195,7 @@ shared_fod_cache <- file.path(tempdir(), "fod_shared_test_cache")
 test_that("read_fod() returns the right class", {
   skip_if_fod_unreachable()
   skip_on_cran()
-  get_fod(directory = shared_fod_cache, verbose = FALSE)
+  suppressWarnings(get_fod(directory = shared_fod_cache, verbose = FALSE))
 
   result_sf <- read_fod(years = 2015, output = "sf", cache = shared_fod_cache, verbose = FALSE)
   expect_s3_class(result_sf, "sf")
@@ -211,7 +211,7 @@ test_that("read_fod() returns the right class", {
 test_that("read_fod() year filtering keeps correct rows", {
   skip_if_fod_unreachable()
   skip_on_cran()
-  get_fod(directory = shared_fod_cache, verbose = FALSE)
+  suppressWarnings(get_fod(directory = shared_fod_cache, verbose = FALSE))
 
   fires <- read_fod(years = 2010:2011, output = "sf", cache = shared_fod_cache, verbose = FALSE)
   expect_true(all(fires[["FIRE_YEAR"]] %in% 2010:2011, na.rm = TRUE))
@@ -220,7 +220,7 @@ test_that("read_fod() year filtering keeps correct rows", {
 test_that("read_fod() single year is treated as exact match", {
   skip_if_fod_unreachable()
   skip_on_cran()
-  get_fod(directory = shared_fod_cache, verbose = FALSE)
+  suppressWarnings(get_fod(directory = shared_fod_cache, verbose = FALSE))
 
   fires <- read_fod(years = 2000, output = "sf", cache = shared_fod_cache, verbose = FALSE)
   expect_true(all(fires[["FIRE_YEAR"]] == 2000, na.rm = TRUE))
@@ -229,7 +229,7 @@ test_that("read_fod() single year is treated as exact match", {
 test_that("read_fod() specific year vector filtering keeps correct rows", {
   skip_if_fod_unreachable()
   skip_on_cran()
-  get_fod(directory = shared_fod_cache, verbose = FALSE)
+  suppressWarnings(get_fod(directory = shared_fod_cache, verbose = FALSE))
 
   fires <- read_fod(years = c(2000, 2010), output = "sf", cache = shared_fod_cache, verbose = FALSE)
   expect_true(all(fires[["FIRE_YEAR"]] %in% c(2000, 2010), na.rm = TRUE))
@@ -240,7 +240,7 @@ test_that("get_fod() downloads and returns ZIP path", {
   skip_on_cran()
 
   cache_dir <- file.path(tempdir(), "fod_download_only")
-  zip_path <- get_fod(directory = cache_dir, verbose = FALSE)
+  zip_path <- suppressWarnings(get_fod(directory = cache_dir, verbose = FALSE))
   expect_type(zip_path, "character")
   expect_true(file.exists(zip_path))
   expect_true(grepl("RDS-2013-0009\\.6_Data_Format3_GPKG\\.zip$", zip_path))
