@@ -59,7 +59,7 @@ test_that("read_mtbs() returns the right class", {
   skip_if_usgs_unreachable()
   skip_on_cran()
   cache_dir <- shared_cache
-  get_mtbs(directory = cache_dir, verbose = FALSE)
+  suppressWarnings(get_mtbs(directory = cache_dir, verbose = FALSE))
 
   # sf (default)
   result_sf <- read_mtbs(years = 2020, output = "sf", cache = cache_dir, verbose = FALSE)
@@ -79,7 +79,7 @@ test_that("year range filtering keeps correct rows", {
   skip_if_usgs_unreachable()
   skip_on_cran()
   cache_dir <- shared_cache
-  get_mtbs(directory = cache_dir, verbose = FALSE)
+  suppressWarnings(get_mtbs(directory = cache_dir, verbose = FALSE))
 
   fires <- read_mtbs(years = 2018:2019, output = "sf", cache = cache_dir, verbose = FALSE)
 
@@ -92,7 +92,7 @@ test_that("specific year vector filtering keeps correct rows", {
   skip_if_usgs_unreachable()
   skip_on_cran()
   cache_dir <- shared_cache
-  get_mtbs(directory = cache_dir, verbose = FALSE)
+  suppressWarnings(get_mtbs(directory = cache_dir, verbose = FALSE))
 
   fires <- read_mtbs(years = c(2018, 2020), output = "sf", cache = cache_dir, verbose = FALSE)
 
@@ -105,7 +105,7 @@ test_that("single year is treated as exact match", {
   skip_if_usgs_unreachable()
   skip_on_cran()
   cache_dir <- shared_cache
-  get_mtbs(directory = cache_dir, verbose = FALSE)
+  suppressWarnings(get_mtbs(directory = cache_dir, verbose = FALSE))
 
   fires <- read_mtbs(years = 2005, output = "sf", cache = cache_dir, verbose = FALSE)
   dates <- as.Date(fires[["Ig_Date"]])
@@ -117,7 +117,7 @@ test_that("type filtering keeps correct rows", {
   skip_if_usgs_unreachable()
   skip_on_cran()
   cache_dir <- shared_cache
-  get_mtbs(directory = cache_dir, verbose = FALSE)
+  suppressWarnings(get_mtbs(directory = cache_dir, verbose = FALSE))
 
   fires <- read_mtbs(years = 2020, type = "Wildfire", output = "sf", cache = cache_dir, verbose = FALSE)
   expect_true(all(fires[["Incid_Type"]] == "Wildfire", na.rm = TRUE))
@@ -127,7 +127,7 @@ test_that("read_mtbs() can read occurrence data", {
   skip_if_usgs_unreachable()
   skip_on_cran()
   cache_dir <- shared_cache
-  get_mtbs(dataset = "occurrence", directory = cache_dir, verbose = FALSE)
+  suppressWarnings(get_mtbs(dataset = "occurrence", directory = cache_dir, verbose = FALSE))
 
   # Check that it returns a spatial object
   result_sf <- read_mtbs(dataset = "occurrence", years = 2020, output = "sf", cache = cache_dir, verbose = FALSE)
@@ -143,7 +143,7 @@ test_that("get_mtbs() downloads and returns ZIP path", {
   skip_on_cran()
 
   cache_dir <- file.path(tempdir(), "mtbs_download_only")
-  zip_path <- get_mtbs(directory = cache_dir, verbose = FALSE)
+  zip_path <- suppressWarnings(get_mtbs(directory = cache_dir, verbose = FALSE))
   expect_type(zip_path, "character")
   expect_true(file.exists(zip_path))
   expect_true(grepl("mtbs_perimeter_data\\.zip$", zip_path))
