@@ -18,6 +18,10 @@ test_that("get_sefire() rejects invalid common arguments", {
 
   expect_error(get_sefire(dataset = "Fire History", verbose = "yes"), "TRUE.*FALSE")
   expect_error(get_sefire(dataset = "Fire History", verbose = NA), "TRUE.*FALSE")
+
+  expect_error(get_sefire(dataset = "Fire History", dry_run = "yes"), "TRUE.*FALSE")
+  expect_error(get_sefire(dataset = "Fire History", dry_run = NA), "TRUE.*FALSE")
+  expect_error(get_sefire(dataset = "Fire History", dry_run = c(TRUE, FALSE)), "TRUE.*FALSE")
 })
 
 test_that("get_sefire() requires years when dataset is Burn Severity", {
