@@ -16,6 +16,10 @@ test_that("get_mtbs() rejects invalid arguments", {
 
   expect_error(get_mtbs(verbose = "yes"), "TRUE.*FALSE")
   expect_error(get_mtbs(verbose = NA), "TRUE.*FALSE")
+
+  expect_error(get_mtbs(dry_run = "yes"), "TRUE.*FALSE")
+  expect_error(get_mtbs(dry_run = NA), "TRUE.*FALSE")
+  expect_error(get_mtbs(dry_run = c(TRUE, FALSE)), "TRUE.*FALSE")
 })
 
 test_that("read_mtbs() input validation works", {

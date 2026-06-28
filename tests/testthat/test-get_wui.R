@@ -14,6 +14,10 @@ test_that("get_wui() rejects invalid arguments", {
 
   expect_error(get_wui(verbose = "yes"), "TRUE.*FALSE")
   expect_error(get_wui(verbose = NA), "TRUE.*FALSE")
+
+  expect_error(get_wui(dry_run = "yes"), "TRUE.*FALSE")
+  expect_error(get_wui(dry_run = NA), "TRUE.*FALSE")
+  expect_error(get_wui(dry_run = c(TRUE, FALSE)), "TRUE.*FALSE")
 })
 
 test_that("get_wui() does not warn when ZIP already exists", {

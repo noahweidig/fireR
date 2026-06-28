@@ -14,6 +14,10 @@ test_that("get_nifc() rejects invalid arguments", {
 
   expect_error(get_nifc(verbose = "yes"), "TRUE.*FALSE")
   expect_error(get_nifc(verbose = NA), "TRUE.*FALSE")
+
+  expect_error(get_nifc(dry_run = "yes"), "TRUE.*FALSE")
+  expect_error(get_nifc(dry_run = NA), "TRUE.*FALSE")
+  expect_error(get_nifc(dry_run = c(TRUE, FALSE)), "TRUE.*FALSE")
 })
 
 test_that("get_fod() rejects invalid arguments", {
@@ -32,6 +36,10 @@ test_that("get_fod() rejects invalid arguments", {
 
   expect_error(get_fod(verbose = "yes"), "TRUE.*FALSE")
   expect_error(get_fod(verbose = NA), "TRUE.*FALSE")
+
+  expect_error(get_fod(dry_run = "yes"), "TRUE.*FALSE")
+  expect_error(get_fod(dry_run = NA), "TRUE.*FALSE")
+  expect_error(get_fod(dry_run = c(TRUE, FALSE)), "TRUE.*FALSE")
 })
 
 # ── read_nifc() input validation (no download required) ──────────────────────
