@@ -69,7 +69,7 @@ The result is an annual burn severity mosaic covering 78 ARD Landsat tiles
 across the southeastern United States for years 2000–2022.
 
 The SE FireMap Fall 2024 release additionally provides a Fire History Map
-(1994–2024), Burned Area Polygons (1994–2024), and Burned Area Raster grids
+(1994–2024), Burned Area Polygons (1994–2024), and Burned Area Rasters
 (1994–2024) as single-file geodatabase ZIPs.  Year selection is not
 applicable to these three products; the \code{years} argument is silently
 ignored when they are requested.
