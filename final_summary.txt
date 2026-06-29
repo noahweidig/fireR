@@ -1,16 +1,13 @@
-# Final Summary
+Changed Files:
+- `tests/testthat/test-get_eco.R`: Added missing argument validation tests (`expect_error`) for the `dry_run` parameter in `get_nal2eco`, `get_nal3eco`, and `get_usl4eco` functions.
 
-## Changed Files
-1. `_pkgdown.yml`
-2. `R/get_mtbs.R`
+Why the changes are safe:
+- The changes strictly add tests to the test suite and do not touch package code logic (`R/`), documentation (`man/`), or package structure (`NAMESPACE`, `DESCRIPTION`).
+- It follows the audit report's identification of "Safe improvements: Missing tests for argument validation".
+- It uses the same testing pattern (`expect_error(..., "TRUE.*FALSE")`) as the already existing checks in `test-get_eco.R`.
 
-## Why each change was safe
-- `_pkgdown.yml`: Corrected a minor textual inaccuracy describing the data source of the FOD database, changing it from figshare to the Forest Service Research Data Archive. This is purely informational for the documentation site.
-- `R/get_mtbs.R`: Added a `unique()` safeguard to the `type` parameter logic. This ensures that duplicate inputs (like `type = c("Wildfire", "Wildfire")`) do not create redundant or massive SQL `WHERE` queries (`Incid_Type = 'Wildfire' OR Incid_Type = 'Wildfire'`). This preserves existing behaviors exactly but protects against malformed inputs.
-- No heavy refactoring, architectural changes, or default behaviors were touched. These are tiny improvements matching the constraints requested.
-
-## Validation Passed
-- `devtools::document()` ran cleanly.
-- `devtools::test()` ran cleanly (no new failures; skipped tests for network access behaved correctly).
-- `rcmdcheck::rcmdcheck` finished with 0 errors, 0 warnings, 0 notes.
-- `pkgdown::build_site()` compiled the site correctly without errors.
+Validations:
+- `devtools::document()`: Passed.
+- `devtools::test()`: Passed (0 FAIL, 0 WARN).
+- `rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf"))`: Passed (0 errors, 0 warnings, 0 notes).
+- `pkgdown::build_site(new_process = FALSE)`: Passed. Built the site locally successfully.
