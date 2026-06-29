@@ -1,21 +1,16 @@
 # Final Summary
 
 ## Changed Files
-1. `tests/testthat/test-get_eco.R`
-2. `tests/testthat/test-get_mtbs.R`
-3. `tests/testthat/test-get_nifc.R`
-4. `tests/testthat/test-get_sefire.R`
-5. `tests/testthat/test-get_wui.R`
-6. `audit_report.md` (Created)
+1. `_pkgdown.yml`
+2. `R/get_mtbs.R`
 
 ## Why each change was safe
-- The changes were entirely confined to test files, adding standard `testthat::expect_error` checks for a recently added `dry_run` parameter. No source code logic (`R/`), default parameters, or exported behaviors were modified.
-- The parameter validation (`is.logical(dry_run)`) already existed in the core functions; the test suite was simply out of sync.
-- The `audit_report.md` was created as requested to document the findings according to the constraints.
-- No heavy dependencies or network-heavy tests were added.
+- `_pkgdown.yml`: Corrected a minor textual inaccuracy describing the data source of the FOD database, changing it from figshare to the Forest Service Research Data Archive. This is purely informational for the documentation site.
+- `R/get_mtbs.R`: Added a `unique()` safeguard to the `type` parameter logic. This ensures that duplicate inputs (like `type = c("Wildfire", "Wildfire")`) do not create redundant or massive SQL `WHERE` queries (`Incid_Type = 'Wildfire' OR Incid_Type = 'Wildfire'`). This preserves existing behaviors exactly but protects against malformed inputs.
+- No heavy refactoring, architectural changes, or default behaviors were touched. These are tiny improvements matching the constraints requested.
 
 ## Validation Passed
-- `devtools::document()` ran without issues.
-- `devtools::test()` ran cleanly (16 tests skipped due to no network access, which is the expected and correct behavior for CRAN/CI compliance, and 217 tests passed).
-- `rcmdcheck::rcmdcheck` finished with **0 errors, 0 warnings, 0 notes**.
+- `devtools::document()` ran cleanly.
+- `devtools::test()` ran cleanly (no new failures; skipped tests for network access behaved correctly).
+- `rcmdcheck::rcmdcheck` finished with 0 errors, 0 warnings, 0 notes.
 - `pkgdown::build_site()` compiled the site correctly without errors.

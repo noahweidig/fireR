@@ -51,9 +51,9 @@ reference:
 
   - title: "NIFC Wildfire Data"
     desc: >
-      Download NIFC (National Interagency Fire Center) wildfire perimeters and
-      Fire Occurrence Database (FOD) datasets from figshare, and read the
-      downloaded archives as spatial objects with optional year filtering.
+      Download NIFC (National Interagency Fire Center) wildfire perimeters from figshare and
+      Fire Occurrence Database (FOD) datasets from the Forest Service Research Data Archive,
+      and read the downloaded archives as spatial objects with optional year filtering.
     contents:
       - get_nifc
       - read_nifc

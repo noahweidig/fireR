@@ -244,6 +244,7 @@ read_mtbs <- function(
     )
   }
   if (!is.null(type)) {
+    type <- unique(type)
     type_eq <- paste(sprintf("Incid_Type = '%s'", type), collapse = " OR ")
     where_clauses <- c(where_clauses, sprintf("(%s)", type_eq))
   }
