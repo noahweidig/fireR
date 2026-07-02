@@ -144,14 +144,24 @@ get_sefire <- function(
           "Downloading {n} SE FireMap Burn Severity mosaic{?s} \u2026"
         )
       }
-      curl::multi_download(
+      results <- curl::multi_download(
         urls[to_download],
         zip_files[to_download],
         progress  = verbose,
         useragent = .ua_string,
         timeout   = as.integer(timeout)
       )
-      if (verbose) cli::cli_inform("Download{?s} complete.")
+      failed <- results[is.na(results$success) | !results$success, , drop = FALSE]
+      if (nrow(failed) > 0L) {
+        failed_msgs <- paste0(failed$url, " (HTTP ", failed$status_code, ")")
+        names(failed_msgs) <- rep("x", length(failed_msgs))
+        cli::cli_warn(c(
+          "!" = "{nrow(failed)} SE FireMap download{?s} failed:",
+          failed_msgs
+        ))
+      } else if (verbose) {
+        cli::cli_inform("Download{?s} complete.")
+      }
     } else if (verbose) {
       cli::cli_inform("All requested SE FireMap Burn Severity ZIPs already exist.")
     }

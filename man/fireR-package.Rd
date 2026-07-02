@@ -10,7 +10,10 @@
 EPA/CEC ecoregion boundaries:
 \code{\link[=get_mtbs]{get_mtbs()}} and \code{\link[=read_mtbs]{read_mtbs()}} for MTBS (Monitoring Trends in Burn
 Severity) composite burned-area extent data, \code{\link[=get_sefire]{get_sefire()}} for
-Southeast FireMap Annual Burn Severity Mosaics, and a family of ecoregion
+Southeast FireMap Annual Burn Severity Mosaics, \code{\link[=get_nifc]{get_nifc()}} and
+\code{\link[=read_nifc]{read_nifc()}} for NIFC wildfire perimeters, \code{\link[=get_fod]{get_fod()}} and \code{\link[=read_fod]{read_fod()}}
+for the USFS Fire Occurrence Database (FPA-FOD), \code{\link[=get_wui]{get_wui()}} for the USFS
+Wildland-Urban Interface dataset, and a family of ecoregion
 loaders (\code{\link[=get_nal1eco]{get_nal1eco()}}, \code{\link[=get_nal2eco]{get_nal2eco()}}, \code{\link[=get_nal3eco]{get_nal3eco()}},
 \code{\link[=get_usl3eco]{get_usl3eco()}}, \code{\link[=get_usl4eco]{get_usl4eco()}}) for CEC North America and US EPA
 ecoregion boundaries.  Spatial results can be returned as an
