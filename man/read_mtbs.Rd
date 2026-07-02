@@ -76,13 +76,13 @@ zip_path <- get_mtbs()
 fires <- read_mtbs(output = "sf")
 
 # Single year
-fires_2020 <- read_mtbs(years = 2020, type = "Wildfire", output = "sf")
+fires_2020 <- read_mtbs(years = 2020, output = "sf")
 
 # Contiguous range
 fires_recent <- read_mtbs(years = 2010:2023, output = "sf")
 
 # Specific years only
-fires_sel <- read_mtbs(years = c(2010, 2015, 2020), output = "sf")
+fires_sel <- read_mtbs(years = c(2000, 2010, 2020), output = "sf")
 
 tbl <- read_mtbs(geometry = FALSE)
 }
