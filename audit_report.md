@@ -4,8 +4,8 @@
 None found. The package is generally well-structured, passes R CMD check without errors/warnings/notes, and handles dependencies and large downloads appropriately (e.g., using `cli_warn` for large files and robust caching).
 
 ## 2. Safe improvements
-- **Missing tests for argument validation:** The `dry_run` parameter was recently added to all `get_*` functions (which is good practice for large downloads). While the `is.logical()` argument validation exists in the source code (e.g., in `R/get_mtbs.R`, `R/get_nifc.R`, etc.), the corresponding `testthat` blocks validating that incorrect input types (like "yes", NA, or vectors of length > 1) throw proper errors are missing in the test files.
-- *Action:* Add `expect_error` tests for the `dry_run` argument across `test-get_eco.R`, `test-get_mtbs.R`, `test-get_nifc.R`, `test-get_sefire.R`, and `test-get_wui.R`.
+- **Missing tests for argument validation:** Some exported functions in `get_eco.R` lack tests for parameter validation in `tests/testthat/test-get_eco.R`. Specifically, `get_nal2eco`, `get_nal3eco`, and `get_usl4eco` are missing `verbose` argument validation tests, and `get_usl4eco` is missing `state` argument validation tests.
+- *Action:* Add `expect_error` tests for `verbose` validation across `get_nal2eco`, `get_nal3eco`, and `get_usl4eco`, and for `state` validation in `get_usl4eco`.
 
 ## 3. Possible features, but defer unless needed
 - **Inconsistent output defaults:** The `read_*` functions (`read_mtbs`, `read_nifc`, `read_fod`) default to `output = "vect"` (which returns a `terra::SpatVector`), whereas the `get_eco` functions (`get_nal1eco`, `get_usl3eco`, etc.) default to `output = "sf"`. Furthermore, the `README.md` and `getting-started.Rmd` vignette consistently specify `output = "sf"` in examples, treating it almost as the intended default. While unifying the default across all functions to `"sf"` might make the package more coherent, this would be a backward-incompatible change. Per the conservative review constraints ("Do not change default behavior unless it fixes a clear bug"), this should be deferred.
