@@ -4,7 +4,10 @@
 #' EPA/CEC ecoregion boundaries:
 #' [get_mtbs()] and [read_mtbs()] for MTBS (Monitoring Trends in Burn
 #' Severity) composite burned-area extent data, [get_sefire()] for
-#' Southeast FireMap Annual Burn Severity Mosaics, and a family of ecoregion
+#' Southeast FireMap Annual Burn Severity Mosaics, [get_nifc()] and
+#' [read_nifc()] for NIFC wildfire perimeters, [get_fod()] and [read_fod()]
+#' for the USFS Fire Occurrence Database (FPA-FOD), [get_wui()] for the USFS
+#' Wildland-Urban Interface dataset, and a family of ecoregion
 #' loaders ([get_nal1eco()], [get_nal2eco()], [get_nal3eco()],
 #' [get_usl3eco()], [get_usl4eco()]) for CEC North America and US EPA
 #' ecoregion boundaries.  Spatial results can be returned as an

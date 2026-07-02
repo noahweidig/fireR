@@ -2,9 +2,13 @@
 
 ## New functions
 
+* `get_nifc()`: Download the NIFC wildfire perimeters ZIP from figshare and
+  unzip to a local directory.
 * `read_nifc()`: Read and filter NIFC wildfire perimeters from a local ZIP
   downloaded with `get_nifc()`. Supports year filtering via the integer
   `FireYear` column, and returns `sf`, `terra::SpatVector`, or `data.frame`.
+* `get_fod()`: Download the USFS Fire Occurrence Database (FPA-FOD) GeoPackage
+  ZIP and unzip to a local directory.
 * `read_fod()`: Read and filter the USFS Fire Occurrence Database (FPA-FOD)
   from a local ZIP downloaded with `get_fod()`. Supports year filtering via
   the integer `FIRE_YEAR` column (dataset covers 1992–2020), and returns `sf`,

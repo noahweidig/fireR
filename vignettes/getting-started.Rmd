@@ -23,6 +23,11 @@ ecoregion boundaries:
   [MTBS (Monitoring Trends in Burn Severity)](https://www.mtbs.gov/) wildfire
   perimeter data
 - `get_sefire()` for SE FireMap Annual Burn Severity Mosaics
+- `get_nifc()` / `read_nifc()` for NIFC (National Interagency Fire Center)
+  wildfire perimeters
+- `get_fod()` / `read_fod()` for the USFS Fire Occurrence Database
+  (FPA-FOD, 1992–2020)
+- `get_wui()` for the USFS Wildland-Urban Interface (WUI) dataset
 - `get_nal1eco()`, `get_nal2eco()`, `get_nal3eco()` for CEC North America
   ecoregion boundaries
 - `get_usl3eco()`, `get_usl4eco()` for US EPA ecoregion boundaries
@@ -237,6 +242,55 @@ zip_paths <- get_sefire(years = 2015:2020, directory = "data/sefire")
 ```{r sefire-specific, eval = FALSE, purl = FALSE}
 # Specific years only
 zip_paths <- get_sefire(years = c(2000, 2010, 2020))
+```
+
+---
+
+## NIFC wildfire perimeters
+
+`get_nifc()` downloads the NIFC wildfire perimeters ZIP; `read_nifc()` reads
+and filters it, with optional year filtering via the `FireYear` column:
+
+```{r nifc, eval = FALSE, purl = FALSE}
+# Download once
+get_nifc(directory = "data/nifc")
+
+# Read all perimeters, or filter by year
+perims      <- read_nifc(cache = "data/nifc", output = "sf")
+perims_2021 <- read_nifc(cache = "data/nifc", years = 2021)
+```
+
+---
+
+## USFS Fire Occurrence Database (FPA-FOD)
+
+`get_fod()` downloads the FPA-FOD GeoPackage ZIP; `read_fod()` reads and
+filters it. The dataset covers 1992–2020 (`FIRE_YEAR` column):
+
+```{r fod, eval = FALSE, purl = FALSE}
+get_fod(directory = "data/fod")
+
+fod_recent <- read_fod(cache = "data/fod", years = 2015:2020)
+```
+
+---
+
+## Wildland-Urban Interface (WUI)
+
+`get_wui()` downloads the USFS Wildland-Urban Interface dataset, which
+delineates areas where structures meet or intermingle with undeveloped
+wildland vegetation. The ZIP is **very large (~4.65 GB)**, and the function
+warns about this before downloading. The recommended pattern is to run the
+download in a background R session with `callr::r_bg()` so your console stays
+free:
+
+```{r wui, eval = FALSE, purl = FALSE}
+# Recommended: run in a background session (4.65 GB download)
+bg <- callr::r_bg(function() fireR::get_wui(directory = "data/wui"))
+bg$wait()
+
+# Or download directly in the current session
+zip_path <- get_wui(directory = "data/wui")
 ```
 
 ---
