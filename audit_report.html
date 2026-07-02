@@ -51,9 +51,9 @@
 <div class="section level2">
 <h2 id="id_2-safe-improvements">2. Safe improvements<a class="anchor" aria-label="anchor" href="#id_2-safe-improvements"></a></h2>
 <ul><li>
-<strong>Missing tests for argument validation:</strong> The <code>dry_run</code> parameter was recently added to all <code>get_*</code> functions (which is good practice for large downloads). While the <code><a href="https://rdrr.io/r/base/logical.html" class="external-link">is.logical()</a></code> argument validation exists in the source code (e.g., in <code>R/get_mtbs.R</code>, <code>R/get_nifc.R</code>, etc.), the corresponding <code>testthat</code> blocks validating that incorrect input types (like “yes”, NA, or vectors of length &gt; 1) throw proper errors are missing in the test files.</li>
+<strong>Missing tests for argument validation:</strong> Some exported functions in <code>get_eco.R</code> lack tests for parameter validation in <code>tests/testthat/test-get_eco.R</code>. Specifically, <code>get_nal2eco</code>, <code>get_nal3eco</code>, and <code>get_usl4eco</code> are missing <code>verbose</code> argument validation tests, and <code>get_usl4eco</code> is missing <code>state</code> argument validation tests.</li>
 <li>
-<em>Action:</em> Add <code>expect_error</code> tests for the <code>dry_run</code> argument across <code>test-get_eco.R</code>, <code>test-get_mtbs.R</code>, <code>test-get_nifc.R</code>, <code>test-get_sefire.R</code>, and <code>test-get_wui.R</code>.</li>
+<em>Action:</em> Add <code>expect_error</code> tests for <code>verbose</code> validation across <code>get_nal2eco</code>, <code>get_nal3eco</code>, and <code>get_usl4eco</code>, and for <code>state</code> validation in <code>get_usl4eco</code>.</li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_3-possible-features-but-defer-unless-needed">3. Possible features, but defer unless needed<a class="anchor" aria-label="anchor" href="#id_3-possible-features-but-defer-unless-needed"></a></h2>
