@@ -8,8 +8,18 @@ and
 for MTBS (Monitoring Trends in Burn Severity) composite burned-area
 extent data,
 [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
-for Southeast FireMap Annual Burn Severity Mosaics, and a family of
-ecoregion loaders
+for Southeast FireMap Annual Burn Severity Mosaics,
+[`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md)
+and
+[`read_nifc()`](https://noahweidig.github.io/fireR/reference/read_nifc.md)
+for NIFC wildfire perimeters,
+[`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md)
+and
+[`read_fod()`](https://noahweidig.github.io/fireR/reference/read_fod.md)
+for the USFS Fire Occurrence Database (FPA-FOD),
+[`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md)
+for the USFS Wildland-Urban Interface dataset, and a family of ecoregion
+loaders
 ([`get_nal1eco()`](https://noahweidig.github.io/fireR/reference/get_nal1eco.md),
 [`get_nal2eco()`](https://noahweidig.github.io/fireR/reference/get_nal2eco.md),
 [`get_nal3eco()`](https://noahweidig.github.io/fireR/reference/get_nal3eco.md),

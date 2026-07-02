@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fireR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,11 @@
 <div class="section level3">
 <h3 id="new-functions-1-1-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-1-0"></a></h3>
 <ul><li>
+<code><a href="../reference/get_nifc.html">get_nifc()</a></code>: Download the NIFC wildfire perimeters ZIP from figshare and unzip to a local directory.</li>
+<li>
 <code><a href="../reference/read_nifc.html">read_nifc()</a></code>: Read and filter NIFC wildfire perimeters from a local ZIP downloaded with <code><a href="../reference/get_nifc.html">get_nifc()</a></code>. Supports year filtering via the integer <code>FireYear</code> column, and returns <code>sf</code>, <code><a href="https://rspatial.github.io/terra/reference/SpatVector-class.html" class="external-link">terra::SpatVector</a></code>, or <code>data.frame</code>.</li>
+<li>
+<code><a href="../reference/get_fod.html">get_fod()</a></code>: Download the USFS Fire Occurrence Database (FPA-FOD) GeoPackage ZIP and unzip to a local directory.</li>
 <li>
 <code><a href="../reference/read_fod.html">read_fod()</a></code>: Read and filter the USFS Fire Occurrence Database (FPA-FOD) from a local ZIP downloaded with <code><a href="../reference/get_fod.html">get_fod()</a></code>. Supports year filtering via the integer <code>FIRE_YEAR</code> column (dataset covers 1992–2020), and returns <code>sf</code>, <code><a href="https://rspatial.github.io/terra/reference/SpatVector-class.html" class="external-link">terra::SpatVector</a></code>, or <code>data.frame</code>.</li>
 </ul><hr></div>

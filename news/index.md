@@ -4,6 +4,9 @@
 
 ### New functions
 
+- [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md):
+  Download the NIFC wildfire perimeters ZIP from figshare and unzip to a
+  local directory.
 - [`read_nifc()`](https://noahweidig.github.io/fireR/reference/read_nifc.md):
   Read and filter NIFC wildfire perimeters from a local ZIP downloaded
   with
@@ -12,6 +15,9 @@
   `sf`,
   [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html),
   or `data.frame`.
+- [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md):
+  Download the USFS Fire Occurrence Database (FPA-FOD) GeoPackage ZIP
+  and unzip to a local directory.
 - [`read_fod()`](https://noahweidig.github.io/fireR/reference/read_fod.md):
   Read and filter the USFS Fire Occurrence Database (FPA-FOD) from a
   local ZIP downloaded with

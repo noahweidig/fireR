@@ -12,6 +12,16 @@ ecoregion boundaries:
   wildfire perimeter data
 - [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
   for SE FireMap Annual Burn Severity Mosaics
+- [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md)
+  /
+  [`read_nifc()`](https://noahweidig.github.io/fireR/reference/read_nifc.md)
+  for NIFC (National Interagency Fire Center) wildfire perimeters
+- [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md)
+  /
+  [`read_fod()`](https://noahweidig.github.io/fireR/reference/read_fod.md)
+  for the USFS Fire Occurrence Database (FPA-FOD, 1992–2020)
+- [`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md)
+  for the USFS Wildland-Urban Interface (WUI) dataset
 - [`get_nal1eco()`](https://noahweidig.github.io/fireR/reference/get_nal1eco.md),
   [`get_nal2eco()`](https://noahweidig.github.io/fireR/reference/get_nal2eco.md),
   [`get_nal3eco()`](https://noahweidig.github.io/fireR/reference/get_nal3eco.md)
@@ -273,6 +283,65 @@ zip_paths <- get_sefire(years = 2015:2020, directory = "data/sefire")
 
 # Specific years only
 zip_paths <- get_sefire(years = c(2000, 2010, 2020))
+```
+
+------------------------------------------------------------------------
+
+## NIFC wildfire perimeters
+
+[`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md)
+downloads the NIFC wildfire perimeters ZIP;
+[`read_nifc()`](https://noahweidig.github.io/fireR/reference/read_nifc.md)
+reads and filters it, with optional year filtering via the `FireYear`
+column:
+
+``` r
+
+# Download once
+get_nifc(directory = "data/nifc")
+
+# Read all perimeters, or filter by year
+perims      <- read_nifc(cache = "data/nifc", output = "sf")
+perims_2021 <- read_nifc(cache = "data/nifc", years = 2021)
+```
+
+------------------------------------------------------------------------
+
+## USFS Fire Occurrence Database (FPA-FOD)
+
+[`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md)
+downloads the FPA-FOD GeoPackage ZIP;
+[`read_fod()`](https://noahweidig.github.io/fireR/reference/read_fod.md)
+reads and filters it. The dataset covers 1992–2020 (`FIRE_YEAR` column):
+
+``` r
+
+get_fod(directory = "data/fod")
+
+fod_recent <- read_fod(cache = "data/fod", years = 2015:2020)
+```
+
+------------------------------------------------------------------------
+
+## Wildland-Urban Interface (WUI)
+
+[`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md)
+downloads the USFS Wildland-Urban Interface dataset, which delineates
+areas where structures meet or intermingle with undeveloped wildland
+vegetation. The ZIP is **very large (~4.65 GB)**, and the function warns
+about this before downloading. The recommended pattern is to run the
+download in a background R session with
+[`callr::r_bg()`](https://callr.r-lib.org/reference/r_bg.html) so your
+console stays free:
+
+``` r
+
+# Recommended: run in a background session (4.65 GB download)
+bg <- callr::r_bg(function() fireR::get_wui(directory = "data/wui"))
+bg$wait()
+
+# Or download directly in the current session
+zip_path <- get_wui(directory = "data/wui")
 ```
 
 ------------------------------------------------------------------------
