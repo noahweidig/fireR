@@ -18,6 +18,7 @@ test_that("get_eco functions reject invalid state, verbose, and dry_run argument
   expect_error(get_usl3eco(state = "yes"), "TRUE.*FALSE")
   expect_error(get_usl3eco(state = NA), "TRUE.*FALSE")
   expect_error(get_usl3eco(verbose = "yes"), "TRUE.*FALSE")
+  expect_error(get_usl3eco(verbose = NA), "TRUE.*FALSE")
   expect_error(get_usl3eco(dry_run = "yes"), "TRUE.*FALSE")
   expect_error(get_usl3eco(dry_run = NA), "TRUE.*FALSE")
   expect_error(get_usl3eco(dry_run = c(TRUE, FALSE)), "TRUE.*FALSE")
