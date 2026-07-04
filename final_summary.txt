@@ -1,11 +1,13 @@
 ## Changed Files:
 - `audit_report.md`: Updated to correctly document the missing tests for `verbose` and `state` validation in `test-get_eco.R`.
 - `tests/testthat/test-get_eco.R`: Added missing `expect_error` checks for the `verbose` argument in `get_nal2eco`, `get_nal3eco`, and `get_usl4eco`, as well as checks for the `state` argument in `get_usl4eco`.
+- `tests/testthat/test-get_mtbs.R`: Added missing `expect_error` checks for the `geometry` argument in `read_mtbs` (for `NA` and `numeric` cases, aligning it with `read_nifc` and `read_fod`).
 
 ## Why Each Change was Safe:
 - The changes strictly involve adding new `testthat` assertions to improve test coverage for argument validation.
 - No package logic, function arguments, or default behaviors were changed, ensuring 100% backward compatibility.
 - The `state` argument in `get_usl4eco` is indeed a logical parameter (`TRUE`/`FALSE`) representing whether to include state boundaries, so the `expect_error(..., "TRUE.*FALSE")` regex is correctly matched to the actual error message generated.
+- The `geometry` argument checks in `test-get_mtbs.R` check valid scenarios that were already safeguarded in code but previously missing test coverage.
 
 ## Validation Passed:
 - `devtools::document()`: Ran successfully. No `.Rd` file changes were necessary because only tests were modified.
