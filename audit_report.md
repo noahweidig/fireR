@@ -4,8 +4,8 @@
 None found. The package is generally well-structured, passes R CMD check without errors/warnings/notes, and handles dependencies and large downloads appropriately (e.g., using `cli_warn` for large files and robust caching).
 
 ## 2. Safe improvements
-- **Missing tests for argument validation:** Some exported functions in `get_eco.R` lack tests for parameter validation in `tests/testthat/test-get_eco.R`. Specifically, `get_nal2eco`, `get_nal3eco`, and `get_usl4eco` are missing `verbose` argument validation tests, and `get_usl4eco` is missing `state` argument validation tests.
-- *Action:* Add `expect_error` tests for `verbose` validation across `get_nal2eco`, `get_nal3eco`, and `get_usl4eco`, and for `state` validation in `get_usl4eco`.
+- **Minor test coverage improvements:** The test coverage is excellent, and previous checks for `state`, `cache`, and `verbose` arguments in `get_eco.R` were already in place. However, a few functions are missing explicit tests for `timeout` in `test-get_eco.R`. Specifically, `get_usl3eco` missing `NA_real_` and `get_usl4eco` missing negative timeout validation checks.
+- *Action:* Add `expect_error` tests for `timeout` validation in `get_usl3eco` and `get_usl4eco`.
 
 ## 3. Possible features, but defer unless needed
 - **Inconsistent output defaults:** The `read_*` functions (`read_mtbs`, `read_nifc`, `read_fod`) default to `output = "vect"` (which returns a `terra::SpatVector`), whereas the `get_eco` functions (`get_nal1eco`, `get_usl3eco`, etc.) default to `output = "sf"`. Furthermore, the `README.md` and `getting-started.Rmd` vignette consistently specify `output = "sf"` in examples, treating it almost as the intended default. While unifying the default across all functions to `"sf"` might make the package more coherent, this would be a backward-incompatible change. Per the conservative review constraints ("Do not change default behavior unless it fixes a clear bug"), this should be deferred.
