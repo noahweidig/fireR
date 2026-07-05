@@ -84,8 +84,10 @@ test_that("get_eco functions reject invalid timeout argument", {
   expect_error(get_nal3eco(timeout = NA_real_), "positive number")
   expect_error(get_usl3eco(timeout = c(10, 20)), "positive number")
   expect_error(get_usl3eco(timeout = NA_real_), "positive number")
+  expect_error(get_usl3eco(timeout = -1), "positive number")
   expect_error(get_usl4eco(timeout = list()), "positive number")
   expect_error(get_usl4eco(timeout = -1), "positive number")
+  expect_error(get_usl4eco(timeout = NA_real_), "positive number")
 })
 
 test_that("get_eco functions dry_run returns invisible paths without downloading", {
