@@ -1,0 +1,14 @@
+## Changed Files:
+- `audit_report.md`: Updated the provided audit report to accurately reflect that the `state`, `cache`, and `verbose` validation tests were already correctly implemented, and that the only true safe improvement was to add minor missing `timeout` boundary tests.
+- `tests/testthat/test-get_eco.R`: Added missing `expect_error` checks for invalid `timeout` arguments (e.g. `timeout = NA_real_`, `timeout = -1`) in `get_usl3eco` and `get_usl4eco` to ensure full test coverage for parameter validation.
+
+## Why Each Change was Safe:
+- The `audit_report.md` change is documentation only and correctly updates findings.
+- The changes to `test-get_eco.R` strictly involve adding new `testthat` assertions to improve test coverage.
+- No package logic, function arguments, namespaces, or default behaviors were modified, completely preserving the package's backward compatibility, stable architecture, and external APIs as demanded by the task's strict guidelines.
+
+## Validation Passed:
+- `devtools::document()`: Ran successfully without errors.
+- `devtools::test()`: Tests ran successfully with 233 passing tests and 17 correctly skipped tests.
+- `rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf"))`: Finished successfully with 0 errors, 0 warnings, 0 notes.
+- `pkgdown::build_site(new_process = FALSE)`: Successfully updated the documentation website structure without errors.
