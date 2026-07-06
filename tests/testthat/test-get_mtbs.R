@@ -29,6 +29,8 @@ test_that("read_mtbs() input validation works", {
 
   # geometry must be logical
   expect_error(read_mtbs(geometry = "yes"), "TRUE.*FALSE")
+  expect_error(read_mtbs(geometry = NA), "TRUE.*FALSE")
+  expect_error(read_mtbs(geometry = 1), "TRUE.*FALSE")
 
   # invalid type
   expect_error(read_mtbs(type = "BadType"), "Unknown.*type")
