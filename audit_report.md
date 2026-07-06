@@ -9,6 +9,18 @@ robust caching).
 
 ## 2. Safe improvements
 
+- **Missing tests for argument validation:** Some exported functions in
+  `get_eco.R` lack tests for parameter validation in
+  `tests/testthat/test-get_eco.R`. Specifically, `get_nal2eco`,
+  `get_nal3eco`, and `get_usl4eco` are missing `verbose` argument
+  validation tests, and `get_usl4eco` is missing `state` argument
+  validation tests. In addition, `read_mtbs` in `test-get_mtbs.R` lacks
+  thorough `geometry` argument validation tests (missing NA and numeric
+  cases compared to `read_nifc` and `read_fod`).
+- *Action:* Add `expect_error` tests for `verbose` validation across
+  `get_nal2eco`, `get_nal3eco`, and `get_usl4eco`, for `state`
+  validation in `get_usl4eco`, and for `geometry = NA` and
+  `geometry = 1` in `read_mtbs`.
 - **Minor test coverage improvements:** The test coverage is excellent,
   and previous checks for `state`, `cache`, and `verbose` arguments in
   `get_eco.R` were already in place. However, a few functions are
