@@ -1,13 +1,13 @@
-Changed files:
-- tests/testthat/test-get_eco.R: Added missing test case for `get_usl3eco(verbose = NA)` parameter validation logic, as requested in the audit report.
+## Final Summary
+
+Changed Files:
+- `tests/testthat/test-get_eco.R`
 
 Why it is safe:
-- It only modifies tests, preventing any regressions in package behavior.
-- It covers an edge case directly mentioned as missing in the audit.
-- No defaults, arguments, architecture, or configurations were modified, strictly following the constraints.
+This change only adds comprehensive unit tests verifying that `get_nal1eco()`, `get_nal2eco()`, `get_nal3eco()`, `get_usl3eco()`, and `get_usl4eco()` correctly reject all invalid shapes of the `timeout` argument (strings, negatives, `NA`, and multi-element vectors). No implementation logic or defaults were changed. No network-heavy operations were added to the test suite.
 
 Validation results:
-- devtools::test() passed (0 errors/warnings).
-- devtools::document() successfully updated the documentation (no changes needed since it's just tests).
-- rcmdcheck::rcmdcheck() passed with 0 errors/warnings/notes.
-- pkgdown::build_site() built successfully.
+- `devtools::document()`: Passed (no changes to roxygen required)
+- `devtools::test()`: Passed (250 tests OK, including the newly added tests)
+- `rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf"))`: Passed (0 errors, 0 warnings, 0 notes)
+- `pkgdown::build_site(new_process = FALSE)`: Passed (site built successfully)
