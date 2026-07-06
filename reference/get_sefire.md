@@ -91,6 +91,17 @@ Raster grids (1994–2024) as single-file geodatabase ZIPs. Year selection
 is not applicable to these three products; the `years` argument is
 silently ignored when they are requested.
 
+## Warning \[large files\]
+
+The SE FireMap datasets can be very large. A single year of Burn
+Severity data is approximately 50-100 MB, but downloading all 23 years
+(2000–2022) at once requires several gigabytes. The single-file datasets
+(Fire History, Burned Area Polygons, Burned Area Rasters) range from 1
+to 3 GB each. Downloads may be slow; consider running in a background
+session (e.g., with
+[`callr::r_bg()`](https://callr.r-lib.org/reference/r_bg.html)) to keep
+your interactive session responsive.
+
 ## Examples
 
 ``` r

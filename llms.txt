@@ -136,6 +136,13 @@ fires <- read_mtbs(cache = "~/data/mtbs_cache")
 
 ## SE FireMap
 
+> **Warning:** The SE FireMap datasets can be very large. A single year
+> of Burn Severity data is ~50-100 MB, but downloading all 23 years
+> (2000–2022) at once requires several gigabytes. The single-file
+> datasets (Fire History, Burned Area Polygons, Burned Area Rasters)
+> range from 1 to 3 GB each. Downloads may be slow, so consider running
+> in a background R session.
+
 Download burn severity mosaics for one or more years, or single-file
 datasets covering 1994-2024:
 
