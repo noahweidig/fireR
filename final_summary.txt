@@ -1,10 +1,13 @@
 Changed files:
-- `R/get_sefire.R`: Added a `@section Warning \[large files\]:` to the roxygen block.
-- `man/get_sefire.Rd`: Updated via `devtools::document()`.
-- `README.md`: Added a Warning block about large download sizes for the SE FireMap dataset.
+- `audit_report.md`: Updated the provided audit report to accurately reflect the codebase.
+- `R/get_nifc.R`: Added a `@section Warning \[large files\]:` to the roxygen block for `get_fod()`, and added `cli_warn()` before downloading the ZIP file.
+- `man/get_fod.Rd`: Updated via `devtools::document()`.
+- `tests/testthat/test-get_sefire.R`: Added `dry_run` bounds test for Burned Area Polygons and Burned Area Rasters.
 
 Why changes are safe:
-- These are purely documentation fixes and do not change any default behavior, arguments, or dependencies.
+- `audit_report.md` is documentation only.
+- Added `cli_warn` logic matches existing package norms and does not alter arguments or outputs.
+- `dry_run` bounds tests simply assert the existing logic.
 
 Validations passed:
 - `devtools::document()` ran successfully.

@@ -72,4 +72,20 @@ test_that("get_sefire() dry_run returns invisible paths without downloading", {
   )
   expect_equal(as.character(res2), as.character(fs::path(tmp, "SEFM_L_FHM_1994_2024.gdb.zip")))
   expect_false(file.exists(res2))
+
+  # Burned Area Polygons
+  expect_message(
+    res3 <- get_sefire(dataset = "Burned Area Polygons", directory = tmp, dry_run = TRUE),
+    "Dry run: Would download"
+  )
+  expect_equal(as.character(res3), as.character(fs::path(tmp, "SEFM_L_ABA_1994_2024_polys.gdb.zip")))
+  expect_false(file.exists(res3))
+
+  # Burned Area Rasters
+  expect_message(
+    res4 <- get_sefire(dataset = "Burned Area Rasters", directory = tmp, dry_run = TRUE),
+    "Dry run: Would download"
+  )
+  expect_equal(as.character(res4), as.character(fs::path(tmp, "SEFM_L_ABA_1994_2024_rasters.gdb.zip")))
+  expect_false(file.exists(res4))
 })
