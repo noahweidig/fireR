@@ -36,6 +36,12 @@ local directory.  The server requires browser-like request headers, so
 \pkg{httr2} is used instead of a simple download helper.  If the ZIP
 already exists and \code{overwrite = FALSE}, no network call is made.
 }
+\section{Warning [large files]}{
+
+The FOD ZIP archive is approximately 175 MB. Downloads may be slow depending
+on connection speed. Consider downloading in a background session if needed.
+}
+
 \examples{
 \dontrun{
 zip_path <- get_fod()
