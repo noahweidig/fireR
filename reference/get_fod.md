@@ -47,6 +47,12 @@ get_fod(
 
 `character(1)` path to the downloaded ZIP file (invisibly).
 
+## Warning \[large files\]
+
+The FOD ZIP archive is approximately 175 MB. Downloads may be slow
+depending on connection speed. Consider downloading in a background
+session if needed.
+
 ## Examples
 
 ``` r

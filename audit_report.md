@@ -2,33 +2,38 @@
 
 ## 1. Must fix
 
-None found. The package is generally well-structured, passes R CMD check
-without errors/warnings/notes, and handles dependencies and large
-downloads appropriately (e.g., using `cli_warn` for large files and
-robust caching).
+None found. The package is extremely stable, passes R CMD check
+flawlessly with 0 errors/warnings/notes, correctly manages namespaces,
+properly handles caching logic, and has a strong test suite validating
+its exported functions.
 
 ## 2. Safe improvements
 
-- **Missing tests for argument validation:** Some exported functions in
-  `get_eco.R` lack tests for parameter validation in
-  `tests/testthat/test-get_eco.R`. Specifically, `get_nal2eco`,
-  `get_nal3eco`, and `get_usl4eco` are missing `verbose` argument
-  validation tests, and `get_usl4eco` is missing `state` argument
-  validation tests. In addition, `read_mtbs` in `test-get_mtbs.R` lacks
-  thorough `geometry` argument validation tests (missing NA and numeric
-  cases compared to `read_nifc` and `read_fod`).
-- *Action:* Add `expect_error` tests for `verbose` validation across
-  `get_nal2eco`, `get_nal3eco`, and `get_usl4eco`, for `state`
-  validation in `get_usl4eco`, and for `geometry = NA` and
-  `geometry = 1` in `read_mtbs`.
-- **Minor test coverage improvements:** The test coverage is excellent,
-  and previous checks for `state`, `cache`, and `verbose` arguments in
-  `get_eco.R` were already in place. However, a few functions are
-  missing explicit tests for `timeout` in `test-get_eco.R`.
-  Specifically, `get_usl3eco` missing `NA_real_` and `get_usl4eco`
-  missing negative timeout validation checks.
-- *Action:* Add `expect_error` tests for `timeout` validation in
-  `get_usl3eco` and `get_usl4eco`.
+- **Test coverage for `dry_run` bounds:** While `test-get_sefire.R`
+  comprehensively checks `dry_run` for the `"Burn Severity"` and
+  `"Fire History"` datasets, it omits identical assertions for
+  `"Burned Area Polygons"` and `"Burned Area Rasters"`.
+  - *Action:* Add `dry_run` tests for the two remaining datasets in
+    `tests/testthat/test-get_sefire.R` to ensure complete coverage.
+- **Large download warnings:** The
+  [`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md),
+  [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md),
+  and
+  [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
+  functions properly warn users before initiating multi-gigabyte or
+  multi-hundred-megabyte network downloads using
+  [`cli::cli_warn`](https://cli.r-lib.org/reference/cli_abort.html).
+  However,
+  [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md)
+  (the USFS Fire Occurrence Database GeoPackage) downloads a ~100MB+ ZIP
+  archive without warning the user.
+  - *Action:* Add a `@section Warning \[large files\]:` block in the
+    roxygen documentation for
+    [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md),
+    and add a corresponding
+    [`cli::cli_warn`](https://cli.r-lib.org/reference/cli_abort.html)
+    block prior to download execution in `R/get_nifc.R` to match the
+    package convention for large files.
 
 ## 3. Possible features, but defer unless needed
 
@@ -36,13 +41,10 @@ robust caching).
   `read_nifc`, `read_fod`) default to `output = "vect"` (which returns a
   [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)),
   whereas the `get_eco` functions (`get_nal1eco`, `get_usl3eco`, etc.)
-  default to `output = "sf"`. Furthermore, the `README.md` and
-  `getting-started.Rmd` vignette consistently specify `output = "sf"` in
-  examples, treating it almost as the intended default. While unifying
-  the default across all functions to `"sf"` might make the package more
-  coherent, this would be a backward-incompatible change. Per the
-  conservative review constraints (“Do not change default behavior
-  unless it fixes a clear bug”), this should be deferred.
+  default to `output = "sf"`. Unifying the default across all functions
+  to `"sf"` might make the package more coherent, but would be a
+  backward-incompatible breaking change. Defer unless explicitly
+  requested.
 
 ## 4. Do not touch
 
@@ -51,11 +53,9 @@ robust caching).
   functional. Do not manually edit.
 - **pkgdown Configuration:** The `_pkgdown.yml` file correctly lists all
   exported functions in logical groups, uses Bootstrap 5, and includes
-  the necessary GitHub Pages workflow components. Leave as-is.
-- **Large Download Examples:** The examples using functions that trigger
-  heavy downloads (e.g., `get_wui`, `get_sefire` for large years)
-  correctly use `\dontrun{}` and the `testthat` suite properly leverages
-  `skip_on_cran()` and `dry_run` features to avoid overwhelming CI
-  environments. Do not modify these safeguards.
-- **Branding:** The logo and custom theming (e.g., `pkgdown` colors)
-  should not be changed.
+  the necessary GitHub Pages workflow components.
+- **Large Download Tests:** The functions triggering heavy downloads
+  correctly use `\dontrun{}` in examples, and the `testthat` suite
+  properly leverages `skip_on_cran()` and `dry_run` to avoid
+  overwhelming CI environments. Do not modify these safeguards.
+- **Branding:** The logo and custom theming must be strictly preserved.

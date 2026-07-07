@@ -46,34 +46,36 @@
 
 <div class="section level2">
 <h2 id="id_1-must-fix">1. Must fix<a class="anchor" aria-label="anchor" href="#id_1-must-fix"></a></h2>
-<p>None found. The package is generally well-structured, passes R CMD check without errors/warnings/notes, and handles dependencies and large downloads appropriately (e.g., using <code>cli_warn</code> for large files and robust caching).</p>
+<p>None found. The package is extremely stable, passes R CMD check flawlessly with 0 errors/warnings/notes, correctly manages namespaces, properly handles caching logic, and has a strong test suite validating its exported functions.</p>
 </div>
 <div class="section level2">
 <h2 id="id_2-safe-improvements">2. Safe improvements<a class="anchor" aria-label="anchor" href="#id_2-safe-improvements"></a></h2>
 <ul><li>
-<strong>Missing tests for argument validation:</strong> Some exported functions in <code>get_eco.R</code> lack tests for parameter validation in <code>tests/testthat/test-get_eco.R</code>. Specifically, <code>get_nal2eco</code>, <code>get_nal3eco</code>, and <code>get_usl4eco</code> are missing <code>verbose</code> argument validation tests, and <code>get_usl4eco</code> is missing <code>state</code> argument validation tests. In addition, <code>read_mtbs</code> in <code>test-get_mtbs.R</code> lacks thorough <code>geometry</code> argument validation tests (missing NA and numeric cases compared to <code>read_nifc</code> and <code>read_fod</code>).</li>
+<strong>Test coverage for <code>dry_run</code> bounds:</strong> While <code>test-get_sefire.R</code> comprehensively checks <code>dry_run</code> for the <code>"Burn Severity"</code> and <code>"Fire History"</code> datasets, it omits identical assertions for <code>"Burned Area Polygons"</code> and <code>"Burned Area Rasters"</code>.
+<ul><li>
+<em>Action:</em> Add <code>dry_run</code> tests for the two remaining datasets in <code>tests/testthat/test-get_sefire.R</code> to ensure complete coverage.</li>
+</ul></li>
 <li>
-<em>Action:</em> Add <code>expect_error</code> tests for <code>verbose</code> validation across <code>get_nal2eco</code>, <code>get_nal3eco</code>, and <code>get_usl4eco</code>, for <code>state</code> validation in <code>get_usl4eco</code>, and for <code>geometry = NA</code> and <code>geometry = 1</code> in <code>read_mtbs</code>.</li>
-<li>
-<strong>Minor test coverage improvements:</strong> The test coverage is excellent, and previous checks for <code>state</code>, <code>cache</code>, and <code>verbose</code> arguments in <code>get_eco.R</code> were already in place. However, a few functions are missing explicit tests for <code>timeout</code> in <code>test-get_eco.R</code>. Specifically, <code>get_usl3eco</code> missing <code>NA_real_</code> and <code>get_usl4eco</code> missing negative timeout validation checks.</li>
-<li>
-<em>Action:</em> Add <code>expect_error</code> tests for <code>timeout</code> validation in <code>get_usl3eco</code> and <code>get_usl4eco</code>.</li>
+<strong>Large download warnings:</strong> The <code><a href="reference/get_wui.html">get_wui()</a></code>, <code><a href="reference/get_mtbs.html">get_mtbs()</a></code>, and <code><a href="reference/get_sefire.html">get_sefire()</a></code> functions properly warn users before initiating multi-gigabyte or multi-hundred-megabyte network downloads using <code><a href="https://cli.r-lib.org/reference/cli_abort.html" class="external-link">cli::cli_warn</a></code>. However, <code><a href="reference/get_fod.html">get_fod()</a></code> (the USFS Fire Occurrence Database GeoPackage) downloads a ~100MB+ ZIP archive without warning the user.
+<ul><li>
+<em>Action:</em> Add a <code>@section Warning \[large files\]:</code> block in the roxygen documentation for <code><a href="reference/get_fod.html">get_fod()</a></code>, and add a corresponding <code><a href="https://cli.r-lib.org/reference/cli_abort.html" class="external-link">cli::cli_warn</a></code> block prior to download execution in <code>R/get_nifc.R</code> to match the package convention for large files.</li>
+</ul></li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_3-possible-features-but-defer-unless-needed">3. Possible features, but defer unless needed<a class="anchor" aria-label="anchor" href="#id_3-possible-features-but-defer-unless-needed"></a></h2>
 <ul><li>
-<strong>Inconsistent output defaults:</strong> The <code>read_*</code> functions (<code>read_mtbs</code>, <code>read_nifc</code>, <code>read_fod</code>) default to <code>output = "vect"</code> (which returns a <code><a href="https://rspatial.github.io/terra/reference/SpatVector-class.html" class="external-link">terra::SpatVector</a></code>), whereas the <code>get_eco</code> functions (<code>get_nal1eco</code>, <code>get_usl3eco</code>, etc.) default to <code>output = "sf"</code>. Furthermore, the <code>README.md</code> and <code>getting-started.Rmd</code> vignette consistently specify <code>output = "sf"</code> in examples, treating it almost as the intended default. While unifying the default across all functions to <code>"sf"</code> might make the package more coherent, this would be a backward-incompatible change. Per the conservative review constraints (“Do not change default behavior unless it fixes a clear bug”), this should be deferred.</li>
+<strong>Inconsistent output defaults:</strong> The <code>read_*</code> functions (<code>read_mtbs</code>, <code>read_nifc</code>, <code>read_fod</code>) default to <code>output = "vect"</code> (which returns a <code><a href="https://rspatial.github.io/terra/reference/SpatVector-class.html" class="external-link">terra::SpatVector</a></code>), whereas the <code>get_eco</code> functions (<code>get_nal1eco</code>, <code>get_usl3eco</code>, etc.) default to <code>output = "sf"</code>. Unifying the default across all functions to <code>"sf"</code> might make the package more coherent, but would be a backward-incompatible breaking change. Defer unless explicitly requested.</li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_4-do-not-touch">4. Do not touch<a class="anchor" aria-label="anchor" href="#id_4-do-not-touch"></a></h2>
 <ul><li>
 <strong>Package Architecture &amp; Namespace:</strong> The current <code>roxygen2</code>-generated <code>NAMESPACE</code> and file structure (<code>R/</code>, <code>man/</code>, <code>tests/</code>) are clean and functional. Do not manually edit.</li>
 <li>
-<strong>pkgdown Configuration:</strong> The <code>_pkgdown.yml</code> file correctly lists all exported functions in logical groups, uses Bootstrap 5, and includes the necessary GitHub Pages workflow components. Leave as-is.</li>
+<strong>pkgdown Configuration:</strong> The <code>_pkgdown.yml</code> file correctly lists all exported functions in logical groups, uses Bootstrap 5, and includes the necessary GitHub Pages workflow components.</li>
 <li>
-<strong>Large Download Examples:</strong> The examples using functions that trigger heavy downloads (e.g., <code>get_wui</code>, <code>get_sefire</code> for large years) correctly use <code>\dontrun{}</code> and the <code>testthat</code> suite properly leverages <code>skip_on_cran()</code> and <code>dry_run</code> features to avoid overwhelming CI environments. Do not modify these safeguards.</li>
+<strong>Large Download Tests:</strong> The functions triggering heavy downloads correctly use <code>\dontrun{}</code> in examples, and the <code>testthat</code> suite properly leverages <code>skip_on_cran()</code> and <code>dry_run</code> to avoid overwhelming CI environments. Do not modify these safeguards.</li>
 <li>
-<strong>Branding:</strong> The logo and custom theming (e.g., <code>pkgdown</code> colors) should not be changed.</li>
+<strong>Branding:</strong> The logo and custom theming must be strictly preserved.</li>
 </ul></div>
 </div>
 
