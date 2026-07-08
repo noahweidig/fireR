@@ -172,6 +172,9 @@ perims <- read_nifc(cache = TRUE)
 
 ## USFS Fire Occurrence Database (FOD)
 
+> **Warning:** The FOD ZIP is approximately 175 MB. Downloads may be slow
+> depending on connection speed.
+
 Download and read the FPA-FOD GeoPackage ZIP from the Forest Service Research
 Data Archive.  The dataset covers 1992–2020; year filtering uses the integer
 `FIRE_YEAR` column.
@@ -276,6 +279,9 @@ mtbs_dir <- get_mtbs()
 ---
 
 ## About MTBS
+
+> **Warning:** The MTBS ZIP is approximately 360 MB. Downloads may be slow
+> depending on connection speed.
 
 [Monitoring Trends in Burn Severity (MTBS)](https://www.mtbs.gov/) is a
 multi-agency programme (USGS, USFS) that maps the location, extent, and burn

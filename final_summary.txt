@@ -1,16 +1,14 @@
 Changed files:
-- `audit_report.md`: Updated the provided audit report to accurately reflect the codebase.
-- `R/get_nifc.R`: Added a `@section Warning \[large files\]:` to the roxygen block for `get_fod()`, and added `cli_warn()` before downloading the ZIP file.
-- `man/get_fod.Rd`: Updated via `devtools::document()`.
-- `tests/testthat/test-get_sefire.R`: Added `dry_run` bounds test for Burned Area Polygons and Burned Area Rasters.
+- audit_report.md
+- R/get_mtbs.R
+- README.md
+- man/get_mtbs.Rd
 
-Why changes are safe:
-- `audit_report.md` is documentation only.
-- Added `cli_warn` logic matches existing package norms and does not alter arguments or outputs.
-- `dry_run` bounds tests simply assert the existing logic.
+Why changes were safe:
+The changes were purely documentation updates adding missing `@section Warning [large files]:` tags and `> **Warning:**` blocks to explicitely warn users about large multi-megabyte datasets (MTBS and FOD) prior to triggering large downloads, matching existing package conventions (such as for SE FireMap and WUI). No behavior, defaults, logic, or arguments were altered.
 
-Validations passed:
-- `devtools::document()` ran successfully.
-- `devtools::test()` ran with 0 errors, warnings, or failures.
-- `rcmdcheck::rcmdcheck(args = c('--no-manual', '--compact-vignettes=gs+qpdf'))` completed without notes, warnings, or errors.
-- `pkgdown::build_site(new_process = FALSE)` generated the site successfully without breaking links or reference configurations.
+Validation:
+- devtools::document() updated the man/*.Rd files.
+- devtools::test() passed.
+- rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf")) passed with 0 errors, 0 warnings, 0 notes.
+- pkgdown::build_site(new_process = FALSE) built the site successfully.

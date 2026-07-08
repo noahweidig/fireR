@@ -40,6 +40,12 @@ Downloads an MTBS composite data ZIP archive to a directory.
 If the ZIP already exists and \code{overwrite = FALSE}, no network call is
 made.
 }
+\section{Warning [large files]}{
+
+The MTBS ZIP archive is approximately 360 MB. Downloads may be slow depending
+on connection speed. Consider downloading in a background session if needed.
+}
+
 \examples{
 \dontrun{
 zip_path <- get_mtbs()

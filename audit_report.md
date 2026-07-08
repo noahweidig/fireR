@@ -1,19 +1,17 @@
 # Audit Report: `fireR` Package
 
 ## 1. Must fix
-None found. The package is extremely stable, passes R CMD check flawlessly with 0 errors/warnings/notes, correctly manages namespaces, properly handles caching logic, and has a strong test suite validating its exported functions.
+- None found. The package is stable, passes R CMD check, correctly manages namespaces, properly handles caching logic, and has a strong test suite validating its exported functions.
 
 ## 2. Safe improvements
-- **Test coverage for `dry_run` bounds:** While `test-get_sefire.R` comprehensively checks `dry_run` for the `"Burn Severity"` and `"Fire History"` datasets, it omits identical assertions for `"Burned Area Polygons"` and `"Burned Area Rasters"`.
-  - *Action:* Add `dry_run` tests for the two remaining datasets in `tests/testthat/test-get_sefire.R` to ensure complete coverage.
-- **Large download warnings:** The `get_wui()`, `get_mtbs()`, and `get_sefire()` functions properly warn users before initiating multi-gigabyte or multi-hundred-megabyte network downloads using `cli::cli_warn`. However, `get_fod()` (the USFS Fire Occurrence Database GeoPackage) downloads a ~100MB+ ZIP archive without warning the user.
-  - *Action:* Add a `@section Warning \[large files\]:` block in the roxygen documentation for `get_fod()`, and add a corresponding `cli::cli_warn` block prior to download execution in `R/get_nifc.R` to match the package convention for large files.
+- **Large download warnings:** The `get_wui()`, `get_sefire()` and `get_fod()` functions properly document large file warnings in their Roxygen blocks. However, `get_mtbs()` downloads a ZIP archive of hundreds of megabytes without an explicit `@section Warning \[large files\]:` in its Roxygen documentation. Furthermore, while `get_fod()` is documented with this warning in `R/get_nifc.R`, the README lacks corresponding warning blocks for both MTBS and FOD.
+  - *Action:* Add `@section Warning \[large files\]:` to `get_mtbs()` in `R/get_mtbs.R`. Add explicit block quote warnings (`> **Warning:**`) for `get_mtbs()` and `get_fod()` in `README.md` to match the package convention for SE FireMap and WUI.
 
 ## 3. Possible features, but defer unless needed
-- **Inconsistent output defaults:** The `read_*` functions (`read_mtbs`, `read_nifc`, `read_fod`) default to `output = "vect"` (which returns a `terra::SpatVector`), whereas the `get_eco` functions (`get_nal1eco`, `get_usl3eco`, etc.) default to `output = "sf"`. Unifying the default across all functions to `"sf"` might make the package more coherent, but would be a backward-incompatible breaking change. Defer unless explicitly requested.
+- **Inconsistent output defaults:** The `read_*` functions (`read_mtbs`, `read_nifc`, `read_fod`) default to `output = "vect"`, whereas the `get_eco` functions default to `output = "sf"`. Unifying the default across all functions to `"sf"` might make the package more coherent, but would be a backward-incompatible breaking change. Defer unless explicitly requested.
 
 ## 4. Do not touch
 - **Package Architecture & Namespace:** The current `roxygen2`-generated `NAMESPACE` and file structure (`R/`, `man/`, `tests/`) are clean and functional. Do not manually edit.
 - **pkgdown Configuration:** The `_pkgdown.yml` file correctly lists all exported functions in logical groups, uses Bootstrap 5, and includes the necessary GitHub Pages workflow components.
-- **Large Download Tests:** The functions triggering heavy downloads correctly use `\dontrun{}` in examples, and the `testthat` suite properly leverages `skip_on_cran()` and `dry_run` to avoid overwhelming CI environments. Do not modify these safeguards.
 - **Branding:** The logo and custom theming must be strictly preserved.
+- **Existing Test Logic for Large Downloads:** The `testthat` suite properly leverages `skip_on_cran()` and `dry_run` to avoid overwhelming CI environments. Do not modify these safeguards.
