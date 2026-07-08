@@ -22,6 +22,14 @@ test_that("get_sefire() rejects invalid common arguments", {
   expect_error(get_sefire(dataset = "Fire History", dry_run = "yes"), "TRUE.*FALSE")
   expect_error(get_sefire(dataset = "Fire History", dry_run = NA), "TRUE.*FALSE")
   expect_error(get_sefire(dataset = "Fire History", dry_run = c(TRUE, FALSE)), "TRUE.*FALSE")
+
+  expect_error(get_sefire(dataset = "Burned Area Polygons", dry_run = "yes"), "TRUE.*FALSE")
+  expect_error(get_sefire(dataset = "Burned Area Polygons", dry_run = NA), "TRUE.*FALSE")
+  expect_error(get_sefire(dataset = "Burned Area Polygons", dry_run = c(TRUE, FALSE)), "TRUE.*FALSE")
+
+  expect_error(get_sefire(dataset = "Burned Area Rasters", dry_run = "yes"), "TRUE.*FALSE")
+  expect_error(get_sefire(dataset = "Burned Area Rasters", dry_run = NA), "TRUE.*FALSE")
+  expect_error(get_sefire(dataset = "Burned Area Rasters", dry_run = c(TRUE, FALSE)), "TRUE.*FALSE")
 })
 
 test_that("get_sefire() requires years when dataset is Burn Severity", {
