@@ -52,6 +52,12 @@ get_mtbs(
 
 `character(1)` path to the downloaded ZIP file (invisibly).
 
+## Warning \[large files\]
+
+The MTBS ZIP archive is approximately 360 MB. Downloads may be slow
+depending on connection speed. Consider downloading in a background
+session if needed.
+
 ## Examples
 
 ``` r

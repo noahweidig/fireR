@@ -46,25 +46,20 @@
 
 <div class="section level2">
 <h2 id="id_1-must-fix">1. Must fix<a class="anchor" aria-label="anchor" href="#id_1-must-fix"></a></h2>
-<p>None found. The package is extremely stable, passes R CMD check flawlessly with 0 errors/warnings/notes, correctly manages namespaces, properly handles caching logic, and has a strong test suite validating its exported functions.</p>
-</div>
+<ul><li>None found. The package is stable, passes R CMD check, correctly manages namespaces, properly handles caching logic, and has a strong test suite validating its exported functions.</li>
+</ul></div>
 <div class="section level2">
 <h2 id="id_2-safe-improvements">2. Safe improvements<a class="anchor" aria-label="anchor" href="#id_2-safe-improvements"></a></h2>
 <ul><li>
-<strong>Test coverage for <code>dry_run</code> bounds:</strong> While <code>test-get_sefire.R</code> comprehensively checks <code>dry_run</code> for the <code>"Burn Severity"</code> and <code>"Fire History"</code> datasets, it omits identical assertions for <code>"Burned Area Polygons"</code> and <code>"Burned Area Rasters"</code>.
+<strong>Large download warnings:</strong> The <code><a href="reference/get_wui.html">get_wui()</a></code>, <code><a href="reference/get_sefire.html">get_sefire()</a></code> and <code><a href="reference/get_fod.html">get_fod()</a></code> functions properly document large file warnings in their Roxygen blocks. However, <code><a href="reference/get_mtbs.html">get_mtbs()</a></code> downloads a ZIP archive of hundreds of megabytes without an explicit <code>@section Warning \[large files\]:</code> in its Roxygen documentation. Furthermore, while <code><a href="reference/get_fod.html">get_fod()</a></code> is documented with this warning in <code>R/get_nifc.R</code>, the README lacks corresponding warning blocks for both MTBS and FOD.
 <ul><li>
-<em>Action:</em> Add <code>dry_run</code> tests for the two remaining datasets in <code>tests/testthat/test-get_sefire.R</code> to ensure complete coverage.</li>
-</ul></li>
-<li>
-<strong>Large download warnings:</strong> The <code><a href="reference/get_wui.html">get_wui()</a></code>, <code><a href="reference/get_mtbs.html">get_mtbs()</a></code>, and <code><a href="reference/get_sefire.html">get_sefire()</a></code> functions properly warn users before initiating multi-gigabyte or multi-hundred-megabyte network downloads using <code><a href="https://cli.r-lib.org/reference/cli_abort.html" class="external-link">cli::cli_warn</a></code>. However, <code><a href="reference/get_fod.html">get_fod()</a></code> (the USFS Fire Occurrence Database GeoPackage) downloads a ~100MB+ ZIP archive without warning the user.
-<ul><li>
-<em>Action:</em> Add a <code>@section Warning \[large files\]:</code> block in the roxygen documentation for <code><a href="reference/get_fod.html">get_fod()</a></code>, and add a corresponding <code><a href="https://cli.r-lib.org/reference/cli_abort.html" class="external-link">cli::cli_warn</a></code> block prior to download execution in <code>R/get_nifc.R</code> to match the package convention for large files.</li>
+<em>Action:</em> Add <code>@section Warning \[large files\]:</code> to <code><a href="reference/get_mtbs.html">get_mtbs()</a></code> in <code>R/get_mtbs.R</code>. Add explicit block quote warnings (<code>&gt; **Warning:**</code>) for <code><a href="reference/get_mtbs.html">get_mtbs()</a></code> and <code><a href="reference/get_fod.html">get_fod()</a></code> in <code>README.md</code> to match the package convention for SE FireMap and WUI.</li>
 </ul></li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_3-possible-features-but-defer-unless-needed">3. Possible features, but defer unless needed<a class="anchor" aria-label="anchor" href="#id_3-possible-features-but-defer-unless-needed"></a></h2>
 <ul><li>
-<strong>Inconsistent output defaults:</strong> The <code>read_*</code> functions (<code>read_mtbs</code>, <code>read_nifc</code>, <code>read_fod</code>) default to <code>output = "vect"</code> (which returns a <code><a href="https://rspatial.github.io/terra/reference/SpatVector-class.html" class="external-link">terra::SpatVector</a></code>), whereas the <code>get_eco</code> functions (<code>get_nal1eco</code>, <code>get_usl3eco</code>, etc.) default to <code>output = "sf"</code>. Unifying the default across all functions to <code>"sf"</code> might make the package more coherent, but would be a backward-incompatible breaking change. Defer unless explicitly requested.</li>
+<strong>Inconsistent output defaults:</strong> The <code>read_*</code> functions (<code>read_mtbs</code>, <code>read_nifc</code>, <code>read_fod</code>) default to <code>output = "vect"</code>, whereas the <code>get_eco</code> functions default to <code>output = "sf"</code>. Unifying the default across all functions to <code>"sf"</code> might make the package more coherent, but would be a backward-incompatible breaking change. Defer unless explicitly requested.</li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_4-do-not-touch">4. Do not touch<a class="anchor" aria-label="anchor" href="#id_4-do-not-touch"></a></h2>
@@ -73,9 +68,9 @@
 <li>
 <strong>pkgdown Configuration:</strong> The <code>_pkgdown.yml</code> file correctly lists all exported functions in logical groups, uses Bootstrap 5, and includes the necessary GitHub Pages workflow components.</li>
 <li>
-<strong>Large Download Tests:</strong> The functions triggering heavy downloads correctly use <code>\dontrun{}</code> in examples, and the <code>testthat</code> suite properly leverages <code>skip_on_cran()</code> and <code>dry_run</code> to avoid overwhelming CI environments. Do not modify these safeguards.</li>
-<li>
 <strong>Branding:</strong> The logo and custom theming must be strictly preserved.</li>
+<li>
+<strong>Existing Test Logic for Large Downloads:</strong> The <code>testthat</code> suite properly leverages <code>skip_on_cran()</code> and <code>dry_run</code> to avoid overwhelming CI environments. Do not modify these safeguards.</li>
 </ul></div>
 </div>
 
@@ -88,7 +83,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>
