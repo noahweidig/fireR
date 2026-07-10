@@ -312,6 +312,30 @@ mtbs_dir <- get_mtbs()
 
 ------------------------------------------------------------------------
 
+## `read_nifc()` Arguments
+
+| Argument | Type | Default | Description |
+|----|----|----|----|
+| `years` | `integer` | `NULL` | Single year, range (`2010:2020`), or specific years (`c(2000, 2010)`). `NULL` = no filter |
+| `geometry` | `logical` | `TRUE` | Return a spatial object. `FALSE` → `data.frame` |
+| `output` | `character` | `"vect"` | `"sf"` or `"vect"` / `"terra"` |
+| `cache` | `logical`/`character` | `FALSE` | Whether to use the user cache directory (`TRUE`), local directory (`FALSE`), or a specific directory |
+| `verbose` | `logical` | `TRUE` | Print progress messages |
+
+------------------------------------------------------------------------
+
+## `read_fod()` Arguments
+
+| Argument | Type | Default | Description |
+|----|----|----|----|
+| `years` | `integer` | `NULL` | Single year, range (`2010:2020`), or specific years (`c(2000, 2010)`). `NULL` = no filter |
+| `geometry` | `logical` | `TRUE` | Return a spatial object. `FALSE` → `data.frame` |
+| `output` | `character` | `"vect"` | `"sf"` or `"vect"` / `"terra"` |
+| `cache` | `logical`/`character` | `FALSE` | Whether to use the user cache directory (`TRUE`), local directory (`FALSE`), or a specific directory |
+| `verbose` | `logical` | `TRUE` | Print progress messages |
+
+------------------------------------------------------------------------
+
 ## About MTBS
 
 > **Warning:** The MTBS ZIP is approximately 360 MB. Downloads may be

@@ -387,6 +387,120 @@
 <hr>
 </div>
 <div class="section level2">
+<h2 id="read_nifc-arguments">
+<code>read_nifc()</code> Arguments<a class="anchor" aria-label="anchor" href="#read_nifc-arguments"></a>
+</h2>
+<table class="table">
+<colgroup>
+<col width="25%">
+<col width="25%">
+<col width="25%">
+<col width="25%">
+</colgroup>
+<thead><tr>
+<th>Argument</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>years</code></td>
+<td><code>integer</code></td>
+<td><code>NULL</code></td>
+<td>Single year, range (<code>2010:2020</code>), or specific years (<code>c(2000, 2010)</code>). <code>NULL</code> = no filter</td>
+</tr>
+<tr>
+<td><code>geometry</code></td>
+<td><code>logical</code></td>
+<td><code>TRUE</code></td>
+<td>Return a spatial object. <code>FALSE</code> → <code>data.frame</code>
+</td>
+</tr>
+<tr>
+<td><code>output</code></td>
+<td><code>character</code></td>
+<td><code>"vect"</code></td>
+<td>
+<code>"sf"</code> or <code>"vect"</code> / <code>"terra"</code>
+</td>
+</tr>
+<tr>
+<td><code>cache</code></td>
+<td>
+<code>logical</code>/<code>character</code>
+</td>
+<td><code>FALSE</code></td>
+<td>Whether to use the user cache directory (<code>TRUE</code>), local directory (<code>FALSE</code>), or a specific directory</td>
+</tr>
+<tr>
+<td><code>verbose</code></td>
+<td><code>logical</code></td>
+<td><code>TRUE</code></td>
+<td>Print progress messages</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="read_fod-arguments">
+<code>read_fod()</code> Arguments<a class="anchor" aria-label="anchor" href="#read_fod-arguments"></a>
+</h2>
+<table class="table">
+<colgroup>
+<col width="25%">
+<col width="25%">
+<col width="25%">
+<col width="25%">
+</colgroup>
+<thead><tr>
+<th>Argument</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>years</code></td>
+<td><code>integer</code></td>
+<td><code>NULL</code></td>
+<td>Single year, range (<code>2010:2020</code>), or specific years (<code>c(2000, 2010)</code>). <code>NULL</code> = no filter</td>
+</tr>
+<tr>
+<td><code>geometry</code></td>
+<td><code>logical</code></td>
+<td><code>TRUE</code></td>
+<td>Return a spatial object. <code>FALSE</code> → <code>data.frame</code>
+</td>
+</tr>
+<tr>
+<td><code>output</code></td>
+<td><code>character</code></td>
+<td><code>"vect"</code></td>
+<td>
+<code>"sf"</code> or <code>"vect"</code> / <code>"terra"</code>
+</td>
+</tr>
+<tr>
+<td><code>cache</code></td>
+<td>
+<code>logical</code>/<code>character</code>
+</td>
+<td><code>FALSE</code></td>
+<td>Whether to use the user cache directory (<code>TRUE</code>), local directory (<code>FALSE</code>), or a specific directory</td>
+</tr>
+<tr>
+<td><code>verbose</code></td>
+<td><code>logical</code></td>
+<td><code>TRUE</code></td>
+<td>Print progress messages</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="section level2">
 <h2 id="about-mtbs">About MTBS<a class="anchor" aria-label="anchor" href="#about-mtbs"></a>
 </h2>
 <blockquote>

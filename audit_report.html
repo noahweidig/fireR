@@ -51,10 +51,7 @@
 <div class="section level2">
 <h2 id="id_2-safe-improvements">2. Safe improvements<a class="anchor" aria-label="anchor" href="#id_2-safe-improvements"></a></h2>
 <ul><li>
-<strong>Large download warnings:</strong> The <code><a href="reference/get_wui.html">get_wui()</a></code>, <code><a href="reference/get_sefire.html">get_sefire()</a></code> and <code><a href="reference/get_fod.html">get_fod()</a></code> functions properly document large file warnings in their Roxygen blocks. However, <code><a href="reference/get_mtbs.html">get_mtbs()</a></code> downloads a ZIP archive of hundreds of megabytes without an explicit <code>@section Warning \[large files\]:</code> in its Roxygen documentation. Furthermore, while <code><a href="reference/get_fod.html">get_fod()</a></code> is documented with this warning in <code>R/get_nifc.R</code>, the README lacks corresponding warning blocks for both MTBS and FOD.
-<ul><li>
-<em>Action:</em> Add <code>@section Warning \[large files\]:</code> to <code><a href="reference/get_mtbs.html">get_mtbs()</a></code> in <code>R/get_mtbs.R</code>. Add explicit block quote warnings (<code>&gt; **Warning:**</code>) for <code><a href="reference/get_mtbs.html">get_mtbs()</a></code> and <code><a href="reference/get_fod.html">get_fod()</a></code> in <code>README.md</code> to match the package convention for SE FireMap and WUI.</li>
-</ul></li>
+<strong>Documentation:</strong> The <code>README.md</code> provides an explicit argument table for <code><a href="reference/read_mtbs.html">read_mtbs()</a></code> but lacks similar tables for the other main reader functions (<code><a href="reference/read_nifc.html">read_nifc()</a></code> and <code><a href="reference/read_fod.html">read_fod()</a></code>). Adding these tables makes the documentation more consistent and easier to read without having to look at <code><a href="reference/read_nifc.html">?read_nifc</a></code> and <code><a href="reference/read_fod.html">?read_fod</a></code>.</li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_3-possible-features-but-defer-unless-needed">3. Possible features, but defer unless needed<a class="anchor" aria-label="anchor" href="#id_3-possible-features-but-defer-unless-needed"></a></h2>
@@ -64,13 +61,11 @@
 <div class="section level2">
 <h2 id="id_4-do-not-touch">4. Do not touch<a class="anchor" aria-label="anchor" href="#id_4-do-not-touch"></a></h2>
 <ul><li>
-<strong>Package Architecture &amp; Namespace:</strong> The current <code>roxygen2</code>-generated <code>NAMESPACE</code> and file structure (<code>R/</code>, <code>man/</code>, <code>tests/</code>) are clean and functional. Do not manually edit.</li>
+<strong>Package Architecture &amp; Namespace:</strong> The current <code>roxygen2</code>-generated <code>NAMESPACE</code> and file structure are clean and functional. Do not manually edit.</li>
 <li>
 <strong>pkgdown Configuration:</strong> The <code>_pkgdown.yml</code> file correctly lists all exported functions in logical groups, uses Bootstrap 5, and includes the necessary GitHub Pages workflow components.</li>
 <li>
 <strong>Branding:</strong> The logo and custom theming must be strictly preserved.</li>
-<li>
-<strong>Existing Test Logic for Large Downloads:</strong> The <code>testthat</code> suite properly leverages <code>skip_on_cran()</code> and <code>dry_run</code> to avoid overwhelming CI environments. Do not modify these safeguards.</li>
 </ul></div>
 </div>
 
