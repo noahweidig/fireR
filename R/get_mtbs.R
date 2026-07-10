@@ -8,6 +8,10 @@
 #' The MTBS ZIP archive is approximately 360 MB. Downloads may be slow depending
 #' on connection speed. Consider downloading in a background session if needed.
 #'
+#' @section Warning \[large files\]:
+#' The MTBS ZIP archive is approximately 360 MB. Downloads may be slow depending
+#' on connection speed. Consider downloading in a background session if needed.
+#'
 #' @param directory \code{character(1)} directory where the ZIP file is stored.
 #'   Defaults to the current working directory.
 #' @param dataset \code{character(1)} which dataset to download. Use

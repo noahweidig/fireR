@@ -44,6 +44,10 @@ made.
 
 The MTBS ZIP archive is approximately 360 MB. Downloads may be slow depending
 on connection speed. Consider downloading in a background session if needed.
+
+
+The MTBS ZIP archive is approximately 360 MB. Downloads may be slow depending
+on connection speed. Consider downloading in a background session if needed.
 }
 
 \examples{

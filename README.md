@@ -57,6 +57,9 @@ pak::pak("noahweidig/fireR")
 
 ## Usage
 
+> **Warning:** The MTBS ZIP is approximately 360 MB. Downloads may be slow
+> depending on connection speed.
+
 ### All fires, return as `sf`
 
 ```r
@@ -279,9 +282,6 @@ mtbs_dir <- get_mtbs()
 ---
 
 ## About MTBS
-
-> **Warning:** The MTBS ZIP is approximately 360 MB. Downloads may be slow
-> depending on connection speed.
 
 [Monitoring Trends in Burn Severity (MTBS)](https://www.mtbs.gov/) is a
 multi-agency programme (USGS, USFS) that maps the location, extent, and burn

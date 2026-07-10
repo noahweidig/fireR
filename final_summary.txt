@@ -1,13 +1,14 @@
-Final Summary:
+Files changed:
+- R/get_mtbs.R: Added `@section Warning \[large files\]:` to `get_mtbs` to warn about large 360MB download, matching SE FireMap and WUI pattern.
+- man/get_mtbs.Rd: Generated via `roxygen2` corresponding to the R code update.
+- README.md: Moved the MTBS warning block from "About MTBS" to the top of the "Usage" section to make it more prominent for users.
 
-1. **Changed Files:**
-   No files were changed.
+Why it was safe:
+- These are purely documentation changes. They do not alter function signatures, behavior, architecture, or dependencies.
+- Changes match the existing conventions inside the repository.
 
-2. **Why each change was safe:**
-   The initial audit suspected that `get_mtbs` and `get_fod` were missing large download warnings in `README.md` and/or `R/get_mtbs.R`. However, upon direct inspection of the codebase using `cat` and `grep`, the exact strings required (`> **Warning:**` and `@section Warning \[large files\]:`) were confirmed to already exist in both `README.md` and `R/get_mtbs.R`. No edits were necessary because the package was already fully compliant.
-
-3. **What validation passed/failed:**
-   - `devtools::document()`: Passed. Checked doc updates, though none were needed.
-   - `devtools::test()`: Passed. 0 failed, 16 skipped (due to unreachable/cran checks), 264 passed.
-   - `rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf"))`: Passed. 0 errors, 0 warnings, 0 notes.
-   - `pkgdown::build_site(new_process = FALSE)`: Passed. Site built successfully.
+Validation:
+- `devtools::document()`: successfully regenerated `man/` files without errors using roxygen2 8.0.0.
+- `devtools::test()`: All tests passed (0 errors, 0 failures, 16 safely skipped due to network checks).
+- `rcmdcheck::rcmdcheck()`: Passed with 0 errors, 0 warnings, 0 notes.
+- `pkgdown::build_site(new_process = FALSE)`: successfully built the pkgdown site. Note: `docs/` artifacts from pkgdown and `R CMD build` were cleaned up before committing to prevent bloat.
