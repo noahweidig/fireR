@@ -25,8 +25,10 @@ ecoregion boundaries.  Spatial results can be returned as an
 \itemize{
 \item \code{\link[=get_mtbs]{get_mtbs()}} - download MTBS fire perimeter ZIP data.
 \item \code{\link[=read_mtbs]{read_mtbs()}} - read, filter, and return MTBS fire perimeters.
-\item \code{\link[=get_sefire]{get_sefire()}} - download SE FireMap Annual Burn Severity Mosaic ZIP(s)
-for one or more years (2000-2022).
+\item \code{\link[=get_sefire]{get_sefire()}} - download SE FireMap data products: annual Burn Severity
+Mosaic ZIP(s) for one or more years (2000-2022), or single-file Fire
+History, Burned Area Polygons, and Burned Area Rasters datasets
+(1994-2024).
 \item \code{\link[=get_nifc]{get_nifc()}} - download NIFC wildfire perimeters data.
 \item \code{\link[=read_nifc]{read_nifc()}} - read, filter, and return NIFC wildfire perimeters.
 \item \code{\link[=get_fod]{get_fod()}} - download USFS Fire Occurrence Database (FOD) data.

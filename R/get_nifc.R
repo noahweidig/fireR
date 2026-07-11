@@ -61,9 +61,15 @@ get_nifc <- function(
   if (!fs::file_exists(zip_file)) {
     cli::cli_warn(c("!" = "This is a large download (hundreds of megabytes)."))
     if (verbose) cli::cli_inform("Downloading NIFC wildfire perimeters \u2026")
-    curl::curl_download(url, destfile = zip_file,
-                        handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string, timeout = as.integer(timeout)),
-                        quiet  = !verbose)
+    tryCatch(
+      curl::curl_download(url, destfile = zip_file,
+                          handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string, timeout = as.integer(timeout)),
+                          quiet  = !verbose),
+      error = function(e) {
+        if (fs::file_exists(zip_file)) fs::file_delete(zip_file)
+        stop(e)
+      }
+    )
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
     did_download <- TRUE
   } else if (verbose) {
@@ -157,7 +163,13 @@ get_fod <- function(
     )
     req <- httr2::req_timeout(req, as.integer(timeout))
     req <- httr2::req_retry(req, max_tries = 3)
-    httr2::req_perform(req, path = zip_file)
+    tryCatch(
+      httr2::req_perform(req, path = zip_file),
+      error = function(e) {
+        if (fs::file_exists(zip_file)) fs::file_delete(zip_file)
+        stop(e)
+      }
+    )
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
     did_download <- TRUE
   } else if (verbose) {
@@ -326,7 +338,15 @@ read_nifc <- function(
 
   # Determine layer name - required for the SQL query
   layer <- if (is_gpkg || is_gdb) {
-    sf::st_layers(data_path)$name[[1L]]
+    layers <- sf::st_layers(data_path)$name
+    if (length(layers) == 0L) {
+      stop(
+        "No layers found in: ", data_path,
+        "\nThe file may be corrupt or incomplete. ",
+        "Try re-downloading with get_nifc(overwrite = TRUE)."
+      )
+    }
+    layers[[1L]]
   } else if (!is.null(data_in_zip)) {
     tools::file_path_sans_ext(basename(data_in_zip))
   } else {
@@ -483,9 +503,19 @@ read_fod <- function(
     gpkg_in_zip
   )
 
-  # The FOD GeoPackage has a single layer named "Fires" with an integer
-  # FIRE_YEAR column covering 1992-2020
-  layer <- "Fires"
+  # The FOD GeoPackage has a single layer (named "Fires") with an integer
+  # FIRE_YEAR column covering 1992-2020.  Discover the layer name dynamically
+  # rather than hardcoding it, matching read_nifc() and giving an actionable
+  # error if the file is corrupt or incomplete.
+  layers <- sf::st_layers(gpkg_path)$name
+  if (length(layers) == 0L) {
+    stop(
+      "No layers found in: ", gpkg_path,
+      "\nThe file may be corrupt or incomplete. ",
+      "Try re-downloading with get_fod(overwrite = TRUE)."
+    )
+  }
+  layer <- layers[[1L]]
 
   sql_query <- if (!is.null(years)) {
     sprintf(

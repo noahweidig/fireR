@@ -17,8 +17,10 @@
 #' @section Main functions:
 #' * [get_mtbs()] - download MTBS fire perimeter ZIP data.
 #' * [read_mtbs()] - read, filter, and return MTBS fire perimeters.
-#' * [get_sefire()] - download SE FireMap Annual Burn Severity Mosaic ZIP(s)
-#'   for one or more years (2000-2022).
+#' * [get_sefire()] - download SE FireMap data products: annual Burn Severity
+#'   Mosaic ZIP(s) for one or more years (2000-2022), or single-file Fire
+#'   History, Burned Area Polygons, and Burned Area Rasters datasets
+#'   (1994-2024).
 #' * [get_nifc()] - download NIFC wildfire perimeters data.
 #' * [read_nifc()] - read, filter, and return NIFC wildfire perimeters.
 #' * [get_fod()] - download USFS Fire Occurrence Database (FOD) data.
