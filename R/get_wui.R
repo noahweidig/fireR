@@ -85,9 +85,15 @@ get_wui <- function(
       " " = "{.code bg <- callr::r_bg(function() fireR::get_wui(directory = \"{directory}\"))}"
     ))
     if (verbose) cli::cli_inform("Downloading USFS Wildland-Urban Interface (WUI) data \u2026")
-    curl::curl_download(url, destfile = zip_file,
-                        handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string, timeout = as.integer(timeout)),
-                        quiet  = !verbose)
+    tryCatch(
+      curl::curl_download(url, destfile = zip_file,
+                          handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string, timeout = as.integer(timeout)),
+                          quiet  = !verbose),
+      error = function(e) {
+        if (fs::file_exists(zip_file)) fs::file_delete(zip_file)
+        stop(e)
+      }
+    )
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
     did_download <- TRUE
   } else if (verbose) {

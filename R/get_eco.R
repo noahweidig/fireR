@@ -1,5 +1,5 @@
 # Internal helper: download a ZIP and read the shapefile inside it.
-.read_eco_zip <- function(url, zip_name, output, cache, timeout, verbose, dry_run = FALSE) {
+.read_eco_zip <- function(url, zip_name, output, cache, timeout, verbose, dry_run = FALSE, overwrite = FALSE) {
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
   }
@@ -30,11 +30,19 @@
 
   fs::dir_create(cache_dir, recurse = TRUE)
 
+  if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
+
   if (!fs::file_exists(zip_file)) {
     if (verbose) cli::cli_inform("Downloading {zip_name} \u2026")
-    curl::curl_download(url, destfile = zip_file,
-                        handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string, timeout = as.integer(timeout)),
-                        quiet  = !verbose)
+    tryCatch(
+      curl::curl_download(url, destfile = zip_file,
+                          handle = curl::new_handle(followlocation = TRUE, useragent = .ua_string, timeout = as.integer(timeout)),
+                          quiet  = !verbose),
+      error = function(e) {
+        if (fs::file_exists(zip_file)) fs::file_delete(zip_file)
+        stop(e)
+      }
+    )
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
   } else if (verbose) {
     cli::cli_inform("Using cached file: {.path {zip_file}}")
@@ -81,6 +89,8 @@
 #' @param timeout \code{numeric(1)} download timeout in seconds. Default is \code{3600}.
 #' @param verbose \code{logical(1)} print progress messages.
 #' @param dry_run \code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.
+#' @param overwrite \code{logical(1)} re-download when \code{TRUE}, deleting any
+#'   cached ZIP first; defaults to \code{FALSE}.
 #'
 #' @return An \code{sf} object or \code{terra::SpatVector} of North America
 #'   Level 1 Ecoregion polygons. (Or the file path invisibly if \code{dry_run = TRUE}).
@@ -96,7 +106,8 @@ get_nal1eco <- function(
     cache   = FALSE,
     timeout = 3600,
     verbose = TRUE,
-    dry_run = FALSE
+    dry_run = FALSE,
+    overwrite = FALSE
 ) {
   output <- rlang::arg_match(output)
   if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
@@ -108,6 +119,9 @@ get_nal1eco <- function(
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
   }
+  if (!is.logical(overwrite) || length(overwrite) != 1L || is.na(overwrite)) {
+    stop("`overwrite` must be TRUE or FALSE")
+  }
   .read_eco_zip(
     url      = "https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/cec_na/na_cec_eco_l1.zip",
     zip_name = "na_cec_eco_l1.zip",
@@ -115,7 +129,8 @@ get_nal1eco <- function(
     cache    = cache,
     timeout  = timeout,
     verbose  = verbose,
-    dry_run  = dry_run
+    dry_run  = dry_run,
+    overwrite = overwrite
   )
 }
 
@@ -142,6 +157,8 @@ get_nal1eco <- function(
 #' @param timeout \code{numeric(1)} download timeout in seconds. Default is \code{3600}.
 #' @param verbose \code{logical(1)} print progress messages.
 #' @param dry_run \code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.
+#' @param overwrite \code{logical(1)} re-download when \code{TRUE}, deleting any
+#'   cached ZIP first; defaults to \code{FALSE}.
 #'
 #' @return An \code{sf} object or \code{terra::SpatVector} of North America
 #'   Level 2 Ecoregion polygons. (Or the file path invisibly if \code{dry_run = TRUE}).
@@ -157,7 +174,8 @@ get_nal2eco <- function(
     cache   = FALSE,
     timeout = 3600,
     verbose = TRUE,
-    dry_run = FALSE
+    dry_run = FALSE,
+    overwrite = FALSE
 ) {
   output <- rlang::arg_match(output)
   if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
@@ -169,6 +187,9 @@ get_nal2eco <- function(
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
   }
+  if (!is.logical(overwrite) || length(overwrite) != 1L || is.na(overwrite)) {
+    stop("`overwrite` must be TRUE or FALSE")
+  }
   .read_eco_zip(
     url      = "https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/cec_na/na_cec_eco_l2.zip",
     zip_name = "na_cec_eco_l2.zip",
@@ -176,7 +197,8 @@ get_nal2eco <- function(
     cache    = cache,
     timeout  = timeout,
     verbose  = verbose,
-    dry_run  = dry_run
+    dry_run  = dry_run,
+    overwrite = overwrite
   )
 }
 
@@ -204,6 +226,8 @@ get_nal2eco <- function(
 #' @param timeout \code{numeric(1)} download timeout in seconds. Default is \code{3600}.
 #' @param verbose \code{logical(1)} print progress messages.
 #' @param dry_run \code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.
+#' @param overwrite \code{logical(1)} re-download when \code{TRUE}, deleting any
+#'   cached ZIP first; defaults to \code{FALSE}.
 #'
 #' @return An \code{sf} object or \code{terra::SpatVector} of North America
 #'   Level 3 Ecoregion polygons. (Or the file path invisibly if \code{dry_run = TRUE}).
@@ -219,7 +243,8 @@ get_nal3eco <- function(
     cache   = FALSE,
     timeout = 3600,
     verbose = TRUE,
-    dry_run = FALSE
+    dry_run = FALSE,
+    overwrite = FALSE
 ) {
   output <- rlang::arg_match(output)
   if ((!is.logical(cache) && !is.character(cache)) || length(cache) != 1L || is.na(cache)) {
@@ -231,6 +256,9 @@ get_nal3eco <- function(
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
   }
+  if (!is.logical(overwrite) || length(overwrite) != 1L || is.na(overwrite)) {
+    stop("`overwrite` must be TRUE or FALSE")
+  }
   .read_eco_zip(
     url      = "https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/cec_na/NA_CEC_Eco_Level3.zip",
     zip_name = "NA_CEC_Eco_Level3.zip",
@@ -238,7 +266,8 @@ get_nal3eco <- function(
     cache    = cache,
     timeout  = timeout,
     verbose  = verbose,
-    dry_run  = dry_run
+    dry_run  = dry_run,
+    overwrite = overwrite
   )
 }
 
@@ -268,6 +297,8 @@ get_nal3eco <- function(
 #' @param timeout \code{numeric(1)} download timeout in seconds. Default is \code{3600}.
 #' @param verbose \code{logical(1)} print progress messages.
 #' @param dry_run \code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.
+#' @param overwrite \code{logical(1)} re-download when \code{TRUE}, deleting any
+#'   cached ZIP first; defaults to \code{FALSE}.
 #'
 #' @return An \code{sf} object or \code{terra::SpatVector} of US Level 3
 #'   Ecoregion polygons. (Or the file path invisibly if \code{dry_run = TRUE}).
@@ -285,7 +316,8 @@ get_usl3eco <- function(
     cache   = FALSE,
     timeout = 3600,
     verbose = TRUE,
-    dry_run = FALSE
+    dry_run = FALSE,
+    overwrite = FALSE
 ) {
   output <- rlang::arg_match(output)
   if (!is.logical(state) || length(state) != 1L || is.na(state)) {
@@ -299,6 +331,9 @@ get_usl3eco <- function(
   }
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
+  }
+  if (!is.logical(overwrite) || length(overwrite) != 1L || is.na(overwrite)) {
+    stop("`overwrite` must be TRUE or FALSE")
   }
   if (state) {
     url      <- "https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/us/us_eco_l3_state_boundaries.zip"
@@ -314,7 +349,8 @@ get_usl3eco <- function(
     cache    = cache,
     timeout  = timeout,
     verbose  = verbose,
-    dry_run  = dry_run
+    dry_run  = dry_run,
+    overwrite = overwrite
   )
 }
 
@@ -345,6 +381,8 @@ get_usl3eco <- function(
 #' @param timeout \code{numeric(1)} download timeout in seconds. Default is \code{3600}.
 #' @param verbose \code{logical(1)} print progress messages.
 #' @param dry_run \code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.
+#' @param overwrite \code{logical(1)} re-download when \code{TRUE}, deleting any
+#'   cached ZIP first; defaults to \code{FALSE}.
 #'
 #' @return An \code{sf} object or \code{terra::SpatVector} of US Level 4
 #'   Ecoregion polygons. (Or the file path invisibly if \code{dry_run = TRUE}).
@@ -362,7 +400,8 @@ get_usl4eco <- function(
     cache   = FALSE,
     timeout = 3600,
     verbose = TRUE,
-    dry_run = FALSE
+    dry_run = FALSE,
+    overwrite = FALSE
 ) {
   output <- rlang::arg_match(output)
   if (!is.logical(state) || length(state) != 1L || is.na(state)) {
@@ -376,6 +415,9 @@ get_usl4eco <- function(
   }
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("`verbose` must be TRUE or FALSE")
+  }
+  if (!is.logical(overwrite) || length(overwrite) != 1L || is.na(overwrite)) {
+    stop("`overwrite` must be TRUE or FALSE")
   }
   if (state) {
     url      <- "https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/us/us_eco_l4_state_boundaries.zip"
@@ -391,6 +433,7 @@ get_usl4eco <- function(
     cache    = cache,
     timeout  = timeout,
     verbose  = verbose,
-    dry_run  = dry_run
+    dry_run  = dry_run,
+    overwrite = overwrite
   )
 }

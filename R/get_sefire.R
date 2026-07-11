@@ -161,6 +161,12 @@ get_sefire <- function(
       )
       failed <- results[is.na(results$success) | !results$success, , drop = FALSE]
       if (nrow(failed) > 0L) {
+        # Delete partial/empty files left by failed transfers so the next call
+        # re-downloads them instead of treating them as already-complete.
+        failed_files <- failed$destfile
+        existing_partial <- failed_files[fs::file_exists(failed_files)]
+        if (length(existing_partial) > 0L) fs::file_delete(existing_partial)
+
         failed_msgs <- paste0(failed$url, " (HTTP ", failed$status_code, ")")
         names(failed_msgs) <- rep("x", length(failed_msgs))
         cli::cli_warn(c(
@@ -178,7 +184,7 @@ get_sefire <- function(
   }
 
   ## ── Single-file datasets (SE FireMap S3, curl) ────────────────────────────
-  if (!is.null(years) && verbose) {
+  if (!is.null(years)) {
     cli::cli_warn('`years` is ignored when dataset = "{dataset}"')
   }
 
@@ -218,9 +224,15 @@ get_sefire <- function(
       useragent      = .ua_string,
       timeout        = as.integer(timeout)
     )
-    curl::curl_download(ds_info$url, destfile = zip_file,
-                        handle = handle,
-                        quiet  = !verbose)
+    tryCatch(
+      curl::curl_download(ds_info$url, destfile = zip_file,
+                          handle = handle,
+                          quiet  = !verbose),
+      error = function(e) {
+        if (fs::file_exists(zip_file)) fs::file_delete(zip_file)
+        stop(e)
+      }
+    )
     if (verbose) cli::cli_inform("Download complete: {.path {zip_file}}")
   } else if (verbose) {
     cli::cli_inform("SE FireMap ZIP already exists: {.path {zip_file}}")

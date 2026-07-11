@@ -8,10 +8,11 @@ Description: Provides fast, convenient access to USGS fire datasets, USFS
     For MTBS (Monitoring Trends in Burn Severity), downloads the composite
     burned-area extent shapefile and returns it as either an 'sf' or 'terra'
     SpatVector object with optional filtering by year and incident type. For
-    the Southeast FireMap (SE FireMap) Annual Burn Severity Mosaics, downloads
-    ZIP archives for one or more years (2000-2022) of predicted Composite Burn
-    Index (CBI) values covering 78 ARD Landsat tiles across the southeastern
-    United States. Provides a downloader for the USFS WUI dataset (4.65 GB),
+    the Southeast FireMap (SE FireMap), downloads Annual Burn Severity Mosaics
+    as one ZIP per year (2000-2022) of predicted Composite Burn Index (CBI)
+    values covering 78 ARD Landsat tiles across the southeastern United States,
+    plus three single-file geodatabase ZIPs covering 1994-2024: Fire History,
+    Burned Area Polygons, and Burned Area Rasters. Provides a downloader for the USFS WUI dataset (4.65 GB),
     which delineates areas where structures meet or intermingle with undeveloped
     wildland vegetation. Downloads and reads NIFC (National Interagency Fire
     Center) wildfire perimeters and the USFS Fire Occurrence Database (FPA-FOD,

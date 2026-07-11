@@ -14,6 +14,17 @@
   the integer `FIRE_YEAR` column (dataset covers 1992–2020), and returns `sf`,
   `terra::SpatVector`, or `data.frame`.
 
+## New features
+
+* `get_sefire()` gains a `dataset` argument. In addition to the annual Burn
+  Severity mosaics (2000–2022), it now downloads three single-file SE FireMap
+  products covering 1994–2024: `"Fire History"`, `"Burned Area Polygons"`, and
+  `"Burned Area Rasters"`.
+* `dry_run = FALSE` added to `get_mtbs()`, `get_sefire()`, `get_nifc()`,
+  `get_fod()`, `get_wui()`, and the ecoregion loaders. When `TRUE`, the target
+  file path is returned without triggering a network request — useful for
+  previewing cache locations before starting large downloads.
+
 ---
 
 # fireR 1.0.0

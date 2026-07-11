@@ -9,7 +9,8 @@ get_nal3eco(
   cache = FALSE,
   timeout = 3600,
   verbose = TRUE,
-  dry_run = FALSE
+  dry_run = FALSE,
+  overwrite = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,9 @@ directory path as a string to specify a custom location.}
 \item{verbose}{\code{logical(1)} print progress messages.}
 
 \item{dry_run}{\code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.}
+
+\item{overwrite}{\code{logical(1)} re-download when \code{TRUE}, deleting any
+cached ZIP first; defaults to \code{FALSE}.}
 }
 \value{
 An \code{sf} object or \code{terra::SpatVector} of North America
