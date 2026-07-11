@@ -201,7 +201,7 @@ head(tbl[, c("Incid_Name", "Ig_Date", "BurnBndAc", "Incid_Type")])
 
 ## Caching downloads
 
-The MTBS ZIP archive is ~100 MB. Download it once with
+The MTBS ZIP archive is ~360 MB. Download it once with
 [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md),
 then read from disk with
 [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
@@ -260,12 +260,19 @@ fires <- read_mtbs(years = 2022, verbose = FALSE)
 
 ------------------------------------------------------------------------
 
-## SE FireMap mosaics
+## SE FireMap
 
 [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
-downloads Annual Burn Severity Mosaic ZIP archives for the southeastern
-United States (2000–2022). Pass a single year, a range, or a vector of
-specific years:
+downloads four SE FireMap data products via the `dataset` argument:
+annual Burn Severity mosaics (year-based, the default) and three
+single-file products covering 1994–2024 — Fire History, Burned Area
+Polygons, and Burned Area Rasters.
+
+### Burn Severity mosaics
+
+`dataset = "Burn Severity"` (the default) downloads one Annual Burn
+Severity Mosaic ZIP per year for the southeastern United States
+(2000–2022). Pass a single year, a range, or a vector of specific years:
 
 ``` r
 
@@ -283,6 +290,29 @@ zip_paths <- get_sefire(years = 2015:2020, directory = "data/sefire")
 
 # Specific years only
 zip_paths <- get_sefire(years = c(2000, 2010, 2020))
+```
+
+### Single-file datasets (1994–2024)
+
+The remaining three datasets are each a single geodatabase ZIP covering
+1994–2024. The `years` argument does not apply to them:
+
+``` r
+
+# Fire History
+zip_path <- get_sefire(dataset = "Fire History", directory = "data/sefire")
+```
+
+``` r
+
+# Burned Area Polygons
+zip_path <- get_sefire(dataset = "Burned Area Polygons", directory = "data/sefire")
+```
+
+``` r
+
+# Burned Area Rasters
+zip_path <- get_sefire(dataset = "Burned Area Rasters", directory = "data/sefire")
 ```
 
 ------------------------------------------------------------------------

@@ -12,7 +12,8 @@ get_usl3eco(
   cache = FALSE,
   timeout = 3600,
   verbose = TRUE,
-  dry_run = FALSE
+  dry_run = FALSE,
+  overwrite = FALSE
 )
 ```
 
@@ -49,6 +50,11 @@ get_usl3eco(
 
   `logical(1)` if `TRUE`, do not download the file but instead return
   the path where it would be saved. Defaults to `FALSE`.
+
+- overwrite:
+
+  `logical(1)` re-download when `TRUE`, deleting any cached ZIP first;
+  defaults to `FALSE`.
 
 ## Value
 

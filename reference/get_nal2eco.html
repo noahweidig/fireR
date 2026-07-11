@@ -57,7 +57,8 @@ North America Level 2 Ecoregion boundaries as a spatial object.</p>
 <span>  cache <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  timeout <span class="op">=</span> <span class="fl">3600</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  dry_run <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  dry_run <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -89,6 +90,11 @@ directory path as a string to specify a custom location.</p></dd>
 
 <dt id="arg-dry-run">dry_run<a class="anchor" aria-label="anchor" href="#arg-dry-run"></a></dt>
 <dd><p><code>logical(1)</code> if <code>TRUE</code>, do not download the file but instead return the path where it would be saved. Defaults to <code>FALSE</code>.</p></dd>
+
+
+<dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
+<dd><p><code>logical(1)</code> re-download when <code>TRUE</code>, deleting any
+cached ZIP first; defaults to <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

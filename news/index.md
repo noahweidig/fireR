@@ -27,6 +27,23 @@
   [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html),
   or `data.frame`.
 
+### New features
+
+- [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
+  gains a `dataset` argument. In addition to the annual Burn Severity
+  mosaics (2000–2022), it now downloads three single-file SE FireMap
+  products covering 1994–2024: `"Fire History"`,
+  `"Burned Area Polygons"`, and `"Burned Area Rasters"`.
+- `dry_run = FALSE` added to
+  [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md),
+  [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md),
+  [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md),
+  [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md),
+  [`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md),
+  and the ecoregion loaders. When `TRUE`, the target file path is
+  returned without triggering a network request — useful for previewing
+  cache locations before starting large downloads.
+
 ------------------------------------------------------------------------
 
 ## fireR 1.0.0

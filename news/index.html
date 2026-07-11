@@ -54,6 +54,13 @@
 <code><a href="../reference/get_fod.html">get_fod()</a></code>: Download the USFS Fire Occurrence Database (FPA-FOD) GeoPackage ZIP and unzip to a local directory.</li>
 <li>
 <code><a href="../reference/read_fod.html">read_fod()</a></code>: Read and filter the USFS Fire Occurrence Database (FPA-FOD) from a local ZIP downloaded with <code><a href="../reference/get_fod.html">get_fod()</a></code>. Supports year filtering via the integer <code>FIRE_YEAR</code> column (dataset covers 1992–2020), and returns <code>sf</code>, <code><a href="https://rspatial.github.io/terra/reference/SpatVector-class.html" class="external-link">terra::SpatVector</a></code>, or <code>data.frame</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-features-1-1-0">New features<a class="anchor" aria-label="anchor" href="#new-features-1-1-0"></a></h3>
+<ul><li>
+<code><a href="../reference/get_sefire.html">get_sefire()</a></code> gains a <code>dataset</code> argument. In addition to the annual Burn Severity mosaics (2000–2022), it now downloads three single-file SE FireMap products covering 1994–2024: <code>"Fire History"</code>, <code>"Burned Area Polygons"</code>, and <code>"Burned Area Rasters"</code>.</li>
+<li>
+<code>dry_run = FALSE</code> added to <code><a href="../reference/get_mtbs.html">get_mtbs()</a></code>, <code><a href="../reference/get_sefire.html">get_sefire()</a></code>, <code><a href="../reference/get_nifc.html">get_nifc()</a></code>, <code><a href="../reference/get_fod.html">get_fod()</a></code>, <code><a href="../reference/get_wui.html">get_wui()</a></code>, and the ecoregion loaders. When <code>TRUE</code>, the target file path is returned without triggering a network request — useful for previewing cache locations before starting large downloads.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">

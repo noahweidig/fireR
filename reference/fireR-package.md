@@ -40,8 +40,9 @@ or a plain `data.frame`.
   read, filter, and return MTBS fire perimeters.
 
 - [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md) -
-  download SE FireMap Annual Burn Severity Mosaic ZIP(s) for one or more
-  years (2000-2022).
+  download SE FireMap data products: annual Burn Severity Mosaic ZIP(s)
+  for one or more years (2000-2022), or single-file Fire History, Burned
+  Area Polygons, and Burned Area Rasters datasets (1994-2024).
 
 - [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md) -
   download NIFC wildfire perimeters data.
