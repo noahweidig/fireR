@@ -1,13 +1,11 @@
-Final Summary:
+Changed Files:
+- README.md: Added explicit argument tables for `read_nifc()` and `read_fod()` functions.
 
-1. **Changed Files:**
-   No files were changed.
+Why each change was safe:
+- The changes to README.md are purely documentation updates. They bring the documentation for `read_nifc()` and `read_fod()` in line with the existing table structure for `read_mtbs()`, making it easier for users to reference the function arguments. No code, logic, or dependencies were altered, ensuring complete backward compatibility.
 
-2. **Why each change was safe:**
-   The initial audit suspected that `get_mtbs` and `get_fod` were missing large download warnings in `README.md` and/or `R/get_mtbs.R`. However, upon direct inspection of the codebase using `cat` and `grep`, the exact strings required (`> **Warning:**` and `@section Warning \[large files\]:`) were confirmed to already exist in both `README.md` and `R/get_mtbs.R`. No edits were necessary because the package was already fully compliant.
-
-3. **What validation passed/failed:**
-   - `devtools::document()`: Passed. Checked doc updates, though none were needed.
-   - `devtools::test()`: Passed. 0 failed, 16 skipped (due to unreachable/cran checks), 264 passed.
-   - `rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf"))`: Passed. 0 errors, 0 warnings, 0 notes.
-   - `pkgdown::build_site(new_process = FALSE)`: Passed. Site built successfully.
+Validation:
+- `devtools::document()`: Passed (regenerated documentation without errors).
+- `devtools::test()`: Passed (all 264 tests passed, 0 failures, 16 safely skipped due to network checks).
+- `rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf"))`: Passed (0 errors, 0 warnings, 0 notes).
+- `pkgdown::build_site(new_process = FALSE)`: Passed (built the pkgdown site successfully).
