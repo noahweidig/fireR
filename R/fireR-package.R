@@ -3,8 +3,10 @@
 #' @description `fireR` provides ergonomic entry points for USGS fire data and
 #' EPA/CEC ecoregion boundaries:
 #' [get_mtbs()] and [read_mtbs()] for MTBS (Monitoring Trends in Burn
-#' Severity) composite burned-area extent data, [get_sefire()] for
-#' Southeast FireMap Annual Burn Severity Mosaics, [get_nifc()] and
+#' Severity) composite burned-area extent data, [get_sefire()] for SE
+#' FireMap data products (annual Burn Severity Mosaics for 2000-2022, plus
+#' single-file Fire History, Burned Area Polygons, and Burned Area Rasters
+#' covering 1994-2024), [get_nifc()] and
 #' [read_nifc()] for NIFC wildfire perimeters, [get_fod()] and [read_fod()]
 #' for the USFS Fire Occurrence Database (FPA-FOD), [get_wui()] for the USFS
 #' Wildland-Urban Interface dataset, and a family of ecoregion
