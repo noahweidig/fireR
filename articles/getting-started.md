@@ -11,7 +11,8 @@ ecoregion boundaries:
   for [MTBS (Monitoring Trends in Burn Severity)](https://www.mtbs.gov/)
   wildfire perimeter data
 - [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
-  for SE FireMap Annual Burn Severity Mosaics
+  for SE FireMap data products (Burn Severity mosaics 2000–2022; Fire
+  History, Burned Area Polygons, and Burned Area Rasters 1994–2024)
 - [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md)
   /
   [`read_nifc()`](https://noahweidig.github.io/fireR/reference/read_nifc.md)

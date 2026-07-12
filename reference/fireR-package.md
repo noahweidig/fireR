@@ -8,7 +8,9 @@ and
 for MTBS (Monitoring Trends in Burn Severity) composite burned-area
 extent data,
 [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
-for Southeast FireMap Annual Burn Severity Mosaics,
+for SE FireMap data products (annual Burn Severity Mosaics for
+2000-2022, plus single-file Fire History, Burned Area Polygons, and
+Burned Area Rasters covering 1994-2024),
 [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md)
 and
 [`read_nifc()`](https://noahweidig.github.io/fireR/reference/read_nifc.md)

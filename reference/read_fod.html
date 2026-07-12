@@ -88,7 +88,10 @@ is a spatial object (<code>sf</code> or <code><a href="https://rspatial.github.i
 <dd><p><code>character(1)</code> The class of the returned spatial object.
 Either <code>"vect"</code> / <code>"terra"</code> (default) for a
 <code><a href="https://rspatial.github.io/terra/reference/SpatVector-class.html" class="external-link">terra::SpatVector</a></code>, or <code>"sf"</code> for an <code>sf</code> object.
-Ignored when <code>geometry = FALSE</code>.</p></dd>
+Ignored when <code>geometry = FALSE</code>. Note this default (<code>"vect"</code>)
+intentionally differs from the ecoregion loaders
+(<code><a href="get_nal1eco.html">get_nal1eco</a></code>, etc.), which default to <code>"sf"</code>; pass
+<code>output</code> explicitly for a consistent object class across functions.</p></dd>
 
 
 <dt id="arg-cache">cache<a class="anchor" aria-label="anchor" href="#arg-cache"></a></dt>

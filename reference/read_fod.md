@@ -40,7 +40,12 @@ read_fod(
   `character(1)` The class of the returned spatial object. Either
   `"vect"` / `"terra"` (default) for a
   [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html),
-  or `"sf"` for an `sf` object. Ignored when `geometry = FALSE`.
+  or `"sf"` for an `sf` object. Ignored when `geometry = FALSE`. Note
+  this default (`"vect"`) intentionally differs from the ecoregion
+  loaders
+  ([`get_nal1eco`](https://noahweidig.github.io/fireR/reference/get_nal1eco.md),
+  etc.), which default to `"sf"`; pass `output` explicitly for a
+  consistent object class across functions.
 
 - cache:
 
