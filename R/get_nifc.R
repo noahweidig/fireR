@@ -210,7 +210,10 @@ get_fod <- function(
 #' @param output \code{character(1)} The class of the returned spatial object.
 #'   Either \code{"vect"} / \code{"terra"} (default) for a
 #'   \code{terra::SpatVector}, or \code{"sf"} for an \code{sf} object.
-#'   Ignored when \code{geometry = FALSE}.
+#'   Ignored when \code{geometry = FALSE}. Note this default (\code{"vect"})
+#'   intentionally differs from the ecoregion loaders
+#'   (\code{\link{get_nal1eco}}, etc.), which default to \code{"sf"}; pass
+#'   \code{output} explicitly for a consistent object class across functions.
 #' @param cache \code{logical(1)} or \code{character(1)}.  Controls where
 #'   \code{read_nifc()} looks for the downloaded ZIP file.  When \code{FALSE}
 #'   (the default), the current working directory is used.  When \code{TRUE},
@@ -409,7 +412,10 @@ read_nifc <- function(
 #' @param output \code{character(1)} The class of the returned spatial object.
 #'   Either \code{"vect"} / \code{"terra"} (default) for a
 #'   \code{terra::SpatVector}, or \code{"sf"} for an \code{sf} object.
-#'   Ignored when \code{geometry = FALSE}.
+#'   Ignored when \code{geometry = FALSE}. Note this default (\code{"vect"})
+#'   intentionally differs from the ecoregion loaders
+#'   (\code{\link{get_nal1eco}}, etc.), which default to \code{"sf"}; pass
+#'   \code{output} explicitly for a consistent object class across functions.
 #' @param cache \code{logical(1)} or \code{character(1)}.  Controls where
 #'   \code{read_fod()} looks for the downloaded ZIP file.  When \code{FALSE}
 #'   (the default), the current working directory is used.  When \code{TRUE},

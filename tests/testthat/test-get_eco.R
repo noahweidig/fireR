@@ -105,6 +105,25 @@ test_that("get_eco functions reject invalid timeout argument", {
   expect_error(get_usl4eco(timeout = c(10, 20)), "positive number")
 })
 
+test_that("get_eco functions reject invalid overwrite argument", {
+  expect_error(get_nal1eco(overwrite = "yes"), "TRUE.*FALSE")
+  expect_error(get_nal1eco(overwrite = NA), "TRUE.*FALSE")
+  expect_error(get_nal1eco(overwrite = c(TRUE, FALSE)), "TRUE.*FALSE")
+
+  expect_error(get_nal2eco(overwrite = "yes"), "TRUE.*FALSE")
+  expect_error(get_nal2eco(overwrite = NA), "TRUE.*FALSE")
+
+  expect_error(get_nal3eco(overwrite = "yes"), "TRUE.*FALSE")
+  expect_error(get_nal3eco(overwrite = NA), "TRUE.*FALSE")
+
+  expect_error(get_usl3eco(overwrite = "yes"), "TRUE.*FALSE")
+  expect_error(get_usl3eco(overwrite = NA), "TRUE.*FALSE")
+
+  expect_error(get_usl4eco(overwrite = "yes"), "TRUE.*FALSE")
+  expect_error(get_usl4eco(overwrite = NA), "TRUE.*FALSE")
+  expect_error(get_usl4eco(overwrite = c(TRUE, FALSE)), "TRUE.*FALSE")
+})
+
 test_that("get_eco functions dry_run returns invisible paths without downloading", {
   tmp <- tempdir()
 

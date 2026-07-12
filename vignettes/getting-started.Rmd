@@ -22,7 +22,9 @@ ecoregion boundaries:
 - `get_mtbs()` / `read_mtbs()` for
   [MTBS (Monitoring Trends in Burn Severity)](https://www.mtbs.gov/) wildfire
   perimeter data
-- `get_sefire()` for SE FireMap Annual Burn Severity Mosaics
+- `get_sefire()` for SE FireMap data products (Burn Severity mosaics
+  2000–2022; Fire History, Burned Area Polygons, and Burned Area Rasters
+  1994–2024)
 - `get_nifc()` / `read_nifc()` for NIFC (National Interagency Fire Center)
   wildfire perimeters
 - `get_fod()` / `read_fod()` for the USFS Fire Occurrence Database

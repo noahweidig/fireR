@@ -9,8 +9,10 @@
 \code{fireR} provides ergonomic entry points for USGS fire data and
 EPA/CEC ecoregion boundaries:
 \code{\link[=get_mtbs]{get_mtbs()}} and \code{\link[=read_mtbs]{read_mtbs()}} for MTBS (Monitoring Trends in Burn
-Severity) composite burned-area extent data, \code{\link[=get_sefire]{get_sefire()}} for
-Southeast FireMap Annual Burn Severity Mosaics, \code{\link[=get_nifc]{get_nifc()}} and
+Severity) composite burned-area extent data, \code{\link[=get_sefire]{get_sefire()}} for SE
+FireMap data products (annual Burn Severity Mosaics for 2000-2022, plus
+single-file Fire History, Burned Area Polygons, and Burned Area Rasters
+covering 1994-2024), \code{\link[=get_nifc]{get_nifc()}} and
 \code{\link[=read_nifc]{read_nifc()}} for NIFC wildfire perimeters, \code{\link[=get_fod]{get_fod()}} and \code{\link[=read_fod]{read_fod()}}
 for the USFS Fire Occurrence Database (FPA-FOD), \code{\link[=get_wui]{get_wui()}} for the USFS
 Wildland-Urban Interface dataset, and a family of ecoregion
