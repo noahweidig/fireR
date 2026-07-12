@@ -275,6 +275,9 @@ zip_path <- get_sefire(dataset = "Burned Area Rasters", directory = "data/sefire
 
 ## NIFC wildfire perimeters
 
+> **Warning:** The NIFC ZIP is large (hundreds of megabytes). Downloads may be slow
+> depending on connection speed.
+
 `get_nifc()` downloads the NIFC wildfire perimeters ZIP; `read_nifc()` reads
 and filters it, with optional year filtering via the `FireYear` column:
 
