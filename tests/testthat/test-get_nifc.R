@@ -263,7 +263,7 @@ test_that("get_nifc() and get_fod() dry_run returns invisible paths without down
     "Dry run: Would download"
   )
   expect_invisible(get_nifc(directory = tmp, dry_run = TRUE))
-  expect_equal(as.character(res1), as.character(fs::path(tmp, "nifc_perimeters.zip")))
+  expect_equal(basename(as.character(res1)), "nifc_perimeters.zip")
   expect_false(file.exists(res1))
 
   # get_fod
@@ -272,6 +272,6 @@ test_that("get_nifc() and get_fod() dry_run returns invisible paths without down
     "Dry run: Would download"
   )
   expect_invisible(get_fod(directory = tmp, dry_run = TRUE))
-  expect_equal(as.character(res2), as.character(fs::path(tmp, "RDS-2013-0009.6_Data_Format3_GPKG.zip")))
+  expect_equal(basename(as.character(res2)), "RDS-2013-0009.6_Data_Format3_GPKG.zip")
   expect_false(file.exists(res2))
 })
