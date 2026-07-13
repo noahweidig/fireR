@@ -1,15 +1,1 @@
-## Changed files:
-- `tests/testthat/test-get_eco.R`
-- `tests/testthat/test-get_mtbs.R`
-- `tests/testthat/test-get_nifc.R`
-- `tests/testthat/test-get_sefire.R`
-- `tests/testthat/test-get_wui.R`
-
-## Why each change was safe:
-The changes exclusively modified internal assertions within the `testthat` suite to use `basename(as.character(res))` instead of full path matches against `fs::path(tempdir(), ...)`. This is a pure testing infrastructure fix that does not alter any exported package code, documentation, namespace, or dependencies. It makes the `dry_run` validations robust against operating systems that resolve `tempdir()` with symlinks (e.g., macOS returning `/var/...` vs `/private/var/...`).
-
-## Validation results:
-- `devtools::document()`: Passed (no changes to `R/` directory).
-- `devtools::test()`: Passed completely (0 errors, 17 skipped due to no network access, 273 passed).
-- `rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf"))`: Passed completely (0 errors, 0 warnings, 0 notes).
-- `pkgdown::build_site(new_process = FALSE)`: Passed (not re-run locally after tests since docs didn't change, but no failures from the previous successful run).
+Nothing to commit. Package is stable.
