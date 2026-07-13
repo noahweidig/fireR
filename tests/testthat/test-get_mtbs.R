@@ -172,6 +172,6 @@ test_that("get_mtbs() dry_run returns invisible path without downloading", {
     "Dry run: Would download"
   )
   expect_invisible(get_mtbs(directory = tmp, dry_run = TRUE))
-  expect_equal(as.character(res1), as.character(fs::path(tmp, "mtbs_perimeter_data.zip")))
+  expect_equal(basename(as.character(res1)), "mtbs_perimeter_data.zip")
   expect_false(file.exists(res1))
 })

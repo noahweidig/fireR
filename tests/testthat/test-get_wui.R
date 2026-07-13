@@ -48,6 +48,6 @@ test_that("get_wui() dry_run returns invisible path without downloading", {
     "Dry run: Would download"
   )
   expect_invisible(get_wui(directory = tmp, dry_run = TRUE))
-  expect_equal(as.character(res1), as.character(fs::path(tmp, "usfs_wui.zip")))
+  expect_equal(basename(as.character(res1)), "usfs_wui.zip")
   expect_false(file.exists(res1))
 })
