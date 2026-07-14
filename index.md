@@ -298,7 +298,7 @@ sessions.
 | `years` | `integer` | `NULL` | Single year, range (`2010:2020`), or specific years (`c(2000, 2010)`). `NULL` = no filter |
 | `type` | `character` | `NULL` | Incident type(s). `NULL` = all types |
 | `geometry` | `logical` | `TRUE` | Return a spatial object. `FALSE` → `data.frame` |
-| `output` | `character` | `"vect"` | `"sf"` or `"vect"` / `"terra"` |
+| `output` | `character` | `"vect"` | `"sf"` or `"vect"` / `"terra"`. Note: defaults to `"vect"`, unlike ecoregion loaders which default to `"sf"` |
 | `cache` | `logical`/`character` | `FALSE` | Whether to use the user cache directory (`TRUE`), local directory (`FALSE`), or a specific directory |
 | `verbose` | `logical` | `TRUE` | Print progress messages |
 
@@ -318,7 +318,7 @@ mtbs_dir <- get_mtbs()
 |----|----|----|----|
 | `years` | `integer` | `NULL` | Single year, range (`2010:2020`), or specific years (`c(2000, 2010)`). `NULL` = no filter |
 | `geometry` | `logical` | `TRUE` | Return a spatial object. `FALSE` → `data.frame` |
-| `output` | `character` | `"vect"` | `"sf"` or `"vect"` / `"terra"` |
+| `output` | `character` | `"vect"` | `"sf"` or `"vect"` / `"terra"`. Note: defaults to `"vect"`, unlike ecoregion loaders which default to `"sf"` |
 | `cache` | `logical`/`character` | `FALSE` | Whether to use the user cache directory (`TRUE`), local directory (`FALSE`), or a specific directory |
 | `verbose` | `logical` | `TRUE` | Print progress messages |
 
@@ -330,7 +330,7 @@ mtbs_dir <- get_mtbs()
 |----|----|----|----|
 | `years` | `integer` | `NULL` | Single year, range (`2010:2020`), or specific years (`c(2000, 2010)`). `NULL` = no filter |
 | `geometry` | `logical` | `TRUE` | Return a spatial object. `FALSE` → `data.frame` |
-| `output` | `character` | `"vect"` | `"sf"` or `"vect"` / `"terra"` |
+| `output` | `character` | `"vect"` | `"sf"` or `"vect"` / `"terra"`. Note: defaults to `"vect"`, unlike ecoregion loaders which default to `"sf"` |
 | `cache` | `logical`/`character` | `FALSE` | Whether to use the user cache directory (`TRUE`), local directory (`FALSE`), or a specific directory |
 | `verbose` | `logical` | `TRUE` | Print progress messages |
 
