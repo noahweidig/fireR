@@ -1,1 +1,9 @@
-Nothing to commit. Package is stable.
+Summary of Changes:
+
+1. Updated `README.md`
+   - **Why it was safe:** This was a tiny documentation fix to explicitly clarify the default `output` argument behavior for `read_mtbs`, `read_nifc`, and `read_fod`. The default behavior for these functions is `"vect"`, while other ecoregion functions default to `"sf"`. No R code, documentation comments in roxygen, or tests were changed. It was solely an update to the README to match the actual function behaviors and ensure users are aware of the difference without needing to read the function help pages.
+   - **Validation passed/failed:**
+     - `devtools::document()`: Passed.
+     - `devtools::test()`: Passed (273 tests passed, 17 skipped due to network unreachable).
+     - `rcmdcheck::rcmdcheck(args = c("--no-manual", "--compact-vignettes=gs+qpdf"))`: Passed with 0 errors, 0 warnings, 0 notes.
+     - `pkgdown::build_site(new_process = FALSE)`: Passed.
