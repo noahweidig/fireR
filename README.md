@@ -41,7 +41,7 @@ Key features:
   or specific years (`c(2000, 2010, 2020)`)
 - 🗺️ **Flexible output** — `sf`, `terra`, or plain `data.frame`
 - 💾 **Optional caching** — skip the download on repeat calls
-- 🛡️ **Safe checks** — optionally preview cache paths via `dry_run = TRUE` before initiating large downloads
+- 🛡️ **Safe checks** — all `get_*()` functions support `dry_run = TRUE` to safely preview cache paths before downloading.
 
 ---
 
