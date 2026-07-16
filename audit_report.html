@@ -46,26 +46,26 @@
 
 <div class="section level2">
 <h2 id="id_1-must-fix">1. Must fix<a class="anchor" aria-label="anchor" href="#id_1-must-fix"></a></h2>
-<ul><li>None found. The package is stable, passes R CMD check, correctly manages namespaces, properly handles caching logic, and has a strong test suite validating its exported functions.</li>
+<ul><li>None found. The package is highly robust, explicitly uses <code>dry_run</code> arguments correctly, has consistent defaults, and passes all tests successfully.</li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_2-safe-improvements">2. Safe improvements<a class="anchor" aria-label="anchor" href="#id_2-safe-improvements"></a></h2>
 <ul><li>
-<strong>Documentation:</strong> The <code>README.md</code> provides an explicit argument table for <code><a href="reference/read_mtbs.html">read_mtbs()</a></code> but lacks similar tables for the other main reader functions (<code><a href="reference/read_nifc.html">read_nifc()</a></code> and <code><a href="reference/read_fod.html">read_fod()</a></code>). Adding these tables makes the documentation more consistent and easier to read without having to look at <code><a href="reference/read_nifc.html">?read_nifc</a></code> and <code><a href="reference/read_fod.html">?read_fod</a></code>.</li>
+<strong>Warnings for large files:</strong> The <code><a href="reference/get_nifc.html">get_nifc()</a></code> function and the NIFC section in the <code>README.md</code> are missing the warning blocks for large files, which exist consistently for <code><a href="reference/get_mtbs.html">get_mtbs()</a></code>, <code><a href="reference/get_sefire.html">get_sefire()</a></code>, <code><a href="reference/get_wui.html">get_wui()</a></code>, and <code><a href="reference/get_fod.html">get_fod()</a></code>. Adding this makes the behavior and documentation consistent and explicitly alerts users about slow network operations, which satisfies the prompt’s request to identify “functions that download huge files without clear warnings”.</li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_3-possible-features-but-defer-unless-needed">3. Possible features, but defer unless needed<a class="anchor" aria-label="anchor" href="#id_3-possible-features-but-defer-unless-needed"></a></h2>
 <ul><li>
-<strong>Inconsistent output defaults:</strong> The <code>read_*</code> functions (<code>read_mtbs</code>, <code>read_nifc</code>, <code>read_fod</code>) default to <code>output = "vect"</code>, whereas the <code>get_eco</code> functions default to <code>output = "sf"</code>. Unifying the default across all functions to <code>"sf"</code> might make the package more coherent, but would be a backward-incompatible breaking change. Defer unless explicitly requested.</li>
+<strong>Consolidate default output format:</strong> Ecoregion loaders default to <code>output = "sf"</code>, but the rest default to <code>output = "vect"</code>. Unifying this to <code>"sf"</code> would be a breaking change, so it must be deferred.</li>
 </ul></div>
 <div class="section level2">
 <h2 id="id_4-do-not-touch">4. Do not touch<a class="anchor" aria-label="anchor" href="#id_4-do-not-touch"></a></h2>
 <ul><li>
-<strong>Package Architecture &amp; Namespace:</strong> The current <code>roxygen2</code>-generated <code>NAMESPACE</code> and file structure are clean and functional. Do not manually edit.</li>
+<strong>Package Architecture &amp; Namespace:</strong> Do not touch <code>NAMESPACE</code> or the package structure.</li>
 <li>
-<strong>pkgdown Configuration:</strong> The <code>_pkgdown.yml</code> file correctly lists all exported functions in logical groups, uses Bootstrap 5, and includes the necessary GitHub Pages workflow components.</li>
+<strong>pkgdown config:</strong> <code>_pkgdown.yml</code> is correctly formatted. Do not touch.</li>
 <li>
-<strong>Branding:</strong> The logo and custom theming must be strictly preserved.</li>
+<strong>Branding:</strong> Do not touch branding, logo, or <code>.Rd</code> files (update via <code>roxygen2</code>).</li>
 </ul></div>
 </div>
 

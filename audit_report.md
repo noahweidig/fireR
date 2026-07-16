@@ -2,40 +2,37 @@
 
 ## 1. Must fix
 
-- None found. The package is stable, passes R CMD check, correctly
-  manages namespaces, properly handles caching logic, and has a strong
-  test suite validating its exported functions.
+- None found. The package is highly robust, explicitly uses `dry_run`
+  arguments correctly, has consistent defaults, and passes all tests
+  successfully.
 
 ## 2. Safe improvements
 
-- **Documentation:** The `README.md` provides an explicit argument table
-  for
-  [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)
-  but lacks similar tables for the other main reader functions
-  ([`read_nifc()`](https://noahweidig.github.io/fireR/reference/read_nifc.md)
+- **Warnings for large files:** The
+  [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md)
+  function and the NIFC section in the `README.md` are missing the
+  warning blocks for large files, which exist consistently for
+  [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md),
+  [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md),
+  [`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md),
   and
-  [`read_fod()`](https://noahweidig.github.io/fireR/reference/read_fod.md)).
-  Adding these tables makes the documentation more consistent and easier
-  to read without having to look at
-  [`?read_nifc`](https://noahweidig.github.io/fireR/reference/read_nifc.md)
-  and
-  [`?read_fod`](https://noahweidig.github.io/fireR/reference/read_fod.md).
+  [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md).
+  Adding this makes the behavior and documentation consistent and
+  explicitly alerts users about slow network operations, which satisfies
+  the prompt’s request to identify “functions that download huge files
+  without clear warnings”.
 
 ## 3. Possible features, but defer unless needed
 
-- **Inconsistent output defaults:** The `read_*` functions (`read_mtbs`,
-  `read_nifc`, `read_fod`) default to `output = "vect"`, whereas the
-  `get_eco` functions default to `output = "sf"`. Unifying the default
-  across all functions to `"sf"` might make the package more coherent,
-  but would be a backward-incompatible breaking change. Defer unless
-  explicitly requested.
+- **Consolidate default output format:** Ecoregion loaders default to
+  `output = "sf"`, but the rest default to `output = "vect"`. Unifying
+  this to `"sf"` would be a breaking change, so it must be deferred.
 
 ## 4. Do not touch
 
-- **Package Architecture & Namespace:** The current `roxygen2`-generated
-  `NAMESPACE` and file structure are clean and functional. Do not
-  manually edit.
-- **pkgdown Configuration:** The `_pkgdown.yml` file correctly lists all
-  exported functions in logical groups, uses Bootstrap 5, and includes
-  the necessary GitHub Pages workflow components.
-- **Branding:** The logo and custom theming must be strictly preserved.
+- **Package Architecture & Namespace:** Do not touch `NAMESPACE` or the
+  package structure.
+- **pkgdown config:** `_pkgdown.yml` is correctly formatted. Do not
+  touch.
+- **Branding:** Do not touch branding, logo, or `.Rd` files (update via
+  `roxygen2`).

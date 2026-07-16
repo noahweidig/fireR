@@ -45,6 +45,12 @@ get_nifc(
 
 `character(1)` path to the downloaded ZIP file (invisibly).
 
+## Warning \[large files\]
+
+The NIFC ZIP archive is a large file. Downloads may be slow depending on
+connection speed. Consider downloading in a background session if
+needed.
+
 ## Examples
 
 ``` r
