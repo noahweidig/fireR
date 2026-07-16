@@ -4,6 +4,10 @@
 #' dataset from figshare and unzips it to a local directory.  If the ZIP
 #' already exists and \code{overwrite = FALSE}, no network call is made.
 #'
+#' @section Warning \[large files\]:
+#' The NIFC ZIP archive is a large file. Downloads may be slow depending
+#' on connection speed. Consider downloading in a background session if needed.
+#'
 #' @param directory \code{character(1)} directory where the ZIP file and
 #'   unzipped contents are stored.  Defaults to the current working directory.
 #' @param overwrite \code{logical(1)} re-download when \code{TRUE};
