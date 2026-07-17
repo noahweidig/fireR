@@ -1,5 +1,28 @@
 # fireR 1.1.0
 
+## Bug fixes
+
+* `get_sefire()` now inspects the `curl::multi_download()` return value and emits
+  a warning for any failed year downloads instead of printing "Downloads complete."
+  unconditionally (#111).
+* `get_sefire()`, `get_mtbs()`, `get_nifc()`, `get_fod()`, `get_wui()`, and the
+  ecoregion loaders now delete any partial or zero-byte file left on disk after a
+  failed download, so that a subsequent call re-downloads correctly instead of
+  treating the partial file as already-complete (#122, #125, #128, #129).
+* `read_nifc()` now checks that `sf::st_layers()` returns at least one layer and
+  emits an actionable error message if the file is corrupt or empty instead of
+  throwing "subscript out of bounds" (#118).
+* `read_fod()` now discovers the GeoPackage layer name dynamically via
+  `sf::st_layers()` instead of hardcoding `"Fires"`, matching `read_nifc()` and
+  providing a clear error if the file is unreadable (#137).
+* `get_sefire()` "years ignored" warning now fires unconditionally for non-Burn-Severity
+  datasets regardless of `verbose`; previously `verbose = FALSE` silently suppressed
+  it (#121).
+* Vignette corrected: MTBS ZIP is ~360 MB, not ~100 MB (#119).
+* `output` default asymmetry between `read_mtbs()`/`read_nifc()`/`read_fod()`
+  (`"vect"`) and the ecoregion loaders (`"sf"`) is now documented in each reader's
+  `@param output` (#120).
+
 ## New functions
 
 * `get_nifc()`: Download the NIFC wildfire perimeters ZIP from figshare and
