@@ -45,6 +45,22 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.0" id="firer-110">fireR 1.1.0<a class="anchor" aria-label="anchor" href="#firer-110"></a></h2>
 <div class="section level3">
+<h3 id="bug-fixes-1-1-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-1-0"></a></h3>
+<ul><li>
+<code><a href="../reference/get_sefire.html">get_sefire()</a></code> now inspects the <code><a href="https://jeroen.r-universe.dev/curl/reference/multi_download.html" class="external-link">curl::multi_download()</a></code> return value and emits a warning for any failed year downloads instead of printing “Downloads complete.” unconditionally (<a href="https://github.com/noahweidig/fireR/issues/111" class="external-link">#111</a>).</li>
+<li>
+<code><a href="../reference/get_sefire.html">get_sefire()</a></code>, <code><a href="../reference/get_mtbs.html">get_mtbs()</a></code>, <code><a href="../reference/get_nifc.html">get_nifc()</a></code>, <code><a href="../reference/get_fod.html">get_fod()</a></code>, <code><a href="../reference/get_wui.html">get_wui()</a></code>, and the ecoregion loaders now delete any partial or zero-byte file left on disk after a failed download, so that a subsequent call re-downloads correctly instead of treating the partial file as already-complete (<a href="https://github.com/noahweidig/fireR/issues/122" class="external-link">#122</a>, <a href="https://github.com/noahweidig/fireR/issues/125" class="external-link">#125</a>, <a href="https://github.com/noahweidig/fireR/issues/128" class="external-link">#128</a>, <a href="https://github.com/noahweidig/fireR/issues/129" class="external-link">#129</a>).</li>
+<li>
+<code><a href="../reference/read_nifc.html">read_nifc()</a></code> now checks that <code><a href="https://r-spatial.github.io/sf/reference/st_layers.html" class="external-link">sf::st_layers()</a></code> returns at least one layer and emits an actionable error message if the file is corrupt or empty instead of throwing “subscript out of bounds” (<a href="https://github.com/noahweidig/fireR/issues/118" class="external-link">#118</a>).</li>
+<li>
+<code><a href="../reference/read_fod.html">read_fod()</a></code> now discovers the GeoPackage layer name dynamically via <code><a href="https://r-spatial.github.io/sf/reference/st_layers.html" class="external-link">sf::st_layers()</a></code> instead of hardcoding <code>"Fires"</code>, matching <code><a href="../reference/read_nifc.html">read_nifc()</a></code> and providing a clear error if the file is unreadable (<a href="https://github.com/noahweidig/fireR/issues/137" class="external-link">#137</a>).</li>
+<li>
+<code><a href="../reference/get_sefire.html">get_sefire()</a></code> “years ignored” warning now fires unconditionally for non-Burn-Severity datasets regardless of <code>verbose</code>; previously <code>verbose = FALSE</code> silently suppressed it (<a href="https://github.com/noahweidig/fireR/issues/121" class="external-link">#121</a>).</li>
+<li>Vignette corrected: MTBS ZIP is ~360 MB, not ~100 MB (<a href="https://github.com/noahweidig/fireR/issues/119" class="external-link">#119</a>).</li>
+<li>
+<code>output</code> default asymmetry between <code><a href="../reference/read_mtbs.html">read_mtbs()</a></code>/<code><a href="../reference/read_nifc.html">read_nifc()</a></code>/<code><a href="../reference/read_fod.html">read_fod()</a></code> (<code>"vect"</code>) and the ecoregion loaders (<code>"sf"</code>) is now documented in each reader’s <code>@param output</code> (<a href="https://github.com/noahweidig/fireR/issues/120" class="external-link">#120</a>).</li>
+</ul></div>
+<div class="section level3">
 <h3 id="new-functions-1-1-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-1-0"></a></h3>
 <ul><li>
 <code><a href="../reference/get_nifc.html">get_nifc()</a></code>: Download the NIFC wildfire perimeters ZIP from figshare and unzip to a local directory.</li>

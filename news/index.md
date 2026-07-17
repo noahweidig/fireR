@@ -2,6 +2,53 @@
 
 ## fireR 1.1.0
 
+### Bug fixes
+
+- [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
+  now inspects the
+  [`curl::multi_download()`](https://jeroen.r-universe.dev/curl/reference/multi_download.html)
+  return value and emits a warning for any failed year downloads instead
+  of printing “Downloads complete.” unconditionally
+  ([\#111](https://github.com/noahweidig/fireR/issues/111)).
+- [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md),
+  [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md),
+  [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md),
+  [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md),
+  [`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md),
+  and the ecoregion loaders now delete any partial or zero-byte file
+  left on disk after a failed download, so that a subsequent call
+  re-downloads correctly instead of treating the partial file as
+  already-complete
+  ([\#122](https://github.com/noahweidig/fireR/issues/122),
+  [\#125](https://github.com/noahweidig/fireR/issues/125),
+  [\#128](https://github.com/noahweidig/fireR/issues/128),
+  [\#129](https://github.com/noahweidig/fireR/issues/129)).
+- [`read_nifc()`](https://noahweidig.github.io/fireR/reference/read_nifc.md)
+  now checks that
+  [`sf::st_layers()`](https://r-spatial.github.io/sf/reference/st_layers.html)
+  returns at least one layer and emits an actionable error message if
+  the file is corrupt or empty instead of throwing “subscript out of
+  bounds” ([\#118](https://github.com/noahweidig/fireR/issues/118)).
+- [`read_fod()`](https://noahweidig.github.io/fireR/reference/read_fod.md)
+  now discovers the GeoPackage layer name dynamically via
+  [`sf::st_layers()`](https://r-spatial.github.io/sf/reference/st_layers.html)
+  instead of hardcoding `"Fires"`, matching
+  [`read_nifc()`](https://noahweidig.github.io/fireR/reference/read_nifc.md)
+  and providing a clear error if the file is unreadable
+  ([\#137](https://github.com/noahweidig/fireR/issues/137)).
+- [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
+  “years ignored” warning now fires unconditionally for
+  non-Burn-Severity datasets regardless of `verbose`; previously
+  `verbose = FALSE` silently suppressed it
+  ([\#121](https://github.com/noahweidig/fireR/issues/121)).
+- Vignette corrected: MTBS ZIP is ~360 MB, not ~100 MB
+  ([\#119](https://github.com/noahweidig/fireR/issues/119)).
+- `output` default asymmetry between
+  [`read_mtbs()`](https://noahweidig.github.io/fireR/reference/read_mtbs.md)/[`read_nifc()`](https://noahweidig.github.io/fireR/reference/read_nifc.md)/[`read_fod()`](https://noahweidig.github.io/fireR/reference/read_fod.md)
+  (`"vect"`) and the ecoregion loaders (`"sf"`) is now documented in
+  each reader’s `@param output`
+  ([\#120](https://github.com/noahweidig/fireR/issues/120)).
+
 ### New functions
 
 - [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md):
