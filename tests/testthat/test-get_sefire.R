@@ -97,3 +97,61 @@ test_that("get_sefire() dry_run returns invisible paths without downloading", {
   expect_equal(basename(as.character(res4)), "SEFM_L_ABA_1994_2024_rasters.gdb.zip")
   expect_false(file.exists(res4))
 })
+
+test_that("get_sefire() warns that years is ignored for single-file datasets, regardless of verbose (#121)", {
+  for (ds in c("Fire History", "Burned Area Polygons", "Burned Area Rasters")) {
+    for (v in c(TRUE, FALSE)) {
+      expect_warning(
+        suppressMessages(
+          get_sefire(dataset = ds, years = 2020, dry_run = TRUE, verbose = v)
+        ),
+        "ignored"
+      )
+    }
+  }
+})
+
+test_that("get_sefire() returns only ZIP paths that exist after failed downloads", {
+  tmp <- file.path(tempdir(), "sefire_partial_fail")
+  dir.create(tmp, showWarnings = FALSE, recursive = TRUE)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+  ok   <- file.path(tmp, "cbi_mosaic_2020.zip")
+  fail <- file.path(tmp, "cbi_mosaic_2021.zip")
+  writeLines("x", ok)
+
+  local_mocked_bindings(
+    multi_download = function(urls, destfiles, ...) {
+      writeLines("partial", destfiles)
+      data.frame(
+        success     = FALSE,
+        url         = urls,
+        destfile    = destfiles,
+        status_code = 503L
+      )
+    },
+    .package = "curl"
+  )
+
+  res <- suppressWarnings(
+    get_sefire(years = 2020:2021, directory = tmp, verbose = FALSE)
+  )
+  expect_equal(basename(as.character(res)), "cbi_mosaic_2020.zip")
+  expect_true(file.exists(ok))
+  expect_false(file.exists(fail))
+})
+
+# ── Integration tests (download required) ────────────────────────────────────
+
+shared_sefire_cache <- file.path(tempdir(), "sefire_shared_test_cache")
+
+test_that("get_sefire() downloads Burn Severity and returns ZIP path", {
+  skip_if_sefire_unreachable()
+  skip_on_cran()
+
+  zip_paths <- suppressWarnings(
+    get_sefire(years = 2020, directory = shared_sefire_cache, verbose = FALSE)
+  )
+  expect_type(zip_paths, "character")
+  expect_true(all(file.exists(zip_paths)))
+  expect_true(all(grepl("cbi_mosaic_2020\\.zip$", zip_paths)))
+})

@@ -20,8 +20,8 @@
 #' The SE FireMap Fall 2024 release additionally provides a Fire History Map
 #' (1994–2024), Burned Area Polygons (1994–2024), and Burned Area Raster grids
 #' (1994–2024) as single-file geodatabase ZIPs.  Year selection is not
-#' applicable to these three products; the \code{years} argument is silently
-#' ignored when they are requested.
+#' applicable to these three products; if \code{years} is supplied, a warning
+#' is emitted and the argument is ignored.
 #'
 #' @section Warning \[large files\]:
 #' The SE FireMap datasets can be very large. A single year of Burn Severity
@@ -53,8 +53,9 @@
 #' @param dry_run \code{logical(1)} if \code{TRUE}, do not download the file but instead return the path where it would be saved. Defaults to \code{FALSE}.
 #'
 #' @return For \code{dataset = "Burn Severity"}: a \code{character} vector of
-#'   paths to the downloaded ZIP files (returned invisibly), one element per
-#'   unique year requested.  For all other datasets: a \code{character(1)} path
+#'   paths to the ZIP files that exist on disk after the call (returned
+#'   invisibly), at most one per unique year requested.  Years whose download
+#'   failed are omitted.  For all other datasets: a \code{character(1)} path
 #'   to the downloaded ZIP file (returned invisibly).
 #' @export
 #'
@@ -146,7 +147,10 @@ get_sefire <- function(
 
     if (any(to_download)) {
       n <- sum(to_download)
-      cli::cli_warn(c("!" = "This is a large download (hundreds of megabytes)."))
+      cli::cli_warn(c(
+        "!" = "Each Burn Severity year is approximately {.strong 50\u2013100 MB}; {n} file{?s} requested.",
+        "i" = "Consider running {.fn get_sefire} in a background session to keep R responsive."
+      ))
       if (verbose) {
         cli::cli_inform(
           "Downloading {n} SE FireMap Burn Severity mosaic{?s} \u2026"
@@ -180,7 +184,7 @@ get_sefire <- function(
       cli::cli_inform("All requested SE FireMap Burn Severity ZIPs already exist.")
     }
 
-    return(invisible(zip_files))
+    return(invisible(zip_files[fs::file_exists(zip_files)]))
   }
 
   ## ── Single-file datasets (SE FireMap S3, curl) ────────────────────────────
@@ -217,7 +221,11 @@ get_sefire <- function(
   if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
 
   if (!fs::file_exists(zip_file)) {
-    cli::cli_warn(c("!" = "This is a large download (hundreds of megabytes)."))
+    cli::cli_warn(c(
+      "!" = "This is a large download ({.strong 1\u20133 GB} depending on the dataset) and may be slow.",
+      "i" = "Consider running {.fn get_sefire} in a background session:",
+      " " = "{.code bg <- callr::r_bg(function() fireR::get_sefire(dataset = \"{dataset}\", directory = \"{directory}\"))}"
+    ))
     if (verbose) cli::cli_inform("Downloading {ds_info$label} \u2026")
     handle <- curl::new_handle(
       followlocation = TRUE,

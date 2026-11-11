@@ -1,3 +1,35 @@
+# fireR 1.2.0
+
+## Bug fixes
+
+* `get_sefire()` now returns only the Burn Severity ZIP paths that exist on disk,
+  omitting years whose download failed, so the result can be passed directly to
+  readers (#166).
+* `get_wui()`, `get_nifc()`, and `get_fod()` now re-unzip an existing ZIP when
+  its extracted files are missing or incomplete (for example after an interrupted
+  unzip), without re-downloading. Previously the unzip ran only in the session
+  that performed the download (#164).
+* Large-download warnings now state the actual size: `get_sefire()` single-file
+  datasets (1-3 GB; #160), `get_mtbs()` (360 MB) and `get_fod()` (175 MB; #165),
+  and `get_nifc()` (49 MB; #162). Each recommends a background session.
+
+## Documentation
+
+* `get_sefire()` docs no longer say `years` is "silently ignored" for single-file
+  datasets; a warning is emitted (#168).
+* `read_nifc()` docs list `.gdb` as a supported archive format (#156).
+* `get_nifc()` docs state the approximate download size (#162).
+* Removed tracked session-artifact files and added them to `.gitignore` (#153).
+
+## Tests
+
+* Added regression tests for the unconditional `get_sefire()` "years ignored"
+  warning (#167), the `get_sefire()` return value after failed downloads, and the
+  re-unzip behaviour.
+* Added `get_sefire()` integration tests with `skip_if_sefire_unreachable()` (#163)
+  and a `skip_if_invalid_fod_archive()` guard for FOD integration tests (#152).
+* `testthat` (>= 3.2.0) is now required for mocking.
+
 # fireR 1.1.0
 
 ## Bug fixes

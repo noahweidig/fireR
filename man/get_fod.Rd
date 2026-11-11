@@ -34,7 +34,9 @@ Downloads the USFS Fire Occurrence Database (FPA-FOD) GeoPackage ZIP
 archive from the Forest Service Research Data Archive and unzips it to a
 local directory.  The server requires browser-like request headers, so
 \pkg{httr2} is used instead of a simple download helper.  If the ZIP
-already exists and \code{overwrite = FALSE}, no network call is made.
+already exists and \code{overwrite = FALSE}, no network call is made; if
+the extracted files are missing or incomplete, the existing ZIP is unzipped
+again.
 }
 \section{Warning [large files]}{
 

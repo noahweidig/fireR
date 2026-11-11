@@ -45,8 +45,9 @@ Defaults to \code{3600} (one hour).}
 }
 \value{
 For \code{dataset = "Burn Severity"}: a \code{character} vector of
-paths to the downloaded ZIP files (returned invisibly), one element per
-unique year requested.  For all other datasets: a \code{character(1)} path
+paths to the ZIP files that exist on disk after the call (returned
+invisibly), at most one per unique year requested.  Years whose download
+failed are omitted.  For all other datasets: a \code{character(1)} path
 to the downloaded ZIP file (returned invisibly).
 }
 \description{
@@ -71,8 +72,8 @@ across the southeastern United States for years 2000–2022.
 The SE FireMap Fall 2024 release additionally provides a Fire History Map
 (1994–2024), Burned Area Polygons (1994–2024), and Burned Area Raster grids
 (1994–2024) as single-file geodatabase ZIPs.  Year selection is not
-applicable to these three products; the \code{years} argument is silently
-ignored when they are requested.
+applicable to these three products; if \code{years} is supplied, a warning
+is emitted and the argument is ignored.
 }
 
 \section{Warning [large files]}{
