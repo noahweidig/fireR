@@ -204,6 +204,7 @@ test_that("read_fod() returns the right class", {
   skip_if_fod_unreachable()
   skip_on_cran()
   suppressWarnings(get_fod(directory = shared_fod_cache, verbose = FALSE))
+  skip_if_invalid_fod_archive(shared_fod_cache)
 
   result_sf <- read_fod(years = 2015, output = "sf", cache = shared_fod_cache, verbose = FALSE)
   expect_s3_class(result_sf, "sf")
@@ -220,6 +221,7 @@ test_that("read_fod() year filtering keeps correct rows", {
   skip_if_fod_unreachable()
   skip_on_cran()
   suppressWarnings(get_fod(directory = shared_fod_cache, verbose = FALSE))
+  skip_if_invalid_fod_archive(shared_fod_cache)
 
   fires <- read_fod(years = 2010:2011, output = "sf", cache = shared_fod_cache, verbose = FALSE)
   expect_true(all(fires[["FIRE_YEAR"]] %in% 2010:2011, na.rm = TRUE))
@@ -229,6 +231,7 @@ test_that("read_fod() single year is treated as exact match", {
   skip_if_fod_unreachable()
   skip_on_cran()
   suppressWarnings(get_fod(directory = shared_fod_cache, verbose = FALSE))
+  skip_if_invalid_fod_archive(shared_fod_cache)
 
   fires <- read_fod(years = 2000, output = "sf", cache = shared_fod_cache, verbose = FALSE)
   expect_true(all(fires[["FIRE_YEAR"]] == 2000, na.rm = TRUE))
@@ -238,6 +241,7 @@ test_that("read_fod() specific year vector filtering keeps correct rows", {
   skip_if_fod_unreachable()
   skip_on_cran()
   suppressWarnings(get_fod(directory = shared_fod_cache, verbose = FALSE))
+  skip_if_invalid_fod_archive(shared_fod_cache)
 
   fires <- read_fod(years = c(2000, 2010), output = "sf", cache = shared_fod_cache, verbose = FALSE)
   expect_true(all(fires[["FIRE_YEAR"]] %in% c(2000, 2010), na.rm = TRUE))

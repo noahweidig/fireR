@@ -87,3 +87,45 @@ skip_if_fod_unreachable <- function(
     skip("USFS FOD endpoint is not reachable from this environment.")
   }
 }
+
+# Skip helper for downloaded FOD archives that are reachable but unusable.
+skip_if_invalid_fod_archive <- function(
+    directory,
+    zip_name = "RDS-2013-0009.6_Data_Format3_GPKG.zip"
+) {
+  zip_file <- file.path(directory, zip_name)
+  zip_contents <- tryCatch(
+    suppressWarnings(utils::unzip(zip_file, list = TRUE)),
+    error = function(e) NULL
+  )
+
+  has_gpkg <- !is.null(zip_contents) && any(grepl(
+    "\\.gpkg$",
+    zip_contents$Name,
+    ignore.case = TRUE
+  ))
+
+  if (!has_gpkg) {
+    skip("FOD download does not contain a readable GeoPackage.")
+  }
+}
+
+# Skip helper for the SE FireMap Burn Severity (USGS) and S3 endpoints.
+skip_if_sefire_unreachable <- function(
+    url = "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/SeFiremap/cbi_mosaic_2020.zip"
+) {
+  reachable <- tryCatch({
+    h <- curl::new_handle(
+      range          = "bytes=0-1023",
+      timeout        = 15L,
+      followlocation = TRUE,
+      ssl_verifypeer = 1L
+    )
+    res <- curl::curl_fetch_memory(url, handle = h)
+    res$status_code %in% c(200L, 206L)
+  }, error = function(e) FALSE)
+
+  if (!reachable) {
+    skip("SE FireMap endpoint is not reachable from this environment.")
+  }
+}

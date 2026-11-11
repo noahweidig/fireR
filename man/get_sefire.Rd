@@ -45,8 +45,9 @@ Defaults to \code{3600} (one hour).}
 }
 \value{
 For \code{dataset = "Burn Severity"}: a \code{character} vector of
-paths to the downloaded ZIP files (returned invisibly), one element per
-unique year requested.  For all other datasets: a \code{character(1)} path
+paths to the ZIP files that exist on disk after the call (returned
+invisibly), at most one per unique year requested.  Years whose download
+failed are omitted.  For all other datasets: a \code{character(1)} path
 to the downloaded ZIP file (returned invisibly).
 }
 \description{

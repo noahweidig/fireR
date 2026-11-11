@@ -2,10 +2,12 @@
 #'
 #' Downloads the NIFC (National Interagency Fire Center) wildfire perimeters
 #' dataset from figshare and unzips it to a local directory.  If the ZIP
-#' already exists and \code{overwrite = FALSE}, no network call is made.
+#' already exists and \code{overwrite = FALSE}, no network call is made; if
+#' the extracted files are missing or incomplete, the existing ZIP is unzipped
+#' again.
 #'
 #' @section Warning \[large files\]:
-#' The NIFC ZIP archive is a large file. Downloads may be slow depending
+#' The NIFC ZIP archive is approximately 49 MB. Downloads may be slow depending
 #' on connection speed. Consider downloading in a background session if needed.
 #'
 #' @param directory \code{character(1)} directory where the ZIP file and
@@ -63,7 +65,11 @@ get_nifc <- function(
 
   did_download <- FALSE
   if (!fs::file_exists(zip_file)) {
-    cli::cli_warn(c("!" = "This is a large download (hundreds of megabytes)."))
+    cli::cli_warn(c(
+      "!" = "The NIFC ZIP is approximately {.strong 49 MB} and may be slow to download.",
+      "i" = "Consider running {.fn get_nifc} in a background session to keep R responsive:",
+      " " = "{.code bg <- callr::r_bg(function() fireR::get_nifc(directory = \"{directory}\"))}"
+    ))
     if (verbose) cli::cli_inform("Downloading NIFC wildfire perimeters \u2026")
     tryCatch(
       curl::curl_download(url, destfile = zip_file,
@@ -80,11 +86,7 @@ get_nifc <- function(
     cli::cli_inform("NIFC ZIP already exists: {.path {zip_file}}")
   }
 
-  if (did_download) {
-    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} \u2026")
-    utils::unzip(zip_file, exdir = directory)
-    if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
-  }
+  .unzip_if_needed(zip_file, directory, force = did_download, verbose = verbose)
 
   invisible(zip_file)
 }
@@ -95,7 +97,9 @@ get_nifc <- function(
 #' archive from the Forest Service Research Data Archive and unzips it to a
 #' local directory.  The server requires browser-like request headers, so
 #' \pkg{httr2} is used instead of a simple download helper.  If the ZIP
-#' already exists and \code{overwrite = FALSE}, no network call is made.
+#' already exists and \code{overwrite = FALSE}, no network call is made; if
+#' the extracted files are missing or incomplete, the existing ZIP is unzipped
+#' again.
 #'
 #' @section Warning \[large files\]:
 #' The FOD ZIP archive is approximately 175 MB. Downloads may be slow depending
@@ -156,7 +160,11 @@ get_fod <- function(
 
   did_download <- FALSE
   if (!fs::file_exists(zip_file)) {
-    cli::cli_warn(c("!" = "This is a large download (hundreds of megabytes)."))
+    cli::cli_warn(c(
+      "!" = "The FOD ZIP is approximately {.strong 175 MB} and may be slow to download.",
+      "i" = "Consider running {.fn get_fod} in a background session to keep R responsive:",
+      " " = "{.code bg <- callr::r_bg(function() fireR::get_fod(directory = \"{directory}\"))}"
+    ))
     if (verbose) cli::cli_inform("Downloading USFS Fire Occurrence Database (FOD) \u2026")
     req <- httr2::request(url)
     req <- httr2::req_headers(
@@ -180,11 +188,7 @@ get_fod <- function(
     cli::cli_inform("FOD ZIP already exists: {.path {zip_file}}")
   }
 
-  if (did_download) {
-    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} \u2026")
-    utils::unzip(zip_file, exdir = directory)
-    if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
-  }
+  .unzip_if_needed(zip_file, directory, force = did_download, verbose = verbose)
 
   invisible(zip_file)
 }

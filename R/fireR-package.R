@@ -54,3 +54,23 @@ NULL
   "AppleWebKit/537.36 (KHTML, like Gecko) ",
   "Chrome/124.0.0.0 Safari/537.36"
 )
+
+# Unzip `zip_file` into `directory` when `force` is TRUE or when any file listed
+# in the archive is missing on disk (e.g. a previous unzip was interrupted).
+# An unreadable archive is left alone.
+.unzip_if_needed <- function(zip_file, directory, force = FALSE, verbose = TRUE) {
+  if (!force) {
+    entries <- tryCatch(
+      suppressWarnings(utils::unzip(zip_file, list = TRUE)),
+      error = function(e) NULL
+    )
+    if (is.null(entries)) return(invisible(FALSE))
+    files <- entries$Name[!grepl("/$", entries$Name)]
+    if (all(file.exists(file.path(directory, files)))) return(invisible(FALSE))
+    if (verbose) cli::cli_inform("Extracted files are missing or incomplete; re-unzipping.")
+  }
+  if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} \u2026")
+  utils::unzip(zip_file, exdir = directory)
+  if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
+  invisible(TRUE)
+}

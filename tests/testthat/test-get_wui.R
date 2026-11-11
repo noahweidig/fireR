@@ -51,3 +51,21 @@ test_that("get_wui() dry_run returns invisible path without downloading", {
   expect_equal(basename(as.character(res1)), "usfs_wui.zip")
   expect_false(file.exists(res1))
 })
+
+test_that("get_wui() re-unzips an existing ZIP when extracted files are missing", {
+  skip_if(Sys.which("zip") == "", "zip utility not available")
+  tmp <- file.path(tempdir(), "wui_reunzip_test")
+  src <- file.path(tempdir(), "wui_reunzip_src")
+  dir.create(tmp, showWarnings = FALSE, recursive = TRUE)
+  dir.create(src, showWarnings = FALSE, recursive = TRUE)
+  on.exit(unlink(c(tmp, src), recursive = TRUE), add = TRUE)
+
+  writeLines("data", file.path(src, "wui.txt"))
+  old <- setwd(src)
+  utils::zip(file.path(tmp, "usfs_wui.zip"), "wui.txt", flags = "-q")
+  setwd(old)
+
+  expect_false(file.exists(file.path(tmp, "wui.txt")))
+  get_wui(directory = tmp, verbose = FALSE)
+  expect_true(file.exists(file.path(tmp, "wui.txt")))
+})

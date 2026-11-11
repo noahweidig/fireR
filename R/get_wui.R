@@ -2,7 +2,9 @@
 #'
 #' Downloads the USFS Wildland-Urban Interface (WUI) dataset ZIP from the
 #' USFS public Box archive and unzips it to a local directory.  If the ZIP
-#' already exists and \code{overwrite = FALSE}, no network call is made.
+#' already exists and \code{overwrite = FALSE}, no network call is made; if
+#' the extracted files are missing or incomplete, the existing ZIP is unzipped
+#' again.
 #'
 #' @section Warning \[large file\]:
 #' The WUI ZIP archive is approximately \strong{4.65 GB}.  Downloads are slow
@@ -100,11 +102,7 @@ get_wui <- function(
     cli::cli_inform("WUI ZIP already exists: {.path {zip_file}}")
   }
 
-  if (did_download) {
-    if (verbose) cli::cli_inform("Unzipping {.path {zip_file}} \u2026")
-    utils::unzip(zip_file, exdir = directory)
-    if (verbose) cli::cli_inform("Unzip complete: {.path {directory}}")
-  }
+  .unzip_if_needed(zip_file, directory, force = did_download, verbose = verbose)
 
   invisible(zip_file)
 }

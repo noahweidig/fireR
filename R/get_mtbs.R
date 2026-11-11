@@ -75,7 +75,11 @@ get_mtbs <- function(
   if (overwrite && fs::file_exists(zip_file)) fs::file_delete(zip_file)
 
   if (!fs::file_exists(zip_file)) {
-    cli::cli_warn(c("!" = "This is a large download (hundreds of megabytes)."))
+    cli::cli_warn(c(
+      "!" = "The MTBS ZIP is approximately {.strong 360 MB} and may be slow to download.",
+      "i" = "Consider running {.fn get_mtbs} in a background session to keep R responsive:",
+      " " = "{.code bg <- callr::r_bg(function() fireR::get_mtbs(directory = \"{directory}\"))}"
+    ))
     if (verbose) cli::cli_inform("Downloading MTBS {dataset} data \u2026")
     handle <- curl::new_handle(
       followlocation = TRUE,
