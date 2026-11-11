@@ -20,8 +20,8 @@
 #' The SE FireMap Fall 2024 release additionally provides a Fire History Map
 #' (1994–2024), Burned Area Polygons (1994–2024), and Burned Area Raster grids
 #' (1994–2024) as single-file geodatabase ZIPs.  Year selection is not
-#' applicable to these three products; the \code{years} argument is silently
-#' ignored when they are requested.
+#' applicable to these three products; if \code{years} is supplied, a warning
+#' is emitted and the argument is ignored.
 #'
 #' @section Warning \[large files\]:
 #' The SE FireMap datasets can be very large. A single year of Burn Severity

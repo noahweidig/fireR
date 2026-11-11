@@ -6,3 +6,9 @@
 docs/
 *.Rcheck/
 *.tar.gz
+
+# Session artifacts
+audit_report.md
+diff.txt
+final_summary.txt
+summary.txt

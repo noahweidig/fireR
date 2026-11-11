@@ -197,9 +197,11 @@ get_fod <- function(
 #' `read_nifc()` does not download data. Use [get_nifc()] first to obtain the
 #' perimeters ZIP archive.
 #'
-#' The ZIP is expected to contain either a GeoPackage (\code{.gpkg}) or a
-#' shapefile (\code{.shp}).  Year filtering uses the integer \code{FireYear}
-#' column present in the NIFC historical perimeters data.
+#' The ZIP is expected to contain a GeoPackage (\code{.gpkg}), a shapefile
+#' (\code{.shp}), or an ESRI File Geodatabase (\code{.gdb}).  GeoPackage is
+#' preferred when present; shapefile and geodatabase are tried in that order
+#' if no GeoPackage is found.  Year filtering uses the integer
+#' \code{FireYear} column present in the NIFC historical perimeters data.
 #'
 #' @param years \code{integer} vector of years to keep.  Accepts a single
 #'   year (\code{2020}), a contiguous range created with \code{:} notation
