@@ -74,8 +74,10 @@ read_nifc(
 [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md)
 first to obtain the perimeters ZIP archive.
 
-The ZIP is expected to contain either a GeoPackage (`.gpkg`) or a
-shapefile (`.shp`). Year filtering uses the integer `FireYear` column
+The ZIP is expected to contain a GeoPackage (`.gpkg`), a shapefile
+(`.shp`), or an ESRI File Geodatabase (`.gdb`). GeoPackage is preferred
+when present; shapefile and geodatabase are tried in that order if no
+GeoPackage is found. Year filtering uses the integer `FireYear` column
 present in the NIFC historical perimeters data.
 
 ## Examples

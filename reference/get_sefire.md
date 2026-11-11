@@ -68,9 +68,10 @@ get_sefire(
 ## Value
 
 For `dataset = "Burn Severity"`: a `character` vector of paths to the
-downloaded ZIP files (returned invisibly), one element per unique year
-requested. For all other datasets: a `character(1)` path to the
-downloaded ZIP file (returned invisibly).
+ZIP files that exist on disk after the call (returned invisibly), at
+most one per unique year requested. Years whose download failed are
+omitted. For all other datasets: a `character(1)` path to the downloaded
+ZIP file (returned invisibly).
 
 ## About SE FireMap
 
@@ -88,8 +89,8 @@ States for years 2000–2022.
 The SE FireMap Fall 2024 release additionally provides a Fire History
 Map (1994–2024), Burned Area Polygons (1994–2024), and Burned Area
 Raster grids (1994–2024) as single-file geodatabase ZIPs. Year selection
-is not applicable to these three products; the `years` argument is
-silently ignored when they are requested.
+is not applicable to these three products; if `years` is supplied, a
+warning is emitted and the argument is ignored.
 
 ## Warning \[large files\]
 

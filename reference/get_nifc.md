@@ -2,7 +2,9 @@
 
 Downloads the NIFC (National Interagency Fire Center) wildfire
 perimeters dataset from figshare and unzips it to a local directory. If
-the ZIP already exists and `overwrite = FALSE`, no network call is made.
+the ZIP already exists and `overwrite = FALSE`, no network call is made;
+if the extracted files are missing or incomplete, the existing ZIP is
+unzipped again.
 
 ## Usage
 
@@ -47,9 +49,9 @@ get_nifc(
 
 ## Warning \[large files\]
 
-The NIFC ZIP archive is a large file. Downloads may be slow depending on
-connection speed. Consider downloading in a background session if
-needed.
+The NIFC ZIP archive is approximately 49 MB. Downloads may be slow
+depending on connection speed. Consider downloading in a background
+session if needed.
 
 ## Examples
 

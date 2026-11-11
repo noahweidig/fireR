@@ -1,5 +1,66 @@
 # Changelog
 
+## fireR 1.2.0
+
+### Bug fixes
+
+- [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
+  now returns only the Burn Severity ZIP paths that exist on disk,
+  omitting years whose download failed, so the result can be passed
+  directly to readers
+  ([\#166](https://github.com/noahweidig/fireR/issues/166)).
+- [`get_wui()`](https://noahweidig.github.io/fireR/reference/get_wui.md),
+  [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md),
+  and
+  [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md)
+  now re-unzip an existing ZIP when its extracted files are missing or
+  incomplete (for example after an interrupted unzip), without
+  re-downloading. Previously the unzip ran only in the session that
+  performed the download
+  ([\#164](https://github.com/noahweidig/fireR/issues/164)).
+- Large-download warnings now state the actual size:
+  [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
+  single-file datasets (1-3 GB;
+  [\#160](https://github.com/noahweidig/fireR/issues/160)),
+  [`get_mtbs()`](https://noahweidig.github.io/fireR/reference/get_mtbs.md)
+  (360 MB) and
+  [`get_fod()`](https://noahweidig.github.io/fireR/reference/get_fod.md)
+  (175 MB; [\#165](https://github.com/noahweidig/fireR/issues/165)), and
+  [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md)
+  (49 MB; [\#162](https://github.com/noahweidig/fireR/issues/162)). Each
+  recommends a background session.
+
+### Documentation
+
+- [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
+  docs no longer say `years` is “silently ignored” for single-file
+  datasets; a warning is emitted
+  ([\#168](https://github.com/noahweidig/fireR/issues/168)).
+- [`read_nifc()`](https://noahweidig.github.io/fireR/reference/read_nifc.md)
+  docs list `.gdb` as a supported archive format
+  ([\#156](https://github.com/noahweidig/fireR/issues/156)).
+- [`get_nifc()`](https://noahweidig.github.io/fireR/reference/get_nifc.md)
+  docs state the approximate download size
+  ([\#162](https://github.com/noahweidig/fireR/issues/162)).
+- Removed tracked session-artifact files and added them to `.gitignore`
+  ([\#153](https://github.com/noahweidig/fireR/issues/153)).
+
+### Tests
+
+- Added regression tests for the unconditional
+  [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
+  “years ignored” warning
+  ([\#167](https://github.com/noahweidig/fireR/issues/167)), the
+  [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
+  return value after failed downloads, and the re-unzip behaviour.
+- Added
+  [`get_sefire()`](https://noahweidig.github.io/fireR/reference/get_sefire.md)
+  integration tests with `skip_if_sefire_unreachable()`
+  ([\#163](https://github.com/noahweidig/fireR/issues/163)) and a
+  `skip_if_invalid_fod_archive()` guard for FOD integration tests
+  ([\#152](https://github.com/noahweidig/fireR/issues/152)).
+- `testthat` (\>= 3.2.0) is now required for mocking.
+
 ## fireR 1.1.0
 
 ### Bug fixes

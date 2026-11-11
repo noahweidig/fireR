@@ -2,7 +2,9 @@
 
 Downloads the USFS Wildland-Urban Interface (WUI) dataset ZIP from the
 USFS public Box archive and unzips it to a local directory. If the ZIP
-already exists and `overwrite = FALSE`, no network call is made.
+already exists and `overwrite = FALSE`, no network call is made; if the
+extracted files are missing or incomplete, the existing ZIP is unzipped
+again.
 
 ## Usage
 
