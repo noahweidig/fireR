@@ -135,7 +135,8 @@ test_that("get_sefire() returns only ZIP paths that exist after failed downloads
   res <- suppressWarnings(
     get_sefire(years = 2020:2021, directory = tmp, verbose = FALSE)
   )
-  expect_equal(as.character(res), ok)
+  expect_equal(basename(as.character(res)), "cbi_mosaic_2020.zip")
+  expect_true(file.exists(ok))
   expect_false(file.exists(fail))
 })
 
